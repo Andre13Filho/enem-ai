@@ -44,75 +44,136 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Importa Professor Carlos com sistema RAG Local
-try:
-    from professor_carlos_local import setup_professor_carlos_local_ui, get_professor_carlos_local_response
-    PROFESSOR_CARLOS_LOCAL_AVAILABLE = True
-except ImportError:
-    PROFESSOR_CARLOS_LOCAL_AVAILABLE = False
+# Importação lazy dos sistemas RAG - carrega apenas quando necessário
+PROFESSOR_CARLOS_LOCAL_AVAILABLE = False
+PROFESSOR_LUCIANA_LOCAL_AVAILABLE = False  
+PROFESSOR_ROBERTO_LOCAL_AVAILABLE = False
+PROFESSOR_EDUARDO_LOCAL_AVAILABLE = False
+PROFESSOR_MARINA_LOCAL_AVAILABLE = False
+PROFESSOR_FERNANDO_LOCAL_AVAILABLE = False
+PORTUGUESE_RAG_AVAILABLE = False
+ENEM_EXERCISES_AVAILABLE = False
+EXERCICIOS_PERSONALIZADOS_AVAILABLE = False
+REDACAO_AVAILABLE = False
 
-# Importa Professora Luciana com sistema RAG Local de Química
-try:
-    from professor_luciana_local import setup_professor_luciana_local_ui, get_professor_luciana_local_response
-    PROFESSOR_LUCIANA_LOCAL_AVAILABLE = True
-except ImportError:
-    PROFESSOR_LUCIANA_LOCAL_AVAILABLE = False
+# Cache para módulos importados
+_imported_modules = {}
 
-# Importa Professor Roberto com sistema RAG Local de Biologia
-try:
-    from professor_roberto_local import setup_professor_roberto_local_ui, get_professor_roberto_local_response
-    PROFESSOR_ROBERTO_LOCAL_AVAILABLE = True
-except ImportError:
-    PROFESSOR_ROBERTO_LOCAL_AVAILABLE = False
+def lazy_import_professor(subject: str):
+    """Importa professor sob demanda para economizar memória"""
+    global PROFESSOR_CARLOS_LOCAL_AVAILABLE, PROFESSOR_LUCIANA_LOCAL_AVAILABLE
+    global PROFESSOR_ROBERTO_LOCAL_AVAILABLE, PROFESSOR_EDUARDO_LOCAL_AVAILABLE
+    global PROFESSOR_MARINA_LOCAL_AVAILABLE, PROFESSOR_FERNANDO_LOCAL_AVAILABLE
+    global PORTUGUESE_RAG_AVAILABLE, REDACAO_AVAILABLE
+    
+    if subject == "Matemática" and "carlos" not in _imported_modules:
+        try:
+            from professor_carlos_local import setup_professor_carlos_local_ui, get_professor_carlos_local_response
+            _imported_modules["carlos"] = {
+                "setup": setup_professor_carlos_local_ui,
+                "response": get_professor_carlos_local_response
+            }
+            PROFESSOR_CARLOS_LOCAL_AVAILABLE = True
+        except ImportError:
+            pass
+    
+    elif subject == "Química" and "luciana" not in _imported_modules:
+        try:
+            from professor_luciana_local import setup_professor_luciana_local_ui, get_professor_luciana_local_response
+            _imported_modules["luciana"] = {
+                "setup": setup_professor_luciana_local_ui,
+                "response": get_professor_luciana_local_response
+            }
+            PROFESSOR_LUCIANA_LOCAL_AVAILABLE = True
+        except ImportError:
+            pass
+    
+    elif subject == "Biologia" and "roberto" not in _imported_modules:
+        try:
+            from professor_roberto_local import setup_professor_roberto_local_ui, get_professor_roberto_local_response
+            _imported_modules["roberto"] = {
+                "setup": setup_professor_roberto_local_ui,
+                "response": get_professor_roberto_local_response
+            }
+            PROFESSOR_ROBERTO_LOCAL_AVAILABLE = True
+        except ImportError:
+            pass
+    
+    elif subject == "História" and "eduardo" not in _imported_modules:
+        try:
+            from professor_eduardo_local import setup_professor_eduardo_local_ui, get_professor_eduardo_local_response
+            _imported_modules["eduardo"] = {
+                "setup": setup_professor_eduardo_local_ui,
+                "response": get_professor_eduardo_local_response
+            }
+            PROFESSOR_EDUARDO_LOCAL_AVAILABLE = True
+        except ImportError:
+            pass
+    
+    elif subject == "Geografia" and "marina" not in _imported_modules:
+        try:
+            from professor_marina_local import setup_professor_marina_local_ui, get_professor_marina_local_response
+            _imported_modules["marina"] = {
+                "setup": setup_professor_marina_local_ui,
+                "response": get_professor_marina_local_response
+            }
+            PROFESSOR_MARINA_LOCAL_AVAILABLE = True
+        except ImportError:
+            pass
+    
+    elif subject == "Física" and "fernando" not in _imported_modules:
+        try:
+            from professor_fernando_local import setup_professor_fernando_local_ui, get_professor_fernando_local_response
+            _imported_modules["fernando"] = {
+                "setup": setup_professor_fernando_local_ui,
+                "response": get_professor_fernando_local_response
+            }
+            PROFESSOR_FERNANDO_LOCAL_AVAILABLE = True
+        except ImportError:
+            pass
+    
+    elif subject == "Língua Portuguesa" and "leticia" not in _imported_modules:
+        try:
+            from professor_leticia_local import setup_professor_leticia_local_ui, get_professor_leticia_local_response, PORTUGUESE_RAG_AVAILABLE as PORTUGUESE_AVAILABLE
+            _imported_modules["leticia"] = {
+                "setup": setup_professor_leticia_local_ui,
+                "response": get_professor_leticia_local_response
+            }
+            PORTUGUESE_RAG_AVAILABLE = PORTUGUESE_AVAILABLE
+        except ImportError:
+            pass
+    
+    elif subject == "Redação" and "redacao" not in _imported_modules:
+        try:
+            from local_redacao_rag import setup_redacao_ui, analyze_redacao_pdf
+            _imported_modules["redacao"] = {
+                "setup": setup_redacao_ui,
+                "analyze": analyze_redacao_pdf
+            }
+            REDACAO_AVAILABLE = True
+        except ImportError:
+            pass
 
-# Importa Professor Eduardo com sistema RAG Local de História
-try:
-    from professor_eduardo_local import setup_professor_eduardo_local_ui, get_professor_eduardo_local_response
-    PROFESSOR_EDUARDO_LOCAL_AVAILABLE = True
-except ImportError:
-    PROFESSOR_EDUARDO_LOCAL_AVAILABLE = False
+def lazy_import_exercises():
+    """Importa sistema de exercícios sob demanda"""
+    global EXERCICIOS_PERSONALIZADOS_AVAILABLE
+    
+    if "exercicios" not in _imported_modules:
+        try:
+            from exercicios_personalizados import exercicios_personalizados
+            _imported_modules["exercicios"] = exercicios_personalizados
+            EXERCICIOS_PERSONALIZADOS_AVAILABLE = True
+        except ImportError:
+            pass
 
-# Importa Professor Marina com sistema RAG Local de Geografia
-try:
-    from professor_marina_local import setup_professor_marina_local_ui, get_professor_marina_local_response
-    PROFESSOR_MARINA_LOCAL_AVAILABLE = True
-except ImportError:
-    PROFESSOR_MARINA_LOCAL_AVAILABLE = False
-
-# Importa Professor Fernando com sistema RAG Local de Física
-try:
-    from professor_fernando_local import setup_professor_fernando_local_ui, get_professor_fernando_local_response
-    PROFESSOR_FERNANDO_LOCAL_AVAILABLE = True
-except ImportError:
-    PROFESSOR_FERNANDO_LOCAL_AVAILABLE = False
-
-# Importa Professora Letícia com sistema RAG Local de Português
-try:
-    from professor_leticia_local import PORTUGUESE_RAG_AVAILABLE
-except ImportError:
-    PORTUGUESE_RAG_AVAILABLE = False
-
-# Importa sistema de exercícios do ENEM
-try:
-    from enem_exercises_rag import enem_exercises_rag
-    from exercise_formatter import display_exercise_card
-    ENEM_EXERCISES_AVAILABLE = True
-except ImportError:
-    ENEM_EXERCISES_AVAILABLE = False
-
-# Importa sistema de exercícios personalizados
-try:
-    from exercicios_personalizados import exercicios_personalizados
-    EXERCICIOS_PERSONALIZADOS_AVAILABLE = True
-except ImportError:
-    EXERCICIOS_PERSONALIZADOS_AVAILABLE = False
-
-# Importa funções de Redação
-try:
-    # Verifica se as funções foram importadas com sucesso
-    REDACAO_AVAILABLE = True if 'setup_redacao_ui' in globals() and 'analyze_redacao_pdf' in globals() else False
-except:
-    REDACAO_AVAILABLE = False
+def lazy_import_mindmap():
+    """Importa mapa mental sob demanda"""
+    if "mindmap" not in _imported_modules:
+        try:
+            from mapa_mental_markmap import display_mapa_mental_wrapper
+            _imported_modules["mindmap"] = display_mapa_mental_wrapper
+        except ImportError:
+            pass
 
 # Configuração MathJax para renderização de fórmulas matemáticas
 st.markdown("""
@@ -441,32 +502,32 @@ def get_teacher_response(subject: str, user_message: str, api_key: str) -> str:
     """Retorna resposta do professor específico"""
     
     # Professor Carlos especializado (RAG Local)
-    if subject == "Matemática" and PROFESSOR_CARLOS_LOCAL_AVAILABLE:
-        return get_professor_carlos_local_response(user_message, api_key)
+    if subject == "Matemática" and "carlos" in _imported_modules:
+        return _imported_modules["carlos"]["response"](user_message, api_key)
     
     # Professora Luciana especializada (RAG Local de Química)
-    elif subject == "Química" and PROFESSOR_LUCIANA_LOCAL_AVAILABLE:
-        return get_professor_luciana_local_response(user_message, api_key)
+    elif subject == "Química" and "luciana" in _imported_modules:
+        return _imported_modules["luciana"]["response"](user_message, api_key)
     
     # Professor Roberto especializado (RAG Local de Biologia)
-    elif subject == "Biologia" and PROFESSOR_ROBERTO_LOCAL_AVAILABLE:
-        return get_professor_roberto_local_response(user_message, api_key)
+    elif subject == "Biologia" and "roberto" in _imported_modules:
+        return _imported_modules["roberto"]["response"](user_message, api_key)
     
     # Professor Eduardo especializado (RAG Local de História)
-    elif subject == "História" and PROFESSOR_EDUARDO_LOCAL_AVAILABLE:
-        return get_professor_eduardo_local_response(user_message, api_key)
+    elif subject == "História" and "eduardo" in _imported_modules:
+        return _imported_modules["eduardo"]["response"](user_message, api_key)
     
     # Professora Marina especializada (RAG Local de Geografia)
-    elif subject == "Geografia" and PROFESSOR_MARINA_LOCAL_AVAILABLE:
-        return get_professor_marina_local_response(user_message, api_key)
+    elif subject == "Geografia" and "marina" in _imported_modules:
+        return _imported_modules["marina"]["response"](user_message, api_key)
     
     # Professora Letícia (RAG Local de Português)
-    elif subject == "Língua Portuguesa" and PORTUGUESE_RAG_AVAILABLE:
-        return get_professor_leticia_local_response(user_message, api_key)
+    elif subject == "Língua Portuguesa" and "leticia" in _imported_modules:
+        return _imported_modules["leticia"]["response"](user_message, api_key)
     
     # Professor Fernando especializado (RAG Local de Física)
-    elif subject == "Física" and PROFESSOR_FERNANDO_LOCAL_AVAILABLE:
-        return get_professor_fernando_local_response(user_message, api_key)
+    elif subject == "Física" and "fernando" in _imported_modules:
+        return _imported_modules["fernando"]["response"](user_message, api_key)
     
     # Outros professores (Groq genérico)
     else:
@@ -509,22 +570,53 @@ def display_chat_history(subject: str):
                 </div>
                 """, unsafe_allow_html=True)
 
+def cleanup_unused_modules(current_subject: str):
+    """Remove módulos não utilizados da memória para economizar recursos"""
+    subject_module_map = {
+        "Matemática": "carlos",
+        "Química": "luciana", 
+        "Biologia": "roberto",
+        "História": "eduardo",
+        "Geografia": "marina",
+        "Física": "fernando",
+        "Língua Portuguesa": "leticia",
+        "Redação": "redacao"
+    }
+    
+    current_module = subject_module_map.get(current_subject)
+    modules_to_remove = []
+    
+    for module_key in _imported_modules.keys():
+        if module_key != current_module and module_key not in ["mindmap", "exercicios"]:
+            modules_to_remove.append(module_key)
+    
+    for module_key in modules_to_remove:
+        del _imported_modules[module_key]
+        
+    # Reset das variáveis globais para módulos removidos
+    global PROFESSOR_CARLOS_LOCAL_AVAILABLE, PROFESSOR_LUCIANA_LOCAL_AVAILABLE
+    global PROFESSOR_ROBERTO_LOCAL_AVAILABLE, PROFESSOR_EDUARDO_LOCAL_AVAILABLE  
+    global PROFESSOR_MARINA_LOCAL_AVAILABLE, PROFESSOR_FERNANDO_LOCAL_AVAILABLE
+    global PORTUGUESE_RAG_AVAILABLE, REDACAO_AVAILABLE
+    
+    if "carlos" not in _imported_modules:
+        PROFESSOR_CARLOS_LOCAL_AVAILABLE = False
+    if "luciana" not in _imported_modules:
+        PROFESSOR_LUCIANA_LOCAL_AVAILABLE = False
+    if "roberto" not in _imported_modules:
+        PROFESSOR_ROBERTO_LOCAL_AVAILABLE = False
+    if "eduardo" not in _imported_modules:
+        PROFESSOR_EDUARDO_LOCAL_AVAILABLE = False
+    if "marina" not in _imported_modules:
+        PROFESSOR_MARINA_LOCAL_AVAILABLE = False
+    if "fernando" not in _imported_modules:
+        PROFESSOR_FERNANDO_LOCAL_AVAILABLE = False
+    if "leticia" not in _imported_modules:
+        PORTUGUESE_RAG_AVAILABLE = False
+    if "redacao" not in _imported_modules:
+        REDACAO_AVAILABLE = False
 
 def main():
-    # Verificar disponibilidade dos sistemas e mostrar avisos
-    if not PROFESSOR_CARLOS_LOCAL_AVAILABLE:
-        st.warning("⚠️ Professor Carlos Local não disponível. Verifique as dependências")
-    if not PROFESSOR_LUCIANA_LOCAL_AVAILABLE:
-        st.warning("⚠️ Professora Luciana Local não disponível. Verifique as dependências")
-    if not PROFESSOR_ROBERTO_LOCAL_AVAILABLE:
-        st.warning("⚠️ Professor Roberto Local não disponível. Verifique as dependências")
-    if not PROFESSOR_EDUARDO_LOCAL_AVAILABLE:
-        st.warning("⚠️ Professor Eduardo Local não disponível. Verifique as dependências")
-    if not PROFESSOR_MARINA_LOCAL_AVAILABLE:
-        st.warning("⚠️ Professora Marina Local não disponível. Verifique as dependências")
-    if not ENEM_EXERCISES_AVAILABLE:
-        st.warning("⚠️ Sistema de exercícios do ENEM não disponível. Verifique as dependências")
-    
     # Header
     st.markdown("""
     <div style="text-align: center; padding: 2rem 0;">
@@ -546,12 +638,19 @@ def main():
             format_func=lambda x: f"{SUBJECTS[x]['icon']} {x}"
         )
         
-        # Atualiza matéria atual
+        # Atualiza matéria atual e carrega professor sob demanda
         if current_subject != st.session_state.current_subject:
             st.session_state.current_subject = current_subject
             # Reset das flags ao mudar de matéria
             st.session_state.processing_message = False
+            # Limpa módulos não utilizados para economizar memória
+            cleanup_unused_modules(current_subject)
+            # Carrega professor da matéria selecionada
+            lazy_import_professor(current_subject)
             st.rerun()
+        else:
+            # Carrega professor da matéria atual se ainda não foi carregado
+            lazy_import_professor(current_subject)
         
         # Informações do professor atual
         subject_info = SUBJECTS[current_subject]
@@ -590,35 +689,21 @@ def main():
         # Define a API key final a ser usada
         api_key = AUTO_API_KEY if AUTO_API_KEY else st.session_state.api_key
         
-        # Configuração específica para Matemática
-        if current_subject == "Matemática" and PROFESSOR_CARLOS_LOCAL_AVAILABLE:
-            setup_professor_carlos_local_ui()
-        
-        # Configuração específica para Química
-        elif current_subject == "Química" and PROFESSOR_LUCIANA_LOCAL_AVAILABLE:
-            setup_professor_luciana_local_ui()
-        
-        # Configuração específica para Biologia
-        elif current_subject == "Biologia" and PROFESSOR_ROBERTO_LOCAL_AVAILABLE:
-            setup_professor_roberto_local_ui()
-        
-        # Configuração específica para História
-        elif current_subject == "História" and PROFESSOR_EDUARDO_LOCAL_AVAILABLE:
-            setup_professor_eduardo_local_ui()
-        
-        # Configuração específica para Geografia
-        elif current_subject == "Geografia" and PROFESSOR_MARINA_LOCAL_AVAILABLE:
-            setup_professor_marina_local_ui()
-        
-        # Configuração específica para Língua Portuguesa
-        elif current_subject == "Língua Portuguesa" and PORTUGUESE_RAG_AVAILABLE:
-            setup_professor_leticia_local_ui()
-        
-        # Configuração específica para Física
-        elif current_subject == "Física" and PROFESSOR_FERNANDO_LOCAL_AVAILABLE:
-            setup_professor_fernando_local_ui()
-        
-        # Configuração específica para Redação será feita na área principal
+        # Configuração específica para cada matéria (apenas se carregada)
+        if current_subject == "Matemática" and "carlos" in _imported_modules:
+            _imported_modules["carlos"]["setup"]()
+        elif current_subject == "Química" and "luciana" in _imported_modules:
+            _imported_modules["luciana"]["setup"]()
+        elif current_subject == "Biologia" and "roberto" in _imported_modules:
+            _imported_modules["roberto"]["setup"]()
+        elif current_subject == "História" and "eduardo" in _imported_modules:
+            _imported_modules["eduardo"]["setup"]()
+        elif current_subject == "Geografia" and "marina" in _imported_modules:
+            _imported_modules["marina"]["setup"]()
+        elif current_subject == "Língua Portuguesa" and "leticia" in _imported_modules:
+            _imported_modules["leticia"]["setup"]()
+        elif current_subject == "Física" and "fernando" in _imported_modules:
+            _imported_modules["fernando"]["setup"]()
         
         # Estatísticas
         st.markdown("### 📊 Seu Progresso")
@@ -647,16 +732,16 @@ def main():
         
         with tab_mindmap:
             # Lógica do mapa mental
-            try:
-                from mapa_mental_markmap import display_mapa_mental_wrapper
-                display_mapa_mental_wrapper()
-            except ImportError:
+            lazy_import_mindmap()
+            if "mindmap" in _imported_modules:
+                _imported_modules["mindmap"]()
+            else:
                 st.error("O sistema de mapa mental não está disponível.")
 
         with tab_revisao:
             # Lógica da revisão de redação
-            if REDACAO_AVAILABLE and setup_redacao_ui:
-                setup_redacao_ui()
+            if "redacao" in _imported_modules:
+                _imported_modules["redacao"]["setup"]()
             else:
                 st.warning("⚠️ O módulo de revisão de redação não está disponível.")
 
@@ -674,16 +759,17 @@ def main():
         
         with tab_mindmap:
             # Lógica do mapa mental
-            try:
-                from mapa_mental_markmap import display_mapa_mental_wrapper
-                display_mapa_mental_wrapper()
-            except ImportError:
+            lazy_import_mindmap()
+            if "mindmap" in _imported_modules:
+                _imported_modules["mindmap"]()
+            else:
                 st.error("O sistema de mapa mental não está disponível.")
         
         with tab_exercicios:
             # Lógica dos exercícios personalizados
-            if EXERCICIOS_PERSONALIZADOS_AVAILABLE:
-                exercicios_personalizados.setup_ui()
+            lazy_import_exercises()
+            if "exercicios" in _imported_modules:
+                _imported_modules["exercicios"].setup_ui()
             else:
                 st.warning("⚠️ O módulo de exercícios personalizados não está disponível.")
     
@@ -750,7 +836,7 @@ def main():
     st.markdown("""
     <div style="text-align: center; color: #64748b; padding: 1rem;">
         <p>🎓 <strong>ENEM AI Helper</strong> - Sistema personalizado para a Sther</p>
-        <p>Powered by DeepSeek R1 Distill via Groq • Matemática, Física, Química, Biologia e História com sistemas RAG locais</p>
+        <p>Powered by DeepSeek R1 Distill via Groq • Carregamento otimizado para economia de memória</p>
     </div>
     """, unsafe_allow_html=True)
 
