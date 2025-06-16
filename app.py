@@ -5,7 +5,7 @@ import os
 from typing import Dict, List, Any
 from datetime import datetime
 from groq import Groq
-# from local_redacao_rag import setup_redacao_ui, analyze_redacao_pdf
+from local_redacao_rag import setup_redacao_ui, analyze_redacao_pdf
 from local_portuguese_rag import local_portuguese_rag, LocalPortugueseRAG
 from professor_leticia_local import setup_professor_leticia_local_ui, get_professor_leticia_local_response
 
@@ -107,11 +107,12 @@ try:
 except ImportError:
     EXERCICIOS_PERSONALIZADOS_AVAILABLE = False
 
-# Importa funções de Redação (já importado no topo)
-# REDACAO_AVAILABLE = True if 'setup_redacao_ui' in globals() else False
-REDACAO_AVAILABLE = False
-
-# Professor de Redação removido
+# Importa funções de Redação
+try:
+    # Verifica se as funções foram importadas com sucesso
+    REDACAO_AVAILABLE = True if 'setup_redacao_ui' in globals() and 'analyze_redacao_pdf' in globals() else False
+except:
+    REDACAO_AVAILABLE = False
 
 # Configuração MathJax para renderização de fórmulas matemáticas
 st.markdown("""

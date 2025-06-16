@@ -73,7 +73,7 @@ class ProfessorRedacao:
                     "nome": file_path.stem,
                     "conteudo": content
                 })
-        except Exception as e:
+            except Exception as e:
                 print(f"Erro ao carregar {file_path.name}: {e}")
 
     def extract_text_from_pdf(self, pdf_content: bytes) -> str:
@@ -88,10 +88,10 @@ class ProfessorRedacao:
                     tmp_file.flush()
                     
                     with open(tmp_file.name, 'rb') as file:
-                pdf_reader = PyPDF2.PdfReader(file)
-                for page in pdf_reader.pages:
-                    page_text = page.extract_text()
-                    if page_text.strip():
+                        pdf_reader = PyPDF2.PdfReader(file)
+                        for page in pdf_reader.pages:
+                            page_text = page.extract_text()
+                            if page_text.strip():
                                 text += page_text + "\n"
                     
                     os.unlink(tmp_file.name)
@@ -107,8 +107,8 @@ class ProfessorRedacao:
                 pdf_document = fitz.open(stream=pdf_content, filetype="pdf")
                 for page_num in range(pdf_document.page_count):
                     page = pdf_document[page_num]
-                page_text = page.get_text()
-                if page_text.strip():
+                    page_text = page.get_text()
+                    if page_text.strip():
                         text += page_text + "\n"
                 pdf_document.close()
                 
