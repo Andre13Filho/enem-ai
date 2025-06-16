@@ -1,0 +1,23 @@
+# Requisitos para Fine Tuning (além dos atuais)
+torch>=2.0.0
+transformers>=4.30.0
+datasets>=2.0.0
+accelerate>=0.20.0
+bitsandbytes>=0.39.0  # Para quantização e economia de memória
+sentencepiece>=0.1.99  # Para alguns tokenizers
+protobuf>=3.20.0
+
+# Para modelos específicos
+peft>=0.4.0  # Parameter Efficient Fine Tuning (LoRA)
+trl>=0.5.0   # Transformer Reinforcement Learning
+
+# Monitoramento
+wandb>=0.15.0  # Para tracking do treinamento
+tensorboard>=2.13.0
+
+# Processamento avançado de dados
+nltk>=3.8
+spacy>=3.6.0
+
+# ATENÇÃO: Estes pacotes são PESADOS (vários GB)
+# E requerem GPU com bastante memória 

@@ -1,0 +1,2588 @@
+{
+  "2023_91": { "disciplina": "Biologia", "tema": "Ecologia e polinização" },
+  "2023_92": { "disciplina": "Biologia", "tema": "Nutrição e anemia ferropriva" },
+  "2023_93": { "disciplina": "Física", "tema": "Energia nuclear" },
+  "2023_94": { "disciplina": "Química", "tema": "Dureza da água – íons cálcio" },
+  "2023_95": { "disciplina": "Biologia", "tema": "Músculos e voo de aves" },
+  "2023_96": { "disciplina": "Química", "tema": "Hidratação do CaCl₂ – cálculo percentual" },
+  "2023_97": { "disciplina": "Biologia", "tema": "Hormônio vegetal – etileno" },
+  "2023_98": { "disciplina": "Biologia", "tema": "Autotrofia secundária – lesmas com cloroplastos" },
+  "2023_99": { "disciplina": "Biologia", "tema": "Zoonoses – leishmaniose" },
+  "2023_100": { "disciplina": "Física", "tema": "Cinemática – ponto de altura máxima" },
+  "2023_101": { "disciplina": "Biologia", "tema": "Hormônios ovarianos e serotonina" },
+  "2023_102": { "disciplina": "Química", "tema": "Oxidação de álcoois – cetonas" },
+  "2023_103": { "disciplina": "Biologia", "tema": "Fecundação em plantas – tubo polínico" },
+  "2023_104": { "disciplina": "Química", "tema": "Equilíbrio químico – complexação de íons" },
+  "2023_105": { "disciplina": "Biologia", "tema": "Floema e transporte de seiva" },
+  "2023_106": { "disciplina": "Biologia", "tema": "Vacinas de RNA mensageiro" },
+  "2023_107": { "disciplina": "Biologia", "tema": "Fecundação – ação do acrossomo" },
+  "2023_108": { "disciplina": "Física", "tema": "Indução eletromagnética – fogão de indução" },
+  "2023_109": { "disciplina": "Física", "tema": "Polias – relação entre massas" },
+  "2023_110": { "disciplina": "Química", "tema": "Precipitação – reações e gráficos" },
+  "2023_111": { "disciplina": "Física", "tema": "Transmissão sonora – amplitude" },
+  "2023_112": { "disciplina": "Física", "tema": "Difração – laser e CDs/DVDs" },
+  "2023_113": { "disciplina": "Física", "tema": "Intensidade de ondas eletromagnéticas" },
+  "2023_114": { "disciplina": "Física", "tema": "Força de atrito e tensões em cordas" },
+  "2023_115": { "disciplina": "Biologia", "tema": "Biorremediação – aguapé" },
+  "2023_116": { "disciplina": "Biologia", "tema": "Ciclo do nitrogênio – decompositores" },
+  "2023_117": { "disciplina": "Física", "tema": "Dose de radiação – conversão para mSv" },
+  "2023_118": { "disciplina": "Química", "tema": "Combustíveis – estrutura e octanagem" },
+  "2023_119": { "disciplina": "Física", "tema": "Gases – Lei dos gases ideais" },
+  "2023_120": { "disciplina": "Física", "tema": "Circuito elétrico misto – brilho de lâmpadas" },
+  "2023_121": { "disciplina": "Química", "tema": "Eletropositividade – ligação iônica em solos" },
+  "2023_122": { "disciplina": "Física", "tema": "Transferência de calor – calor latente" },
+  "2023_123": { "disciplina": "Química", "tema": "Isomeria óptica – quiralidade" },
+  "2023_124": { "disciplina": "Matemática", "tema": "Velocidade, tempo e regra de três" },
+  "2023_125": { "disciplina": "Biologia", "tema": "Genética – síndrome de Down" },
+  "2023_126": { "disciplina": "Química", "tema": "Solubilidade e sais – cloridrato de aminas" },
+  "2023_127": { "disciplina": "Biologia", "tema": "Cadeia respiratória – inibição por cianeto" },
+  "2023_128": { "disciplina": "Física", "tema": "Interferência eletromagnética – celulares e rádio" },
+  "2023_129": { "disciplina": "Biologia", "tema": "Bioacumulação – lipossolubilidade" },
+  "2023_130": { "disciplina": "Física", "tema": "Condutividade térmica – copos ecológicos" },
+  "2023_131": { "disciplina": "Química", "tema": "Densidade de refrigerantes – solutos" },
+  "2023_132": { "disciplina": "Física", "tema": "Lei dos gases ideais – P vs T" },
+  "2023_133": { "disciplina": "Química", "tema": "Biodegradabilidade de tensoativos" },
+  "2023_134": { "disciplina": "Biologia", "tema": "Mutação cromossômica – micronúcleos" },
+  "2023_135": { "disciplina": "Física", "tema": "Ondas mecânicas – velocidade do som" },
+  "2023_136-180": { "disciplina": "Matemática", "tema": "Diversos (álgebra, geometria, estatística, probabilidade, funções, porcentagem, etc.)" },
+  "2024_91": { "disciplina": "Física", "tema": "Mecânica (Zonas de Deformação Programada, Segurança, Energia Cinética)" },
+  "2024_92": { "disciplina": "Química", "tema": "Eletroquímica/Bioquímica (Células a Combustível Microbianas, Reações Redox)" },
+  "2024_93": { "disciplina": "Química", "tema": "Química Orgânica (Definição de Compostos Orgânicos)" },
+  "2024_94": { "disciplina": "Química", "tema": "Química Orgânica/Ácidos e Bases (Teoria Ácido-Base de Brønsted-Lowry, Grupos Funcionais)" },
+  "2024_95": { "disciplina": "Biologia", "tema": "Biotecnologia/Biologia Molecular (PCR, Detecção de Genes)" },
+  "2024_96": { "disciplina": "Física", "tema": "Mecânica (Centro de Massa, Balanceamento)" },
+  "2024_97": { "disciplina": "Química", "tema": "Estequiometria/Soluções (Concentração, Massa Molar, Cloreto de Sódio em Solução Salina)" },
+  "2024_98": { "disciplina": "Biologia", "tema": "Evolução/Zoologia (Reprodução e Evolução de Mamíferos)" },
+  "2024_99": { "disciplina": "Física", "tema": "Ondas/Óptica (Efeito Doppler para Som e Radar)" },
+  "2024_100": { "disciplina": "Física", "tema": "Óptica (Espelhos Côncavos, Formação de Imagem)" },
+  "2024_101": { "disciplina": "Física", "tema": "Acústica (Nível Sonoro, Distância e Compreensão em Salas de Aula)" },
+  "2024_102": { "disciplina": "Biologia", "tema": "Fisiologia Vegetal/Bioquímica (Desnaturação Enzimática, Conversão Amido-Açúcar)" },
+  "2024_103": { "disciplina": "Física", "tema": "Termodinâmica (Transferência de Calor - Convecção em Aquecedores Solares de Água)" },
+  "2024_104": { "disciplina": "Biologia", "tema": "Ecologia/Ciência Ambiental (Urbanização, Saneamento e Transmissão de Doenças)" },
+  "2024_105": { "disciplina": "Biologia", "tema": "Ecologia/Toxicologia (Microplásticos, Acúmulo de Poluentes em Tecidos)" },
+  "2024_106": { "disciplina": "Física", "tema": "Raios X/Imagem (Inspeção por Raios X de Laptops em Aeroportos)" },
+  "2024_107": { "disciplina": "Biologia", "tema": "Biologia Humana/Toxicologia (Compostos Nitrosos, Mutagênese, Câncer)" },
+  "2024_108": { "disciplina": "Biologia", "tema": "Ecologia/Agronomia (Sistemas Agroflorestais, Sucessão Ecológica)" },
+  "2024_109": { "disciplina": "Biologia", "tema": "Fisiologia Humana (Fibras Musculares e Desempenho Atlético)" },
+  "2024_110": { "disciplina": "Biologia", "tema": "Evolução/Ecologia (Mimetismo em Serpentes)" },
+  "2024_111": { "disciplina": "Biologia", "tema": "Zoologia/Fisiologia (Exoesqueleto de Crustáceos e Crescimento)" },
+  "2024_112": { "disciplina": "Biologia", "tema": "Genética (Herança Recessiva Ligada ao Cromossomo X - Daltonismo)" },
+  "2024_113": { "disciplina": "Biologia", "tema": "Ecologia/Bioquímica (Metabolismo de Procariontes nos Ciclos do Nitrogênio e do Carbono, Reações Redox)" },
+  "2024_114": { "disciplina": "Química", "tema": "Química Ambiental (Combustão, Poluição do Ar, Emissões de Motores)" },
+  "2024_115": { "disciplina": "Biologia", "tema": "Biologia Celular (Citoesqueleto, Movimento de Amebas)" },
+  "2024_116": { "disciplina": "Química", "tema": "Técnicas de Separação (Separação de Hidróxido de Magnésio)" },
+  "2024_117": { "disciplina": "Biologia", "tema": "Zoologia/Ecologia (Vocalização e Reprodução de Anfíbios)" },
+  "2024_118": { "disciplina": "Química", "tema": "Equilíbrio Químico (Desmineralização/Remineralização Dentária, pH)" },
+  "2024_119": { "disciplina": "Física", "tema": "Cinemática/Vetores (Velocidade Relativa em Maratona Aquática)" },
+  "2024_120": { "disciplina": "Biologia", "tema": "Virologia/Imunologia (HTLV-1 vs. HIV, Efeitos em Linfócitos)" },
+  "2024_121": { "disciplina": "Física", "tema": "Mecânica (Movimento de Projétil, Gravidade, Força Resultante)" },
+  "2024_122": { "disciplina": "Física", "tema": "Termodinâmica (Isolamento Térmico de Iglus)" },
+  "2024_123": { "disciplina": "Química", "tema": "Química Orgânica (Grupos Funcionais em Pesticidas)" },
+  "2024_124": { "disciplina": "Biologia", "tema": "Microbiologia/Metabolismo (Padrões de Crescimento Bacteriano e Requisitos de Oxigênio)" },
+  "2024_125": { "disciplina": "Física", "tema": "Física Atômica (Fosforescência em Sinais de Emergência)" },
+  "2024_126": { "disciplina": "Biologia", "tema": "Imunologia/Virologia (Vacinas COVID-19, Resposta Antígeno-Anticorpo)" },
+  "2024_127": { "disciplina": "Física", "tema": "Eletromagnetismo (Linhas de Campo Elétrico com Condutor)" },
+  "2024_128": { "disciplina": "Física", "tema": "Energia/Ciência dos Materiais (Placas Solares de Grafeno, Geração de Eletricidade a partir da Chuva)" },
+  "2024_129": { "disciplina": "Física", "tema": "Termodinâmica/Eficiência Energética (Cálculo de Eficiência de Cafeteira)" },
+  "2024_130": { "disciplina": "Física", "tema": "Termodinâmica (Ciclo Otto, Transformação de Energia)" },
+  "2024_131": { "disciplina": "Física", "tema": "Eletrônica (Circuitos com LED)" },
+  "2024_132": { "disciplina": "Física", "tema": "Eletromagnetismo (Análise de Circuito, Divisores de Tensão)" },
+  "2024_133": { "disciplina": "Química", "tema": "Estequiometria/Energia (Biogás vs. Etanol para Produção de Energia)" },
+  "2024_134": { "disciplina": "Biologia", "tema": "Ciência Ambiental (Fitorremediação)" },
+  "2024_135": { "disciplina": "Química", "tema": "Ciência Ambiental (Reciclagem de Alumínio, Extração de Bauxita)" },
+  "2024_136": { "disciplina": "Matemática", "tema": "Grandezas e Medidas (Microscópio - Ampliação)" },
+  "2024_137": { "disciplina": "Matemática", "tema": "Estatística (Média Aritmética)" },
+  "2024_138": { "disciplina": "Matemática", "tema": "Análise Combinatória (Arranjos e Permutações)" },
+  "2024_139": { "disciplina": "Matemática", "tema": "Problemas do Primeiro Grau (Cálculo de Custos)" },
+  "2024_140": { "disciplina": "Matemática", "tema": "Porcentagem (Cálculo e Comparação de Porcentagens)" },
+  "2024_141": { "disciplina": "Matemática", "tema": "Funções (Análise Gráfica e Domínio de Funções)" },
+  "2024_142": { "disciplina": "Matemática", "tema": "Progressão Geométrica (Crescimento Exponencial)" },
+  "2024_143": { "disciplina": "Matemática", "tema": "Problemas do Primeiro Grau/Financeiro (Cálculo de Lucro e Vendas)" },
+  "2024_144": { "disciplina": "Matemática", "tema": "Geometria Espacial (Sólidos de Revolução)" },
+  "2024_145": { "disciplina": "Matemática", "tema": "Geometria Plana (Área de Retângulos)" },
+  "2024_146": { "disciplina": "Matemática", "tema": "Otimização/Geometria (Área Máxima de Retângulo com Perímetro Fixo)" },
+  "2024_147": { "disciplina": "Matemática", "tema": "Números Racionais (Representações Fracionárias e Decimais)" },
+  "2024_148": { "disciplina": "Matemática", "tema": "Função Exponencial (Modelagem e Interpretação Gráfica)" },
+  "2024_149": { "disciplina": "Matemática", "tema": "Geometria Espacial (Volume de Cilindros e Cubos)" },
+  "2024_150": { "disciplina": "Matemática", "tema": "Geometria (Arranjo de Círculos em Retângulos)" },
+  "2024_151": { "disciplina": "Matemática", "tema": "Escalas (Relação entre Áreas em Diferentes Escalas)" },
+  "2024_152": { "disciplina": "Matemática", "tema": "Gráficos e Tabelas (Interpretação de Dados e Saldo Comercial)" },
+  "2024_153": { "disciplina": "Matemática", "tema": "Porcentagem (Representação Decimal de Taxa Percentual)" },
+  "2024_154": { "disciplina": "Matemática", "tema": "Estatística (Mediana)" },
+  "2024_155": { "disciplina": "Matemática", "tema": "Geometria Plana (Área de Setor Circular)" },
+  "2024_156": { "disciplina": "Matemática", "tema": "Funções (Função Afim - Modelagem de Custos)" },
+  "2024_157": { "disciplina": "Matemática", "tema": "Problemas do Primeiro Grau/Financeiro (Cálculo de Preço por Unidade)" },
+  "2024_158": { "disciplina": "Matemática", "tema": "Problemas de Otimização (Custo Mínimo de Produtos)" },
+  "2024_159": { "disciplina": "Matemática", "tema": "Grandezas e Medidas (Unidades de Medida e Análise Dimensional)" },
+  "2024_160": { "disciplina": "Matemática", "tema": "Proporcionalidade/Vazão (Cálculo de Vazão em Piscinas)" },
+  "2024_161": { "disciplina": "Matemática", "tema": "Funções (Interpretação Gráfica de Nível de Água em Tanque)" },
+  "2024_162": { "disciplina": "Matemática", "tema": "Matemática Financeira (Otimização de Pagamentos)" },
+  "2024_163": { "disciplina": "Matemática", "tema": "Geometria Plana (Comprimento de Correias e Polias)" },
+  "2024_164": { "disciplina": "Matemática", "tema": "Geometria Plana (Pontos Equidistantes - Triângulo Equilátero)" },
+  "2024_165": { "disciplina": "Matemática", "tema": "Probabilidade (Eventos Independentes)" },
+  "2024_166": { "disciplina": "Matemática", "tema": "Razões e Proporções (Densidade Demográfica)" },
+  "2024_167": { "disciplina": "Matemática", "tema": "Números Racionais (Operações com Frações e Decimais)" },
+  "2024_168": { "disciplina": "Matemática", "tema": "Gráficos e Tabelas (Interpretação de Gráficos de Ondas)" },
+  "2024_169": { "disciplina": "Matemática", "tema": "Probabilidade (Probabilidade Condicional)" },
+  "2024_170": { "disciplina": "Matemática", "tema": "Logaritmos (Escala Richter)" },
+  "2024_171": { "disciplina": "Matemática", "tema": "Geometria Plana (Área de Polígonos Regulares)" },
+  "2024_172": { "disciplina": "Matemática", "tema": "Cinemática (Encontro de Corpos em Movimento)" },
+  "2024_173": { "disciplina": "Matemática", "tema": "Estatística (Análise de Dados em Gráficos de Barras)" },
+  "2024_174": { "disciplina": "Matemática", "tema": "Geometria Espacial (Projeção Ortogonal)" },
+  "2024_175": { "disciplina": "Matemática", "tema": "Geometria Espacial (Volume de Cilindros)" },
+  "2024_176": { "disciplina": "Matemática", "tema": "Funções (Interpretação e Extrapolação de Gráfico Linear)" },
+  "2024_177": { "disciplina": "Matemática", "tema": "Função Afim (Cálculo de Custos)" },
+  "2024_178": { "disciplina": "Matemática", "tema": "Estatística (Mediana de um Conjunto de Dados)" },
+  "2024_179": { "disciplina": "Matemática", "tema": "Razões e Proporções (Divisão Proporcional)" },
+  "2024_180": { "disciplina": "Matemática", "tema": "Análise Combinatória (Combinações)" },
+  "2022_91": { "disciplina": "Química", "tema": "Química Ambiental (Remediação de Solos, Reações de Oxirredução)" },
+  "2022_92": { "disciplina": "Biologia", "tema": "Saúde Pública/Parasitologia (Doenças Tropicais, Medidas Profiláticas)" },
+  "2022_93": { "disciplina": "Física", "tema": "Eletricidade/Energia (Parque Solar, Potência, Irradiância, Eficiência)" },
+  "2022_94": { "disciplina": "Química", "tema": "Química Geral (Reações de Incompatibilidade, Riscos Químicos)" },
+  "2022_95": { "disciplina": "Física", "tema": "Eletromagnetismo (Campo Magnético Gerado por Corrente Elétrica)" },
+  "2022_96": { "disciplina": "Física", "tema": "Eletricidade/Segurança (Corrente Elétrica no Corpo Humano, Resistência Elétrica, Associação de Baterias)" },
+  "2022_97": { "disciplina": "Química", "tema": "Separação de Misturas/Isótopos (Enriquecimento de Urânio, Efusão, Métodos Alternativos de Separação)" },
+  "2022_98": { "disciplina": "Biologia", "tema": "Biotecnologia/Terapia Gênica (Terapia Gênica, Gene, Células da Retina)" },
+  "2022_99": { "disciplina": "Biologia", "tema": "Ecologia (Espécies Exóticas Invasoras, Redução da Biodiversidade)" },
+  "2022_100": { "disciplina": "Física", "tema": "Cinemática (Lançamento de Projétil, Alcance Vertical e Horizontal)" },
+  "2022_101": { "disciplina": "Química", "tema": "Bioquímica/Cálculos (Produção de Etanol, Deterioração da Sacarose, Concentração)" },
+  "2022_102": { "disciplina": "Biologia", "tema": "Biotecnologia/Virologia (Diagnóstico de COVID-19, PCR, Vírus RNA)" },
+  "2022_103": { "disciplina": "Física", "tema": "Estática/Dinâmica (Forças em Equilíbrio, Atrito Estático)" },
+  "2022_104": { "disciplina": "Biologia", "tema": "Fisiologia Humana (Doping Sanguíneo, Eritropoietina, Transporte de Oxigênio)" },
+  "2022_105": { "disciplina": "Física", "tema": "Mecânica (Colisões, Força Média, Energia Dissipada)" },
+  "2022_106": { "disciplina": "Química", "tema": "Química Orgânica/pH (Penicilamina, Grupos Funcionais Ionizáveis, Predominância em pH Diferentes)" },
+  "2022_107": { "disciplina": "Química", "tema": "Reações Orgânicas/Cinética (Hidrólise de Polissacarídeos, Função do Íon H+)" },
+  "2022_108": { "disciplina": "Química", "tema": "Estequiometria/Soluções (Titulação Ácido-Base, Concentração)" },
+  "2022_109": { "disciplina": "Física", "tema": "Radioatividade (Decaimento Radioativo, Meia-vida)" },
+  "2022_110": { "disciplina": "Biologia", "tema": "Evolução/Ecologia (Padrões Reprodutivos em Anfíbios, Estratégias Reprodutivas)" },
+  "2022_111": { "disciplina": "Física", "tema": "Climatologia/Geografia (Inclinação do Eixo da Terra, Duração do Dia, Energia Solar)" },
+  "2022_112": { "disciplina": "Física", "tema": "Mecânica (Movimento Circular, Tensão em Corda, Conservação de Energia)" },
+  "2022_113": { "disciplina": "Química", "tema": "Eletroquímica/Corrosão (Corrosão de Metais, Nanotecnologia Anticorrosiva)" },
+  "2022_114": { "disciplina": "Biologia", "tema": "Citologia/Fisiologia Vegetal (Célula Vegetal, Vacúolo, Meio Hipotônico)" },
+  "2022_115": { "disciplina": "Física", "tema": "Termodinâmica (Calor Específico, Densidade, Variação de Temperatura)" },
+  "2022_116": { "disciplina": "Física", "tema": "Eletricidade/Termodinâmica (Ducha Elétrica, Potência, Corrente, Disjuntor)" },
+  "2022_117": { "disciplina": "Química", "tema": "Reações Inorgânicas (Reação Ácido-Carbonato, Gás Liberado)" },
+  "2022_118": { "disciplina": "Biologia", "tema": "Fisiologia Animal/Endocrinologia (Hormônios Sexuais, Atrazina, Hermafroditismo)" },
+  "2022_119": { "disciplina": "Física", "tema": "Eletricidade (Circuitos Elétricos, Lâmpada Incandescente, Pilhas em Série)" },
+  "2022_120": { "disciplina": "Biologia", "tema": "Bioquímica/Enzimologia (Atividade Enzimática, Temperatura, Desnaturação)" },
+  "2022_121": { "disciplina": "Biologia", "tema": "Microbiologia/Farmacologia (Antimicrobianos, Mecanismos de Ação, Seletividade)" },
+  "2022_122": { "disciplina": "Biologia", "tema": "Biotecnologia/Farmacologia (Veneno de Cascavel, Proteína Recombinante, Modulação da Coagulação Sanguínea)" },
+  "2022_123": { "disciplina": "Física", "tema": "Astrofísica/Gravidade (Buracos Negros, Órbitas Planetárias)" },
+  "2022_124": { "disciplina": "Química", "tema": "Química Ambiental/Toxicologia (Ozônio, Agente Sanitizante, Toxicidade, Ação Química)" },
+  "2022_125": { "disciplina": "Biologia", "tema": "Genética (Mosaicismo, Inativação do Cromossomo X, Expressividade Variável)" },
+  "2022_126": { "disciplina": "Química", "tema": "Tratamento de Água (Etapas de Purificação, Retirada de Sólidos)" },
+  "2022_127": { "disciplina": "Biologia", "tema": "Bioquímica/Fisiologia (Metabolismo Energético, Termogenina, ATP Sintase)" },
+  "2022_128": { "disciplina": "Física", "tema": "Eletricidade (Circuitos Elétricos, Lei de Ohm, Resistência Elétrica)" },
+  "2022_129": { "disciplina": "Química", "tema": "Química Ambiental/Equilíbrio (Chuva Ácida, Ciclo do Nitrogênio, pH e Formação de Compostos)" },
+  "2022_130": { "disciplina": "Biologia", "tema": "Fisiologia da Visão (Olho Humano, Cones e Bastonetes, Percepção da Luz)" },
+  "2022_131": { "disciplina": "Química", "tema": "Química Orgânica (Compostos Aromáticos, Anel Benzênico)" },
+  "2022_132": { "disciplina": "Biologia", "tema": "Microbiologia/Saúde Pública (Dengue, Wolbachia, Competição Interespecífica)" },
+  "2022_133": { "disciplina": "Biologia", "tema": "Imunologia/Biotecnologia (Vacinas Terapêuticas, Câncer, Trypanosoma cruzi, Apresentação de Antígenos)" },
+  "2022_134": { "disciplina": "Física", "tema": "Ondas/Acústica (Velocidade do Som em Diferentes Meios, Distância)" },
+  "2022_135": { "disciplina": "Física", "tema": "Óptica (Fenômenos Ópticos, Refração da Luz)" },
+  "2022_136": { "disciplina": "Matemática", "tema": "Funções (Análise Gráfica de Função de Temperatura e Velocidade)" },
+  "2022_137": { "disciplina": "Matemática", "tema": "Probabilidade (Probabilidade em Eventos Sequenciais)" },
+  "2022_138": { "disciplina": "Matemática", "tema": "Estatística (Mediana de Lucros)" },
+  "2022_139": { "disciplina": "Matemática", "tema": "Escalas (Cálculo de Dimensões Reais a Partir de Escala)" },
+  "2022_140": { "disciplina": "Matemática", "tema": "Lógica/Calendário (Número Mínimo de Dias para um Torneio com Restrições de Descanso)" },
+  "2022_141": { "disciplina": "Matemática", "tema": "Probabilidade (Probabilidade de Ganhar em Jogo de Bingo)" },
+  "2022_142": { "disciplina": "Matemática", "tema": "Análise Combinatória (Configurações Diferentes de Carro)" },
+  "2022_143": { "disciplina": "Matemática", "tema": "Geometria Espacial (Planificação de Cubo com Áreas Pintadas)" },
+  "2022_144": { "disciplina": "Matemática", "tema": "Aritmética (Cálculo de Dígito Verificador)" },
+  "2022_145": { "disciplina": "Matemática", "tema": "Proporcionalidade (Cálculo de Quantidades em Pacotes Promocionais)" },
+  "2022_146": { "disciplina": "Matemática", "tema": "Sistemas Lineares (Cálculo de Voltas em Circuitos)" },
+  "2022_147": { "disciplina": "Matemática", "tema": "Porcentagem (Análise de Aumento de Vendas com Investimento)" },
+  "2022_148": { "disciplina": "Matemática", "tema": "Álgebra (Relação entre Luminosidade, Raio e Temperatura de Estrelas)" },
+  "2022_149": { "disciplina": "Matemática", "tema": "Estatística (Mediana de Quantidade de Crianças por Família)" },
+  "2022_150": { "disciplina": "Matemática", "tema": "Funções Quadráticas (Trajetória de Bola de Voleibol, Altura Máxima)" },
+  "2022_151": { "disciplina": "Matemática", "tema": "Problemas do Primeiro Grau (Cálculo de Tempo de Atividade Física com Base em Ingestão de Água)" },
+  "2022_152": { "disciplina": "Matemática", "tema": "Geometria Espacial (Dimensionamento de Sala de Cinema com Poltronas)" },
+  "2022_153": { "disciplina": "Matemática", "tema": "Geometria Espacial (Volume de Cone, Redução Percentual de Volume)" },
+  "2022_154": { "disciplina": "Matemática", "tema": "Porcentagem (Cálculo de Vagas de Emprego com Queda Percentual)" },
+  "2022_155": { "disciplina": "Matemática", "tema": "Análise Combinatória (Escolha de Apartamentos com Condições Específicas)" },
+  "2022_156": { "disciplina": "Matemática", "tema": "Geometria Plana (Dobradura e Recorte de Papel - Geometria de Formas Resultantes)" },
+  "2022_157": { "disciplina": "Matemática", "tema": "Funções Definidas por Partes (Salário com Comissão Variável)" },
+  "2022_158": { "disciplina": "Matemática", "tema": "Funções Quadráticas (Máximo de Função para Modelo de Pessoas Infectadas)" },
+  "2022_159": { "disciplina": "Matemática", "tema": "Sequências/Padrões (Sequência de Treinamento em Ciclos)" },
+  "2022_160": { "disciplina": "Matemática", "tema": "Geometria Espacial (Projeção Ortogonal de Trajeto em Cubo)" },
+  "2022_161": { "disciplina": "Matemática", "tema": "Escalas/Geometria Plana (Cálculo de Área Real de Varanda a Partir de Planta em Escala)" },
+  "2022_162": { "disciplina": "Matemática", "tema": "Funções Lineares (Projeção de Vendas e Meta)" },
+  "2022_163": { "disciplina": "Matemática", "tema": "Média Ponderada/Porcentagem (Aumento Salarial e Média Salarial)" },
+  "2022_164": { "disciplina": "Matemática", "tema": "Razões e Proporções (Cálculo de Quantidade Liberada por Borrifador)" },
+  "2022_165": { "disciplina": "Matemática", "tema": "Razões e Proporções (Relação entre Dias e Anos em Diferentes Planetas)" },
+  "2022_166": { "disciplina": "Matemática", "tema": "Gráficos e Tabelas (Análise Gráfica de Ultrapassagens em Competição)" },
+  "2022_167": { "disciplina": "Matemática", "tema": "Porcentagem (Cálculo de Preço com Desconto e Aumento)" },
+  "2022_168": { "disciplina": "Matemática", "tema": "Geometria Analítica/Caminhos Mínimos (Descrição de Caminho Poligonal em Grade)" },
+  "2022_169": { "disciplina": "Matemática", "tema": "Geometria Espacial (Volume de Cilindros com Variações de Dimensões)" },
+  "2022_170": { "disciplina": "Matemática", "tema": "Gráficos e Tabelas (Rentabilidade de Aluguel a Partir de Gráficos)" },
+  "2022_171": { "disciplina": "Matemática", "tema": "Média Aritmética (Cálculo de Pontuação Necessária para Média)" },
+  "2022_172": { "disciplina": "Matemática", "tema": "Geometria Espacial (Área de Revestimento de Piscina - Otimização)" },
+  "2022_173": { "disciplina": "Matemática", "tema": "Razões e Proporções (Cálculo de Candidatos por Vaga)" },
+  "2022_174": { "disciplina": "Matemática", "tema": "Geometria Espacial (Volume de Cilindro e Esferas - Reciclagem)" },
+  "2022_175": { "disciplina": "Matemática", "tema": "Grandezas e Medidas (Representação Numérica de Bilhão)" },
+  "2022_176": { "disciplina": "Matemática", "tema": "Geometria Analítica (Otimização de Distância em Rodovias)" },
+  "2022_177": { "disciplina": "Matemática", "tema": "Problemas do Primeiro Grau (Cálculo do Custo Total de Contratação de Operário)" },
+  "2022_178": { "disciplina": "Matemática", "tema": "Geometria Espacial (Proporcionalidade de Volume em Docinhos Esféricos)" },
+  "2022_179": { "disciplina": "Matemática", "tema": "Média Aritmética (Cálculo de Esperança de Vida)" },
+  "2022_180": { "disciplina": "Matemática", "tema": "Geometria Espacial (Projeção Ortogonal na Superfície Terrestre)" },
+    "2021_91": {
+      "disciplina": "Biologia",
+      "tema": "Nutrição de plantas e pH"
+    },
+    "2021_92": {
+      "disciplina": "Física",
+      "tema": "Ondas sonoras em barras"
+    },
+    "2021_93": {
+      "disciplina": "Biologia",
+      "tema": "Mimetismo e evolução"
+    },
+    "2021_94": {
+      "disciplina": "Física",
+      "tema": "Lançamento oblíquo"
+    },
+    "2021_95": {
+      "disciplina": "Química",
+      "tema": "Tempo de meia-vida"
+    },
+    "2021_96": {
+      "disciplina": "Biologia",
+      "tema": "Mutações genéticas e síntese proteica"
+    },
+    "2021_97": {
+      "disciplina": "Química",
+      "tema": "Saponificação"
+    },
+    "2021_98": {
+      "disciplina": "Biologia",
+      "tema": "Circulação fetal e comparada"
+    },
+    "2021_99": {
+      "disciplina": "Física",
+      "tema": "Transferência de calor (irradiação e convecção)"
+    },
+    "2021_100": {
+      "disciplina": "Física",
+      "tema": "Queda dos corpos e resistência do ar"
+    },
+    "2021_101": {
+      "disciplina": "Química",
+      "tema": "Estequiometria e rendimento de reação"
+    },
+    "2021_102": {
+      "disciplina": "Química",
+      "tema": "Pilhas galvânicas e circuitos elétricos"
+    },
+    "2021_103": {
+      "disciplina": "Química",
+      "tema": "Titulação ácido-base"
+    },
+    "2021_104": {
+      "disciplina": "Biologia",
+      "tema": "Bioacumulação e cadeias alimentares"
+    },
+    "2021_105": {
+      "disciplina": "Física",
+      "tema": "Força magnética em cargas elétricas"
+    },
+    "2021_106": {
+      "disciplina": "Química",
+      "tema": "Isomeria geométrica"
+    },
+    "2021_107": {
+      "disciplina": "Física",
+      "tema": "Potência e energia cinética"
+    },
+    "2021_108": {
+      "disciplina": "Física",
+      "tema": "Astronomia (características de planetas)"
+    },
+    "2021_109": {
+      "disciplina": "Física",
+      "tema": "Resistência elétrica"
+    },
+    "2021_110": {
+      "disciplina": "Biologia",
+      "tema": "Metabolismo energético (fermentação)"
+    },
+    "2021_111": {
+      "disciplina": "Biologia",
+      "tema": "Coleta seletiva e gestão de resíduos"
+    },
+    "2021_112": {
+      "disciplina": "Biologia",
+      "tema": "Mapeamento genético e consanguinidade"
+    },
+    "2021_113": {
+      "disciplina": "Química",
+      "tema": "Reações de oxirredução (ciclo do cobre)"
+    },
+    "2021_114": {
+      "disciplina": "Biologia",
+      "tema": "Sistema nervoso (arco reflexo)"
+    },
+    "2021_115": {
+      "disciplina": "Física",
+      "tema": "Condução de calor (panelas)"
+    },
+    "2021_116": {
+      "disciplina": "Química",
+      "tema": "Propriedades ácido-base (pesticidas)"
+    },
+    "2021_117": {
+      "disciplina": "Química",
+      "tema": "Biocombustíveis (biogás)"
+    },
+    "2021_118": {
+      "disciplina": "Biologia",
+      "tema": "Combate à dengue (ciclo de vida)"
+    },
+    "2021_119": {
+      "disciplina": "Biologia",
+      "tema": "Tecidos vegetais (xilema, cerne, alburno)"
+    },
+    "2021_120": {
+      "disciplina": "Física",
+      "tema": "Cor e absorção de luz (pigmentos vegetais)"
+    },
+    "2021_121": {
+      "disciplina": "Biologia",
+      "tema": "Evolução patógeno-hospedeiro (letalidade e incubação)"
+    },
+    "2021_122": {
+      "disciplina": "Biologia",
+      "tema": "Tratamento de esgoto (decantação)"
+    },
+    "2021_123": {
+      "disciplina": "Biologia",
+      "tema": "Hormônios vegetais (auxinas e estaquia)"
+    },
+    "2021_124": {
+      "disciplina": "Química",
+      "tema": "Células de combustível (eletrólitos e condições operacionais)"
+    },
+    "2021_125": {
+      "disciplina": "Física",
+      "tema": "Termodinâmica (sensação térmica e umidade)"
+    },
+    "2021_126": {
+      "disciplina": "Física",
+      "tema": "Circuitos elétricos (interruptores)"
+    },
+    "2021_127": {
+      "disciplina": "Biologia",
+      "tema": "Ecologia (dispersão de sementes e extinção)"
+    },
+    "2021_128": {
+      "disciplina": "Física",
+      "tema": "Eletricidade (consumo de energia e recarga de baterias)"
+    },
+    "2021_129": {
+      "disciplina": "Biologia",
+      "tema": "Reprodução de angiospermas (endosperma)"
+    },
+    "2021_130": {
+      "disciplina": "Química",
+      "tema": "Ésteres e suas estruturas"
+    },
+    "2021_131": {
+      "disciplina": "Física",
+      "tema": "Fisiologia humana (batimentos cardíacos e eletrocardiograma)"
+    },
+    "2021_132": {
+      "disciplina": "Biologia",
+      "tema": "Genética (doença hereditária recessiva)"
+    },
+    "2021_133": {
+      "disciplina": "Física",
+      "tema": "Eletroquímica (pilhas e força eletromotriz)"
+    },
+    "2021_134": {
+      "disciplina": "Química",
+      "tema": "Densidade e temperatura (alcoolômetro)"
+    },
+    "2021_135": {
+      "disciplina": "Química",
+      "tema": "Polímeros condutores (ligações conjugadas)"
+    },
+    "2021_136": {
+      "disciplina": "Matemática",
+      "tema": "Proporção áurea e sequências numéricas"
+    },
+    "2021_137": {
+      "disciplina": "Matemática",
+      "tema": "Geometria espacial e projeção ortogonal"
+    },
+    "2021_138": {
+      "disciplina": "Matemática",
+      "tema": "Análise combinatória (arranjos e permutações)"
+    },
+    "2021_139": {
+      "disciplina": "Matemática",
+      "tema": "Média aritmética"
+    },
+    "2021_140": {
+      "disciplina": "Matemática",
+      "tema": "Média ponderada"
+    },
+    "2021_141": {
+      "disciplina": "Matemática",
+      "tema": "Funções lineares (cálculo de preço)"
+    },
+    "2021_142": {
+      "disciplina": "Matemática",
+      "tema": "Probabilidade (eventos complementares)"
+    },
+    "2021_143": {
+      "disciplina": "Matemática",
+      "tema": "Interpretação de gráficos (volume de reservatórios)"
+    },
+    "2021_144": {
+      "disciplina": "Matemática",
+      "tema": "Média aritmética (dados de um gráfico de barras)"
+    },
+    "2021_145": {
+      "disciplina": "Matemática",
+      "tema": "Média ponderada (tempo de leitura)"
+    },
+    "2021_146": {
+      "disciplina": "Matemática",
+      "tema": "Estatística (coeficiente de variação)"
+    },
+    "2021_147": {
+      "disciplina": "Matemática",
+      "tema": "Criptografia (Cifra de César e frequência de letras)"
+    },
+    "2021_148": {
+      "disciplina": "Matemática",
+      "tema": "Estatística (mediana de dados)"
+    },
+    "2021_149": {
+      "disciplina": "Matemática",
+      "tema": "Análise de gráficos (receita, despesa e lucro)"
+    },
+    "2021_150": {
+      "disciplina": "Matemática",
+      "tema": "Porcentagem (aumento percentual)"
+    },
+    "2021_151": {
+      "disciplina": "Matemática",
+      "tema": "Estatística (mediana em histograma)"
+    },
+    "2021_152": {
+      "disciplina": "Matemática",
+      "tema": "Funções e equações (operações definidas)"
+    },
+    "2021_153": {
+      "disciplina": "Matemática",
+      "tema": "Escalas"
+    },
+    "2021_154": {
+      "disciplina": "Matemática",
+      "tema": "Projeção estatística (média de variações)"
+    },
+    "2021_155": {
+      "disciplina": "Matemática",
+      "tema": "Porcentagem e custo"
+    },
+    "2021_156": {
+      "disciplina": "Matemática",
+      "tema": "Funções trigonométricas (movimento harmônico simples)"
+    },
+    "2021_157": {
+      "disciplina": "Matemática",
+      "tema": "Matrizes (soma de elementos)"
+    },
+    "2021_158": {
+      "disciplina": "Matemática",
+      "tema": "Porcentagem (consumo de combustível)"
+    },
+    "2021_159": {
+      "disciplina": "Matemática",
+      "tema": "Proporcionalidade inversa (tempo e número de trabalhadores)"
+    },
+    "2021_160": {
+      "disciplina": "Matemática",
+      "tema": "Otimização (compra de suplementos)"
+    },
+    "2021_161": {
+      "disciplina": "Matemática",
+      "tema": "Funções quadráticas (arrecadação)"
+    },
+    "2021_162": {
+      "disciplina": "Matemática",
+      "tema": "Funções definidas por partes (imposto)"
+    },
+    "2021_163": {
+      "disciplina": "Física",
+      "tema": "Análise dimensional"
+    },
+    "2021_164": {
+      "disciplina": "Matemática",
+      "tema": "Sistemas de equações lineares"
+    },
+    "2021_165": {
+      "disciplina": "Matemática",
+      "tema": "Rendimento de combustível"
+    },
+    "2021_166": {
+      "disciplina": "Matemática",
+      "tema": "Geometria (áreas e volumes com alteração de dimensões)"
+    },
+    "2021_167": {
+      "disciplina": "Matemática",
+      "tema": "Volume de cilindro"
+    },
+    "2021_168": {
+      "disciplina": "Matemática",
+      "tema": "Geometria espacial (planificação de octaedro)"
+    },
+    "2021_169": {
+      "disciplina": "Matemática",
+      "tema": "Geometria plana (perímetro de triângulo equilátero)"
+    },
+    "2021_170": {
+      "disciplina": "Matemática",
+      "tema": "Volume de tronco de cone"
+    },
+    "2021_171": {
+      "disciplina": "Matemática",
+      "tema": "Área de figuras planas (otimização de área)"
+    },
+    "2021_172": {
+      "disciplina": "Física",
+      "tema": "Fisiologia (frequência cardíaca ideal)"
+    },
+    "2021_173": {
+      "disciplina": "Matemática",
+      "tema": "Mínimo de lavagens para não ter prejuízo"
+    },
+    "2021_174": {
+      "disciplina": "Matemática",
+      "tema": "Otimização de custos (compra de medicamentos)"
+    },
+    "2021_175": {
+      "disciplina": "Matemática",
+      "tema": "Geometria espacial (formas de figuras em estrutura)"
+    },
+    "2021_176": {
+      "disciplina": "Matemática",
+      "tema": "Sistema de numeração romano"
+    },
+    "2021_177": {
+      "disciplina": "Matemática",
+      "tema": "Sistema de numeração binário"
+    },
+    "2021_178": {
+      "disciplina": "Matemática",
+      "tema": "Cálculo de área, número de terrenos e receita"
+    },
+    "2021_179": {
+      "disciplina": "Matemática",
+      "tema": "Análise combinatória (combinações)"
+    },
+    "2021_180": {
+      "disciplina": "Matemática",
+      "tema": "Análise de custos (comparação de laboratórios)"
+    },
+      "2020_91": {
+        "disciplina": "Física",
+        "tema": "Eletrostática (Eletrização por atrito)"
+      },
+      "2020_92": {
+        "disciplina": "Química",
+        "tema": "Química ambiental (Polímeros biodegradáveis)"
+      },
+      "2020_93": {
+        "disciplina": "Física",
+        "tema": "Eletrodinâmica (Amperímetro e corrente elétrica)"
+      },
+      "2020_94": {
+        "disciplina": "Química",
+        "tema": "Química orgânica (Funções orgânicas)"
+      },
+      "2020_95": {
+        "disciplina": "Biologia",
+        "tema": "Ecologia (Fragmentação de hábitats e corredores ecológicos)"
+      },
+      "2020_96": {
+        "disciplina": "Química",
+        "tema": "Química ambiental (Ciclo do carbono e combustíveis fósseis)"
+      },
+      "2020_97": {
+        "disciplina": "Física",
+        "tema": "Eletromagnetismo (Indução eletromagnética)"
+      },
+      "2020_98": {
+        "disciplina": "Química",
+        "tema": "Cinética química (Hidrólise e concentração)"
+      },
+      "2020_99": {
+        "disciplina": "Física",
+        "tema": "Cinemática (Movimento acelerado e uniforme)"
+      },
+      "2020_100": {
+        "disciplina": "Química",
+        "tema": "Química orgânica (Decomposição térmica de PVC)"
+      },
+      "2020_101": {
+        "disciplina": "Biologia",
+        "tema": "Evolução (Especiação e isolamento reprodutivo)"
+      },
+      "2020_102": {
+        "disciplina": "Química",
+        "tema": "Separação de misturas (Extração e polaridade)"
+      },
+      "2020_103": {
+        "disciplina": "Química",
+        "tema": "Química ambiental (Efeito do CO2 em ambientes aquáticos)"
+      },
+      "2020_104": {
+        "disciplina": "Biologia",
+        "tema": "Fisiologia animal (Aves aquáticas e impermeabilização das penas)"
+      },
+      "2020_105": {
+        "disciplina": "Física",
+        "tema": "Termodinâmica (Refrigeradores e transferência de calor)"
+      },
+      "2020_106": {
+        "disciplina": "Física",
+        "tema": "Hidrostática (Pressão e descompressão de mergulhadores)"
+      },
+      "2020_107": {
+        "disciplina": "Física",
+        "tema": "Mecânica (Pressão e escalas em estruturas)"
+      },
+      "2020_108": {
+        "disciplina": "Biologia",
+        "tema": "Farmacologia (Revestimento de medicamentos)"
+      },
+      "2020_109": {
+        "disciplina": "Física",
+        "tema": "Termodinâmica (Panela de pressão e ponto de ebulição)"
+      },
+      "2020_110": {
+        "disciplina": "Química",
+        "tema": "Nanotecnologia (Catalisadores e superfície de contato)"
+      },
+      "2020_111": {
+        "disciplina": "Física",
+        "tema": "Ondas (Interferência de ondas sonoras)"
+      },
+      "2020_112": {
+        "disciplina": "Química",
+        "tema": "Equilíbrio químico (Princípio de Le Chatelier)"
+      },
+      "2020_113": {
+        "disciplina": "Física",
+        "tema": "Cinemática (Queda livre e lançamento horizontal)"
+      },
+      "2020_114": {
+        "disciplina": "Física",
+        "tema": "Ondas sonoras (Tubos sonoros fechados)"
+      },
+      "2020_115": {
+        "disciplina": "Biologia",
+        "tema": "Biotecnologia (Transgenia em plantas)"
+      },
+      "2020_116": {
+        "disciplina": "Física",
+        "tema": "Eletrodinâmica (Divisor de tensão)"
+      },
+      "2020_117": {
+        "disciplina": "Biologia",
+        "tema": "Biotecnologia (Fotoimunoterapia)"
+      },
+      "2020_118": {
+        "disciplina": "Biologia",
+        "tema": "Zoologia (Adaptações de Aracnídeos ao ambiente terrestre)"
+      },
+      "2020_119": {
+        "disciplina": "Química",
+        "tema": "Química ambiental (Indicadores de qualidade da água)"
+      },
+      "2020_120": {
+        "disciplina": "Química",
+        "tema": "Estequiometria (Emissões de CO2 em veículos)"
+      },
+      "2020_121": {
+        "disciplina": "Biologia",
+        "tema": "Fotossíntese (Espectro de absorção e taxa fotossintética)"
+      },
+      "2020_122": {
+        "disciplina": "Biologia",
+        "tema": "Parasitologia (Exame parasitológico de fezes)"
+      },
+      "2020_123": {
+        "disciplina": "Química",
+        "tema": "Separação de misturas (Decantação)"
+      },
+      "2020_124": {
+        "disciplina": "Química",
+        "tema": "Química ambiental (Impactos de derramamento de petróleo)"
+      },
+      "2020_125": {
+        "disciplina": "Biologia",
+        "tema": "Genética (Sistema ABO e frequências alélicas)"
+      },
+      "2020_126": {
+        "disciplina": "Física",
+        "tema": "Física nuclear (Fissão nuclear)"
+      },
+      "2020_127": {
+        "disciplina": "Biologia",
+        "tema": "Ecologia (Plantas pioneiras e restauração ambiental)"
+      },
+      "2020_128": {
+        "disciplina": "Física",
+        "tema": "Termodinâmica (Taxa de resfriamento e calor específico)"
+      },
+      "2020_129": {
+        "disciplina": "Biologia",
+        "tema": "Farmacologia (Testes de quimioterápicos)"
+      },
+      "2020_130": {
+        "disciplina": "Física",
+        "tema": "Termologia (Espectro solar e aquecimento)"
+      },
+      "2020_131": {
+        "disciplina": "Química",
+        "tema": "Química verde (Princípios e aplicações)"
+      },
+      "2020_132": {
+        "disciplina": "Química",
+        "tema": "Química ambiental (Poluição por fogos de artifício)"
+      },
+      "2020_133": {
+        "disciplina": "Física",
+        "tema": "Eletrostática (Blindagem eletrostática - Gaiola de Faraday)"
+      },
+      "2020_134": {
+        "disciplina": "Química",
+        "tema": "Densidade (Moedas e volume por deslocamento de água)"
+      },
+      "2020_135": {
+        "disciplina": "Biologia",
+        "tema": "Genética (Poliploidia e especiação)"
+      },
+      "2020_136": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Dimensões da Bandeira Nacional)"
+      },
+      "2020_137": {
+        "disciplina": "Matemática",
+        "tema": "Razão e proporção (Assentos de ônibus)"
+      },
+      "2020_138": {
+        "disciplina": "Matemática",
+        "tema": "Escala (Volume de caixa-d'água)"
+      },
+      "2020_139": {
+        "disciplina": "Matemática",
+        "tema": "Estatística (Eficiência de produção)"
+      },
+      "2020_140": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Área de porcelanato e otimização de compra)"
+      },
+      "2020_141": {
+        "disciplina": "Matemática",
+        "tema": "Contagem (Quantidade de algarismos)"
+      },
+      "2020_142": {
+        "disciplina": "Matemática",
+        "tema": "Probabilidade (Sorteio com repetições)"
+      },
+      "2020_143": {
+        "disciplina": "Matemática",
+        "tema": "Progressão aritmética (Tempo de estudo)"
+      },
+      "2020_144": {
+        "disciplina": "Matemática",
+        "tema": "Vazão (Tempo para encher balde)"
+      },
+      "2020_145": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Dimensões de miniatura de troféu)"
+      },
+      "2020_146": {
+        "disciplina": "Matemática",
+        "tema": "Inequações (Regras de construção de escadas)"
+      },
+      "2020_147": {
+        "disciplina": "Matemática",
+        "tema": "Funções (Conversão de unidades de consumo de combustível)"
+      },
+      "2020_148": {
+        "disciplina": "Matemática",
+        "tema": "Porcentagem (Jovens em atividades)"
+      },
+      "2020_149": {
+        "disciplina": "Matemática",
+        "tema": "Logaritmos (Lei de Zipf)"
+      },
+      "2020_150": {
+        "disciplina": "Matemática",
+        "tema": "Funções exponenciais (Datação por Carbono-14)"
+      },
+      "2020_151": {
+        "disciplina": "Matemática",
+        "tema": "Geometria espacial (Tronco de pirâmide)"
+      },
+      "2020_152": {
+        "disciplina": "Matemática",
+        "tema": "Volume e proporção (Aeração de líquido)"
+      },
+      "2020_153": {
+        "disciplina": "Matemática",
+        "tema": "Velocidade média (Comparação de meios de transporte)"
+      },
+      "2020_154": {
+        "disciplina": "Matemática",
+        "tema": "Notação científica (Comprimento de miniatura)"
+      },
+      "2020_155": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Sequência de quadrados e progressão geométrica)"
+      },
+      "2020_156": {
+        "disciplina": "Matemática",
+        "tema": "Porcentagem (Arrecadação de vendas)"
+      },
+      "2020_157": {
+        "disciplina": "Matemática",
+        "tema": "Probabilidade (Amigo secreto)"
+      },
+      "2020_158": {
+        "disciplina": "Matemática",
+        "tema": "Análise combinatória (Caminhos em grade)"
+      },
+      "2020_159": {
+        "disciplina": "Matemática",
+        "tema": "Otimização de custos (Compra de cimento com frete)"
+      },
+      "2020_160": {
+        "disciplina": "Matemática",
+        "tema": "Cálculo de consumo de combustível"
+      },
+      "2020_161": {
+        "disciplina": "Matemática",
+        "tema": "Volume de cilindros (Relação entre raios e alturas)"
+      },
+      "2020_162": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Área construída e afastamentos)"
+      },
+      "2020_163": {
+        "disciplina": "Matemática",
+        "tema": "Análise combinatória (Anagramas com restrições)"
+      },
+      "2020_164": {
+        "disciplina": "Matemática",
+        "tema": "Interpretação de gráficos (Nível de ruído)"
+      },
+      "2020_165": {
+        "disciplina": "Matemática",
+        "tema": "Média aritmética (Média de estaturas)"
+      },
+      "2020_166": {
+        "disciplina": "Matemática",
+        "tema": "Funções (Vazão e altura em garrafa)"
+      },
+      "2020_167": {
+        "disciplina": "Matemática",
+        "tema": "Porcentagem (Redução de mesada)"
+      },
+      "2020_168": {
+        "disciplina": "Matemática",
+        "tema": "Volume (Deslocamento de água por bolinhas)"
+      },
+      "2020_169": {
+        "disciplina": "Matemática",
+        "tema": "Conjuntos e probabilidade (Tipos sanguíneos)"
+      },
+      "2020_170": {
+        "disciplina": "Matemática",
+        "tema": "Razões e proporções (Capital de uma empresa)"
+      },
+      "2020_171": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Preenchimento de painel com azulejos)"
+      },
+      "2020_172": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Iluminação natalina e comprimento de segmentos)"
+      },
+      "2020_173": {
+        "disciplina": "Matemática",
+        "tema": "Trigonometria (Altura de vigas em pergolado)"
+      },
+      "2020_174": {
+        "disciplina": "Matemática",
+        "tema": "Cálculo de área e densidade (Estimativa de pessoas em evento)"
+      },
+      "2020_175": {
+        "disciplina": "Matemática",
+        "tema": "Funções (Lucro em função de receita e custo)"
+      },
+      "2020_176": {
+        "disciplina": "Matemática",
+        "tema": "Geometria espacial (Projeções ortogonais de sólidos)"
+      },
+      "2020_177": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Plantas de telhados e escoamento de água)"
+      },
+      "2020_178": {
+        "disciplina": "Matemática",
+        "tema": "Probabilidade (Coeficiente de rendimento climático)"
+      },
+      "2020_179": {
+        "disciplina": "Matemática",
+        "tema": "Cálculo de massa (Densidade superficial do papel)"
+      },
+      "2020_180": {
+        "disciplina": "Matemática",
+        "tema": "Média ponderada (Pesquisa de satisfação)"
+      },
+      "2018_136": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_137": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_138": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_139": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_140": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_141": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_142": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_143": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_144": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_145": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_146": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_147": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_148": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_149": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_150": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_151": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_152": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_153": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_154": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_155": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_156": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_157": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_158": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_159": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_160": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_161": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_162": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_163": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_164": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_165": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_166": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_167": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_168": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_169": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_170": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_171": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_172": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_173": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_174": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_175": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_176": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_177": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_178": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_179": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_180": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2018_91": {
+    "disciplina": "Química",
+    "tema": "Fotoquímica e isomeria"
+  },
+  "2018_92": {
+    "disciplina": "Química",
+    "tema": "Combustíveis – calor de combustão e volume"
+  },
+  "2018_93": {
+    "disciplina": "Química",
+    "tema": "Eletroquímica – pilhas"
+  },
+  "2018_94": {
+    "disciplina": "Biologia",
+    "tema": "Metabolismo – ação de hormônios"
+  },
+  "2018_95": {
+    "disciplina": "Física",
+    "tema": "Densidade – flutuabilidade"
+  },
+  "2018_96": {
+    "disciplina": "Biologia",
+    "tema": "Digestão de lipídios – ação dos sais biliares"
+  },
+  "2018_97": {
+    "disciplina": "Física",
+    "tema": "Indução eletromagnética – RFID"
+  },
+  "2018_98": {
+    "disciplina": "Biologia",
+    "tema": "Ecologia – corredores ecológicos"
+  },
+  "2018_99": {
+    "disciplina": "Química",
+    "tema": "Identificação de substâncias perigosas"
+  },
+  "2018_100": {
+    "disciplina": "Biologia",
+    "tema": "Ciclo celular – proteína p53 e câncer"
+  },
+  "2018_101": {
+    "disciplina": "Biologia",
+    "tema": "Adaptações ao deserto – excreção"
+  },
+  "2018_102": {
+    "disciplina": "Química",
+    "tema": "Degradação fotoquímica de pigmentos"
+  },
+  "2018_103": {
+    "disciplina": "Física",
+    "tema": "Frequência de vibração – sonorizadores"
+  },
+  "2018_104": {
+    "disciplina": "Física",
+    "tema": "Alavancas – análise de força"
+  },
+  "2018_105": {
+    "disciplina": "Química",
+    "tema": "Tabela periódica – propriedades dos elementos"
+  },
+  "2018_106": {
+    "disciplina": "Biologia",
+    "tema": "Especiação – isolamento reprodutivo"
+  },
+  "2018_107": {
+    "disciplina": "Biologia",
+    "tema": "Reprodução vegetal – enxertia"
+  },
+  "2018_108": {
+    "disciplina": "Física",
+    "tema": "Resistência elétrica – gráfico V x i"
+  },
+  "2018_109": {
+    "disciplina": "Química",
+    "tema": "Reatividade – substituição nucleofílica"
+  },
+  "2018_110": {
+    "disciplina": "Biologia",
+    "tema": "Código genético – definição correta"
+  },
+  "2018_111": {
+    "disciplina": "Biologia",
+    "tema": "Polinização anemófila – estratégia adaptativa"
+  },
+  "2018_112": {
+    "disciplina": "Física",
+    "tema": "Circuitos elétricos – telas resistivas"
+  },
+  "2018_113": {
+    "disciplina": "Biotecnologia",
+    "tema": "leveduras modificadas"
+  },
+  "2018_114": {
+    "disciplina": "Química",
+    "tema": "Energia da glicose – cálculo de calor liberado"
+  },
+  "2018_115": {
+    "disciplina": "Física",
+    "tema": "Potência elétrica – comparação com equipamentos"
+  },
+  "2018_116": {
+    "disciplina": "Química",
+    "tema": "Células solares – reação de regeneração"
+  },
+  "2018_117": {
+    "disciplina": "Biologia",
+    "tema": "Síntese proteica – metabolismo celular"
+  },
+  "2018_118": {
+    "disciplina": "Física",
+    "tema": "Dilatação térmica – energia interatômica"
+  },
+  "2018_119": {
+    "disciplina": "Biologia",
+    "tema": "Controle de doenças – inseticidas naturais"
+  },
+  "2018_120": {
+    "disciplina": "Física",
+    "tema": "Fases de som – interferência sonora"
+  },
+  "2018_121": {
+    "disciplina": "Química",
+    "tema": "Correção do solo – pH e disponibilidade de íons"
+  },
+  "2018_122": {
+    "disciplina": "Física",
+    "tema": "Centro de massa e velocidade – rodas maiores"
+  },
+  "2018_123": {
+    "disciplina": "Biologia",
+    "tema": "Energia – conversão no ciclo do carbono"
+  },
+  "2018_124": {
+    "disciplina": "Química",
+    "tema": "Craqueamento do petróleo – separação"
+  },
+  "2018_125": {
+    "disciplina": "Física",
+    "tema": "Refração e dispersão – prisma óptico"
+  },
+  "2018_126": {
+    "disciplina": "Química",
+    "tema": "Tensoativos – estrutura e biodegradabilidade"
+  },
+  "2018_127": {
+    "disciplina": "Biologia",
+    "tema": "Genética – análise de marcadores de DNA"
+  },
+  "2018_128": {
+    "disciplina": "Física",
+    "tema": "Ação e reação – vento em vela de barco"
+  },
+  "2018_129": {
+    "disciplina": "Biologia",
+    "tema": "Visão tricromática – daltonismo"
+  },
+  "2018_130": {
+    "disciplina": "Química",
+    "tema": "Estrutura do grafeno – hibridação"
+  },
+  "2018_131": {
+    "disciplina": "Física",
+    "tema": "Energia potencial elástica – mola e velocidade"
+  },
+  "2018_132": {
+    "disciplina": "Química",
+    "tema": "Isomeria – sinalizadores químicos"
+  },
+  "2018_133": {
+    "disciplina": "Biologia",
+    "tema": "Desenvolvimento – holometabolia"
+  },
+  "2018_134": {
+    "disciplina": "Física",
+    "tema": "Pressão e sucção – uso de dois canudos"
+  },
+  "2018_135": {
+    "disciplina": "Química",
+    "tema": "Ciclo do nitrogênio – importância da amônia"
+  },
+    "2019_91": {
+      "disciplina": "Química",
+      "tema": "Eletroquímica (Potenciais de redução e reação com liberação de H2)"
+    },
+    "2019_92": {
+      "disciplina": "Física",
+      "tema": "Eletromagnetismo (Indução eletromagnética e aterramento)"
+    },
+    "2019_93": {
+      "disciplina": "Biologia",
+      "tema": "Imunologia (Vacinas para esquistossomose)"
+    },
+    "2019_94": {
+      "disciplina": "Física",
+      "tema": "Calorimetria (Isolantes térmicos)"
+    },
+    "2019_95": {
+      "disciplina": "Química",
+      "tema": "Termoquímica (Entalpia de combustão e processo anaeróbico)"
+    },
+    "2019_96": {
+      "disciplina": "Biologia",
+      "tema": "Ecologia (Estratégias de sobrevivência e recuperação de áreas desmatadas)"
+    },
+    "2019_97": {
+      "disciplina": "Biologia",
+      "tema": "Ecologia (Relações ecológicas - Competição)"
+    },
+    "2019_98": {
+      "disciplina": "Física",
+      "tema": "Óptica (Percepção de cores e daltonismo)"
+    },
+    "2019_99": {
+      "disciplina": "Química",
+      "tema": "Química ambiental (Fertilizantes orgânicos e ciclo de nutrientes)"
+    },
+    "2019_100": {
+      "disciplina": "Biologia",
+      "tema": "Agricultura orgânica (Controle de pragas)"
+    },
+    "2019_101": {
+      "disciplina": "Biologia",
+      "tema": "Fisiologia (Doping por eritropoetina)"
+    },
+    "2019_102": {
+      "disciplina": "Física",
+      "tema": "Calorimetria (Condutividade térmica e troca de calor)"
+    },
+    "2019_103": {
+      "disciplina": "Química",
+      "tema": "Reações químicas (Oxirredução em biochips)"
+    },
+    "2019_104": {
+      "disciplina": "Química",
+      "tema": "Química ambiental (Contaminantes em recursos hídricos)"
+    },
+    "2019_105": {
+      "disciplina": "Física",
+      "tema": "Física moderna (Emissão de luz e transições eletrônicas)"
+    },
+    "2019_106": {
+      "disciplina": "Física",
+      "tema": "Mecânica (Estática e forças em equilíbrio)"
+    },
+    "2019_107": {
+      "disciplina": "Biologia",
+      "tema": "Comportamento animal (Tropismo)"
+    },
+    "2019_108": {
+      "disciplina": "Química",
+      "tema": "Química inorgânica (Gases nobres e regra do octeto)"
+    },
+    "2019_109": {
+      "disciplina": "Física",
+      "tema": "Mecânica (Movimento de corpos em órbita)"
+    },
+    "2019_110": {
+      "disciplina": "Biologia",
+      "tema": "Genética (Linkage e distribuição independente)"
+    },
+    "2019_111": {
+      "disciplina": "Física",
+      "tema": "Mecânica (Impulso e quantidade de movimento)"
+    },
+    "2019_112": {
+      "disciplina": "Química",
+      "tema": "Química orgânica (Propriedades de hidrocarbonetos e destilação fracionada)"
+    },
+    "2019_113": {
+      "disciplina": "Física",
+      "tema": "Eletromagnetismo (Movimento de cargas em campo magnético)"
+    },
+    "2019_114": {
+      "disciplina": "Biologia",
+      "tema": "Virologia (Tratamento de infecções virais por retrovírus)"
+    },
+    "2019_115": {
+      "disciplina": "Química",
+      "tema": "Química ambiental (Reciclagem de concreto)"
+    },
+    "2019_116": {
+      "disciplina": "Biologia",
+      "tema": "Citologia (Fluidez da membrana celular)"
+    },
+    "2019_117": {
+      "disciplina": "Física",
+      "tema": "Calorimetria (Cálculo de energia e temperatura)"
+    },
+    "2019_118": {
+      "disciplina": "Química",
+      "tema": "Eletroquímica (Baterias de zinco-ar)"
+    },
+    "2019_119": {
+      "disciplina": "Física",
+      "tema": "Gases (Pressão e volume de pneus)"
+    },
+    "2019_120": {
+      "disciplina": "Química",
+      "tema": "Química orgânica (Corantes naturais e cadeia conjugada)"
+    },
+    "2019_121": {
+      "disciplina": "Física",
+      "tema": "Mecânica (Conservação de energia e disco de Maxwell)"
+    },
+    "2019_122": {
+      "disciplina": "Química",
+      "tema": "Reações químicas (Atuação de 'sabonete de aço inoxidável')"
+    },
+    "2019_123": {
+      "disciplina": "Biologia",
+      "tema": "Ecologia (Bioacumulação de estrôncio-90)"
+    },
+    "2019_124": {
+      "disciplina": "Química",
+      "tema": "Química orgânica (Reciclagem de PET por transesterificação)"
+    },
+    "2019_125": {
+      "disciplina": "Biologia",
+      "tema": "Botânica (Evolução das plantas e conquista do ambiente terrestre)"
+    },
+    "2019_126": {
+      "disciplina": "Física",
+      "tema": "Eletrodinâmica (Circuitos elétricos e queda de tensão)"
+    },
+    "2019_127": {
+      "disciplina": "Biologia",
+      "tema": "Fisiologia (Dinitrofenol e metabolismo energético)"
+    },
+    "2019_128": {
+      "disciplina": "Química",
+      "tema": "Modelos atômicos (Postulados de Dalton e modelo atual)"
+    },
+    "2019_129": {
+      "disciplina": "Química",
+      "tema": "Estequiometria (Acidez de polpas de frutas por titulação)"
+    },
+    "2019_130": {
+      "disciplina": "Biologia",
+      "tema": "Transporte de substâncias (Osmose em batatas)"
+    },
+    "2019_131": {
+      "disciplina": "Física",
+      "tema": "Óptica (Fotografia aérea e sobreposição de imagens)"
+    },
+    "2019_132": {
+      "disciplina": "Física",
+      "tema": "Óptica (Acuidade visual e difração)"
+    },
+    "2019_133": {
+      "disciplina": "Biologia",
+      "tema": "Fisiologia (Rim biônico e remoção de ureia)"
+    },
+    "2019_134": {
+      "disciplina": "Física",
+      "tema": "Mecânica dos fluidos (Capilaridade)"
+    },
+    "2019_135": {
+      "disciplina": "Física",
+      "tema": "História da Física (Natureza da luz: modelo corpuscular e ondulatório)"
+    },
+    "2019_136": {
+      "disciplina": "Matemática",
+      "tema": "Geometria (Projeção ortogonal de letras)"
+    },
+    "2019_137": {
+      "disciplina": "Matemática",
+      "tema": "Logaritmos (pH e concentração de H+)"
+    },
+    "2019_138": {
+      "disciplina": "Matemática",
+      "tema": "Porcentagem (Cálculo de recompensa e gastos)"
+    },
+    "2019_139": {
+      "disciplina": "Matemática",
+      "tema": "Funções (Gráfico de tarifas de consumo de água)"
+    },
+    "2019_140": {
+      "disciplina": "Matemática",
+      "tema": "Notação científica (Diâmetro de vírus)"
+    },
+    "2019_141": {
+      "disciplina": "Matemática",
+      "tema": "Álgebra (Forças em jogo online)"
+    },
+    "2019_142": {
+      "disciplina": "Matemática",
+      "tema": "Geometria (Área de círculos e ampliação)"
+    },
+    "2019_143": {
+      "disciplina": "Matemática",
+      "tema": "Interpretação de gráficos (Consumo de calorias por atividade)"
+    },
+    "2019_144": {
+      "disciplina": "Matemática",
+      "tema": "Matrizes (Resultados de testes e quantidade de acertos)"
+    },
+    "2019_145": {
+      "disciplina": "Matemática",
+      "tema": "Geometria (Diâmetros de catracas e avanço da bicicleta)"
+    },
+    "2019_146": {
+      "disciplina": "Matemática",
+      "tema": "Interpretação de gráficos (Alertas meteorológicos)"
+    },
+    "2019_147": {
+      "disciplina": "Matemática",
+      "tema": "Geometria (Área de placas de sinalização)"
+    },
+    "2019_148": {
+      "disciplina": "Matemática",
+      "tema": "Volume (Quantidade de embalagens para banheira)"
+    },
+    "2019_149": {
+      "disciplina": "Matemática",
+      "tema": "Progressão aritmética (Redução de acidentes)"
+    },
+    "2019_150": {
+      "disciplina": "Matemática",
+      "tema": "Matemática financeira (Juros compostos)"
+    },
+    "2019_151": {
+      "disciplina": "Matemática",
+      "tema": "Porcentagem (Divisão de lucros de empresa)"
+    },
+    "2019_152": {
+      "disciplina": "Matemática",
+      "tema": "Proporcionalidade inversa (Valor a pagar por serviço)"
+    },
+    "2019_153": {
+      "disciplina": "Matemática",
+      "tema": "Porcentagem (Rendimento médio de trabalhadores)"
+    },
+    "2019_154": {
+      "disciplina": "Matemática",
+      "tema": "Logaritmos (Escala Richter)"
+    },
+    "2019_155": {
+      "disciplina": "Matemática",
+      "tema": "Sequência (Padrão de formação de produtos)"
+    },
+    "2019_156": {
+      "disciplina": "Matemática",
+      "tema": "Análise combinatória (Formação de duplas com restrições)"
+    },
+    "2019_157": {
+      "disciplina": "Matemática",
+      "tema": "Geometria espacial (Tetraedro truncado e suas faces)"
+    },
+    "2019_158": {
+      "disciplina": "Matemática",
+      "tema": "Escalas (Capacidade de reservatório em maquete)"
+    },
+    "2019_159": {
+      "disciplina": "Matemática",
+      "tema": "Probabilidade (Motorista perceber placas)"
+    },
+    "2019_160": {
+      "disciplina": "Matemática",
+      "tema": "Média aritmética (Média de altura de jogadores)"
+    },
+    "2019_161": {
+      "disciplina": "Matemática",
+      "tema": "Média aritmética (Quantidade de garrafas fora de especificação)"
+    },
+    "2019_162": {
+      "disciplina": "Matemática",
+      "tema": "Grandezas e medidas (Conversão de unidades)"
+    },
+    "2019_163": {
+      "disciplina": "Matemática",
+      "tema": "Potências e raízes (Comparação de IDH)"
+    },
+    "2019_164": {
+      "disciplina": "Matemática",
+      "tema": "Geometria (Volume de laje e capacidade de caminhões)"
+    },
+    "2019_165": {
+      "disciplina": "Matemática",
+      "tema": "Álgebra (Concentração de álcool no sangue)"
+    },
+    "2019_166": {
+      "disciplina": "Matemática",
+      "tema": "Geometria (Dobradura de papel e teorema de Pitágoras)"
+    },
+    "2019_167": {
+      "disciplina": "Matemática",
+      "tema": "Estatística (Mediana e distribuição de alturas)"
+    },
+    "2019_168": {
+      "disciplina": "Matemática",
+      "tema": "Funções lineares (Custo semanal com funcionários)"
+    },
+    "2019_169": {
+      "disciplina": "Matemática",
+      "tema": "Geometria analítica (Distância entre pontos e raio de abrangência)"
+    },
+    "2019_170": {
+      "disciplina": "Matemática",
+      "tema": "Cálculo de volume (Dosagem de antibiótico)"
+    },
+    "2019_171": {
+      "disciplina": "Matemática",
+      "tema": "Análise combinatória (Combinações com repetição de cores)"
+    },
+    "2019_172": {
+      "disciplina": "Matemática",
+      "tema": "Análise de gráficos (Projeção de vendas)"
+    },
+    "2019_173": {
+      "disciplina": "Matemática",
+      "tema": "Probabilidade condicional (Declarações fraudulentas)"
+    },
+    "2019_174": {
+      "disciplina": "Matemática",
+      "tema": "Razões e proporções (Taxa de urbanização)"
+    },
+    "2019_175": {
+      "disciplina": "Matemática",
+      "tema": "Geometria (Volume de cilindros e vasos comunicantes)"
+    },
+    "2019_176": {
+      "disciplina": "Matemática",
+      "tema": "Matemática financeira (Orçamento com descontos e aumentos)"
+    },
+    "2019_177": {
+      "disciplina": "Matemática",
+      "tema": "Funções trigonométricas (Movimento de pistão)"
+    },
+    "2019_178": {
+      "disciplina": "Matemática",
+      "tema": "Interpretação de gráficos (Vendas de produtos)"
+    },
+    "2019_179": {
+      "disciplina": "Matemática",
+      "tema": "Análise de gráficos (Consumo de energia em cômodos)"
+    },
+    "2019_180": {
+      "disciplina": "Matemática",
+      "tema": "Cálculo de custos (Viagem e taxa de câmbio)"
+    },
+      "2017_91": {
+        "disciplina": "Química",
+        "tema": "Eletroquímica (Potenciais de redução e reatividade)"
+      },
+      "2017_92": {
+        "disciplina": "Biologia",
+        "tema": "Farmacologia (Mecanismo de ação de antibióticos)"
+      },
+      "2017_93": {
+        "disciplina": "Física",
+        "tema": "Eletrodinâmica (Resistores e Lei de Ohm)"
+      },
+      "2017_94": {
+        "disciplina": "Biologia",
+        "tema": "Fisiologia vegetal (Fotossíntese e absorção de energia)"
+      },
+      "2017_95": {
+        "disciplina": "Química",
+        "tema": "Eletroquímica (Eletrólise de NaCl)"
+      },
+      "2017_96": {
+        "disciplina": "Biologia",
+        "tema": "Ecologia (Ciclo do nitrogênio e fertilizantes)"
+      },
+      "2017_97": {
+        "disciplina": "Química",
+        "tema": "Espectroscopia (Teste da chama)"
+      },
+      "2017_98": {
+        "disciplina": "Biologia",
+        "tema": "Classificação biológica (Filogenia)"
+      },
+      "2017_99": {
+        "disciplina": "Física",
+        "tema": "Mecânica (Impulso e segurança em colisões)"
+      },
+      "2017_100": {
+        "disciplina": "Biologia",
+        "tema": "Fisiologia humana (Coagulação sanguínea e hemofilia)"
+      },
+      "2017_101": {
+        "disciplina": "Física",
+        "tema": "Óptica (Espectro de emissão de lâmpadas e calor)"
+      },
+      "2017_102": {
+        "disciplina": "Química",
+        "tema": "Química ambiental (Formação de partículas na atmosfera)"
+      },
+      "2017_103": {
+        "disciplina": "Física",
+        "tema": "Comunicação (Perda de sinal em fibra óptica)"
+      },
+      "2017_104": {
+        "disciplina": "Física",
+        "tema": "Física nuclear (Datação por carbono-14)"
+      },
+      "2017_105": {
+        "disciplina": "Física",
+        "tema": "Energia (Estação híbrida de geração de eletricidade)"
+      },
+      "2017_106": {
+        "disciplina": "Biologia",
+        "tema": "Fisiologia vegetal (Coleta de óleos essenciais)"
+      },
+      "2017_107": {
+        "disciplina": "Física",
+        "tema": "Óptica (Epilação a laser e absorção de luz)"
+      },
+      "2017_108": {
+        "disciplina": "Física",
+        "tema": "Mecânica (Conservação de energia em pula-pula)"
+      },
+      "2017_109": {
+        "disciplina": "Biologia",
+        "tema": "Ecologia (Impactos de barragens na piracema)"
+      },
+      "2017_110": {
+        "disciplina": "Física",
+        "tema": "Eletrodinâmica (Fusíveis e proteção de circuitos)"
+      },
+      "2017_111": {
+        "disciplina": "Biologia",
+        "tema": "Ecologia (Bioacumulação e cadeia alimentar)"
+      },
+      "2017_112": {
+        "disciplina": "Física",
+        "tema": "Ondas (Interferência de ondas sonoras)"
+      },
+      "2017_113": {
+        "disciplina": "Química",
+        "tema": "Separação de misturas (Extração de óleo de linhaça)"
+      },
+      "2017_114": {
+        "disciplina": "Química",
+        "tema": "Química orgânica (Produção de biodiesel)"
+      },
+      "2017_115": {
+        "disciplina": "Física",
+        "tema": "Mecânica (Centrifugação e separação de substâncias)"
+      },
+      "2017_116": {
+        "disciplina": "Biologia",
+        "tema": "Citologia (Fluidez da membrana plasmática)"
+      },
+      "2017_117": {
+        "disciplina": "Biologia",
+        "tema": "Genética (Diferença na manifestação de distrofia muscular)"
+      },
+      "2017_118": {
+        "disciplina": "Química",
+        "tema": "Química ambiental (Uso de concregrama)"
+      },
+      "2017_119": {
+        "disciplina": "Química",
+        "tema": "Química orgânica (Extração de lapachol)"
+      },
+      "2017_120": {
+        "disciplina": "Física",
+        "tema": "Mecânica dos fluidos (Osmose reversa)"
+      },
+      "2017_121": {
+        "disciplina": "Química",
+        "tema": "Eletroquímica (Pilhas e LEDs)"
+      },
+      "2017_122": {
+        "disciplina": "Química",
+        "tema": "Estequiometria (Síntese de ácido acetilsalicílico)"
+      },
+      "2017_123": {
+        "disciplina": "Biologia",
+        "tema": "Botânica (Epifitismo e captação de água)"
+      },
+      "2017_124": {
+        "disciplina": "Química",
+        "tema": "Termoquímica (Variação de entalpia em reações)"
+      },
+      "2017_125": {
+        "disciplina": "Biologia",
+        "tema": "Biologia molecular (PCR e desnaturação de DNA)"
+      },
+      "2017_126": {
+        "disciplina": "Química",
+        "tema": "Química inorgânica (Propriedades de gases nobres e flúor)"
+      },
+      "2017_127": {
+        "disciplina": "Física",
+        "tema": "Eletrodinâmica (Chuveiro elétrico e potência)"
+      },
+      "2017_128": {
+        "disciplina": "Biologia",
+        "tema": "Fisiologia da visão (Função dos cones na retina)"
+      },
+      "2017_129": {
+        "disciplina": "Física",
+        "tema": "Eletrodinâmica (Cercas eletrificadas e resistência elétrica)"
+      },
+      "2017_130": {
+        "disciplina": "Química",
+        "tema": "Cromatografia (Separação de misturas e polaridade)"
+      },
+      "2017_131": {
+        "disciplina": "Física",
+        "tema": "Cinemática (Tempo de reação e distância percorrida)"
+      },
+      "2017_132": {
+        "disciplina": "Biologia",
+        "tema": "Citologia (Salgamento de alimentos e osmose)"
+      },
+      "2017_133": {
+        "disciplina": "Física",
+        "tema": "Eletromagnetismo (Geradores elétricos e indução)"
+      },
+      "2017_134": {
+        "disciplina": "Química",
+        "tema": "Química orgânica (Ozonólise de alcenos)"
+      },
+      "2017_135": {
+        "disciplina": "Biologia",
+        "tema": "Biotecnologia (Terapia celular e transfusão de sangue)"
+      },
+      "2017_136": {
+        "disciplina": "Matemática",
+        "tema": "Matemática financeira (Juros compostos e quitação de dívida)"
+      },
+      "2017_137": {
+        "disciplina": "Matemática",
+        "tema": "Matemática financeira (Empréstimo e número de prestações)"
+      },
+      "2017_138": {
+        "disciplina": "Matemática",
+        "tema": "Trigonometria (Intensidade luminosa e ângulo)"
+      },
+      "2017_139": {
+        "disciplina": "Matemática",
+        "tema": "Análise de gráficos (Velocidade de veículo em congestionamento)"
+      },
+      "2017_140": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Área mínima de bandeja para taças)"
+      },
+      "2017_141": {
+        "disciplina": "Matemática",
+        "tema": "Porcentagem (Custo de sucos e redução de preço)"
+      },
+      "2017_142": {
+        "disciplina": "Matemática",
+        "tema": "Geometria espacial (Volume de caixa e espaço livre)"
+      },
+      "2017_143": {
+        "disciplina": "Matemática",
+        "tema": "Análise combinatória (Modelos de brinquedos)"
+      },
+      "2017_144": {
+        "disciplina": "Matemática",
+        "tema": "Volume (Quantidade de produto para piscina)"
+      },
+      "2017_145": {
+        "disciplina": "Matemática",
+        "tema": "Estatística (Margem de erro em pesquisas)"
+      },
+      "2017_146": {
+        "disciplina": "Matemática",
+        "tema": "Cinemática (Movimento em teleférico)"
+      },
+      "2017_147": {
+        "disciplina": "Matemática",
+        "tema": "Análise de gráficos (Profundidade de rio)"
+      },
+      "2017_148": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Forma geométrica de cabana)"
+      },
+      "2017_149": {
+        "disciplina": "Matemática",
+        "tema": "Probabilidade (Campo Minado)"
+      },
+      "2017_150": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Rotação de figura quadrada)"
+      },
+      "2017_151": {
+        "disciplina": "Matemática",
+        "tema": "Média ponderada (Avaliação de rendimento de alunos)"
+      },
+      "2017_152": {
+        "disciplina": "Matemática",
+        "tema": "Funções (Altura da água em reservatórios)"
+      },
+      "2017_153": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Altura de caminhão com carga em viaduto)"
+      },
+      "2017_154": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Trajeto em mapa)"
+      },
+      "2017_155": {
+        "disciplina": "Matemática",
+        "tema": "Média aritmética (Aprovação em curso)"
+      },
+      "2017_156": {
+        "disciplina": "Matemática",
+        "tema": "Trigonometria (Desenho de tampa de panela com compasso)"
+      },
+      "2017_157": {
+        "disciplina": "Matemática",
+        "tema": "Estatística (Diâmetro de pérolas)"
+      },
+      "2017_158": {
+        "disciplina": "Matemática",
+        "tema": "Escalas (Volume de monumento)"
+      },
+      "2017_159": {
+        "disciplina": "Matemática",
+        "tema": "Marchas de bicicleta (Relação de transmissão)"
+      },
+      "2017_160": {
+        "disciplina": "Matemática",
+        "tema": "Análise combinatória (Coloração de logomarca)"
+      },
+      "2017_161": {
+        "disciplina": "Matemática",
+        "tema": "Otimização (Área máxima de viveiro de lagostas)"
+      },
+      "2017_162": {
+        "disciplina": "Matemática",
+        "tema": "Funções (Equação de Hill e representação geométrica)"
+      },
+      "2017_163": {
+        "disciplina": "Matemática",
+        "tema": "Cálculo de custos (Visita a mirantes)"
+      },
+      "2017_164": {
+        "disciplina": "Matemática",
+        "tema": "Proporcionalidade (Distância percorrida 'às cegas')"
+      },
+      "2017_165": {
+        "disciplina": "Matemática",
+        "tema": "Análise de gráficos (Pesquisa eleitoral)"
+      },
+      "2017_166": {
+        "disciplina": "Matemática",
+        "tema": "Funções trigonométricas (Pressão arterial)"
+      },
+      "2017_167": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Corte de melão esférico)"
+      },
+      "2017_168": {
+        "disciplina": "Matemática",
+        "tema": "Geometria (Abóbadas parabólicas)"
+      },
+      "2017_169": {
+        "disciplina": "Matemática",
+        "tema": "Análise de gráficos (Taxa de aumento no tempo de acesso)"
+      },
+      "2017_170": {
+        "disciplina": "Matemática",
+        "tema": "Termometria (Leitura de termômetro)"
+      },
+      "2017_171": {
+        "disciplina": "Matemática",
+        "tema": "Velocidade (Pivô central de irrigação)"
+      },
+      "2017_172": {
+        "disciplina": "Matemática",
+        "tema": "Análise de gráficos (Quantidade de água em reservatórios)"
+      },
+      "2017_173": {
+        "disciplina": "Química",
+        "tema": "Densidade (Cálculo de volume de gasolina)"
+      },
+      "2017_174": {
+        "disciplina": "Matemática",
+        "tema": "Estatística (Mediana de taxa de desemprego)"
+      },
+      "2017_175": {
+        "disciplina": "Matemática",
+        "tema": "Probabilidade (Semáforos independentes)"
+      },
+      "2017_176": {
+        "disciplina": "Matemática",
+        "tema": "Energia solar (Economia e ampliação de painéis)"
+      },
+      "2017_177": {
+        "disciplina": "Matemática",
+        "tema": "Análise combinatória (Formato de senhas)"
+      },
+      "2017_178": {
+        "disciplina": "Matemática",
+        "tema": "Análise combinatória (Número de partidas em torneio)"
+      },
+      "2017_179": {
+        "disciplina": "Matemática",
+        "tema": "Probabilidade (Atraso para o trabalho com chuva)"
+      },
+      "2017_180": {
+        "disciplina": "Matemática",
+        "tema": "Vazão (Nível de água em piscina com escoamento)"
+      },
+      "2016_136": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_137": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_138": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_139": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_140": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_141": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_142": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_143": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_144": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_145": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_146": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_147": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_148": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_149": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_150": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_151": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_152": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_153": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_154": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_155": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_156": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_157": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_158": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_159": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_160": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_161": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_162": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_163": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_164": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_165": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_166": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_167": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_168": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_169": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_170": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_171": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_172": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_173": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_174": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_175": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_176": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_177": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_178": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_179": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+  "2016_180": {
+    "disciplina": "Matemática",
+    "tema": "Diversos (geometria, álgebra, estatística, funções, probabilidade etc.)"
+  },
+    "2015_91": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Cultura Indígena Norte-Americana (Inglês)"
+    },
+    "2015_92": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Comunicação e Ambiguidade (Inglês)"
+    },
+    "2015_93": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Escrita e Propósito (Inglês)"
+    },
+    "2015_94": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Tecnologia e Memória (Inglês)"
+    },
+    "2015_95": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Avisos Públicos (Inglês)"
+    },
+    "2015_91_espanhol": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Preposições e Metáfora (Espanhol)"
+    },
+    "2015_92_espanhol": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Expressões Idiomáticas (Espanhol)"
+    },
+    "2015_93_espanhol": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Acessibilidade e Conscientização (Espanhol)"
+    },
+    "2015_94_espanhol": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Multiculturalidade (Espanhol)"
+    },
+    "2015_95_espanhol": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Linguagem e Cultura (Espanhol)"
+    },
+    "2015_96": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Imprensa e Cidadania"
+    },
+    "2015_97": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Cultura Hip Hop"
+    },
+    "2015_98": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Narrativa e Visão Contemporânea"
+    },
+    "2015_99": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Poesia e Existencialismo"
+    },
+    "2015_100": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Linguagem Informal e Coloquialismo"
+    },
+    "2015_101": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Gênero Textual: Carta (Canção)"
+    },
+    "2015_102": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Funções da Linguagem (Texto Educativo)"
+    },
+    "2015_103": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Gêneros Textuais e Finalidade"
+    },
+    "2015_104": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Concretismo e Expressividade"
+    },
+    "2015_105": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Sociedade da Informação"
+    },
+    "2015_106": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Variação Linguística e Novas Tecnologias"
+    },
+    "2015_107": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Poesia e Projeto Ideológico (Primeira República)"
+    },
+    "2015_108": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Surrealismo na Pintura"
+    },
+    "2015_109": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Cultura Afro-Brasileira na Música"
+    },
+    "2015_110": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Arte Africana e Vanguardas"
+    },
+    "2015_111": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Arte Indígena e Europeia"
+    },
+    "2015_112": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Arte Contemporânea (Performance)"
+    },
+    "2015_113": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Processos de Formação de Palavras"
+    },
+    "2015_114": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Redes Sociais e Mercado de Trabalho"
+    },
+    "2015_115": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Oralidade e Escrita em Culturas Indígenas"
+    },
+    "2015_116": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Variação Linguística Regional"
+    },
+    "2015_117": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Gênero Textual: Relatório Oficial"
+    },
+    "2015_118": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Recursos Publicitários"
+    },
+    "2015_119": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Metalinguagem Poética"
+    },
+    "2015_120": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Linguagem e Sociocultura"
+    },
+    "2015_121": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Projetos Culturais e Literatura"
+    },
+    "2015_122": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Linguagem Indígena e Conhecimento"
+    },
+    "2015_123": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Vocabulário Formal e Informal"
+    },
+    "2015_124": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Saúde e Obesidade"
+    },
+    "2015_125": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Gênero Textual: Guia e Instrução"
+    },
+    "2015_126": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Barroco e Poética Contemporânea"
+    },
+    "2015_127": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Literatura e Educação"
+    },
+    "2015_128": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Gênero Textual: Biografia"
+    },
+    "2015_129": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Poesia e Regime Militar"
+    },
+    "2015_130": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Ficção Contemporânea e Modelos Sociais"
+    },
+    "2015_131": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Arte no Século XX e Realismo"
+    },
+    "2015_132": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Estratégias de Persuasão em Publicidade"
+    },
+    "2015_133": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Brincadeiras e Adaptação Cultural"
+    },
+    "2015_134": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Recursos Narrativos em Memórias"
+    },
+    "2015_135": {
+      "disciplina": "Linguagens, Códigos e suas Tecnologias",
+      "tema": "Textos e Propósitos Comunicativos (Divulgação Científica)"
+    },
+    "2015_136": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Análise Gráfica de Operações Financeiras"
+    },
+    "2015_137": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Geometria Plana (Círculo e Triângulo Equilátero)"
+    },
+    "2015_138": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Análise Gráfica de Funções (Locadoras de Veículos)"
+    },
+    "2015_139": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Números Racionais (Equivalência de Frações, Decimais e Percentuais)"
+    },
+    "2015_140": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Estatística (Interpretação de Gráficos de Barras)"
+    },
+    "2015_141": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Volume e Porcentagem (Sorvete)"
+    },
+    "2015_142": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Probabilidade (Sorteio de Senhas)"
+    },
+    "2015_143": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Estatística (Mediana de Tempos)"
+    },
+    "2015_144": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Área de Figuras Planas (Quadra de Basquete)"
+    },
+    "2015_145": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Mínimo Múltiplo Comum (Distribuição de Ingressos)"
+    },
+    "2015_146": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Volume de Cilindros (Cisterna)"
+    },
+    "2015_147": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Análise Combinatória (Notas em Desfile)"
+    },
+    "2015_148": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Volume e Empilhamento (Contêineres)"
+    },
+    "2015_149": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Geometria Espacial (Poliedro de Cortes em Cubo)"
+    },
+    "2015_150": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Funções Quadráticas (Preço e Quantidade de Pães)"
+    },
+    "2015_151": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Probabilidade (Vacinação HPV)"
+    },
+    "2015_152": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Funções Exponenciais (Produção Industrial)"
+    },
+    "2015_153": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Porcentagem (Distribuição de Calorias)"
+    },
+    "2015_154": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Funções Logarítmicas (Vidros de Automóvel)"
+    },
+    "2015_155": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Área de Círculos (Antenas de Telefonia)"
+    },
+    "2015_156": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Matemática Financeira (Financiamento Imobiliário)"
+    },
+    "2015_157": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Notação Científica (Exportação de Soja)"
+    },
+    "2015_158": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Fórmulas de Dosagem (Medicamentos)"
+    },
+    "2015_159": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Renda Média e Desigualdade"
+    },
+    "2015_160": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Escalas (Fotografia e Medidas Reais)"
+    },
+    "2015_161": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Porcentagem e Área (Malhas de Proteção Solar)"
+    },
+    "2015_162": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Máximo Divisor Comum (Corte de Tábuas)"
+    },
+    "2015_163": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Cálculo de Dosagem (Insulina)"
+    },
+    "2015_164": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Análise Combinatória (Acomodação em Voo)"
+    },
+    "2015_165": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Área de Setores Circulares (Piscina)"
+    },
+    "2015_166": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Cálculo de Volume (Ingestão de Água)"
+    },
+    "2015_167": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Geometria (Dobradura de Papel)"
+    },
+    "2015_168": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Probabilidade (Compreensão de Inglês)"
+    },
+    "2015_169": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Interpretação de Gráficos de Setores (Reciclagem PET)"
+    },
+    "2015_170": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Média e Critérios de Desempate"
+    },
+    "2015_171": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Volume de Cilindro (Índice Pluviométrico)"
+    },
+    "2015_172": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Geometria Analítica (Novo Ponto de Parada)"
+    },
+    "2015_173": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Números Decimais (Espessuras de Lentes)"
+    },
+    "2015_174": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Funções Quadráticas (Temperatura em Estufa)"
+    },
+    "2015_175": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Volume de Elipsoide (Bola de Futebol Americano)"
+    },
+    "2015_176": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Funções Definidas por Partes (Plano de Telefonia)"
+    },
+    "2015_177": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Cálculo de Dosagem (Medicamento Felino)"
+    },
+    "2015_178": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Volume (Reservatório de Água da Chuva)"
+    },
+    "2015_179": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Probabilidade (Exame Antidoping)"
+    },
+    "2015_180": {
+      "disciplina": "Matemática e suas Tecnologias",
+      "tema": "Funções Trigonométricas (Preço de Produto Sazonal)"
+    }
+}

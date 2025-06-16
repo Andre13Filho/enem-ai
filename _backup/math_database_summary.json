@@ -1,0 +1,26 @@
+{
+  "total_exercises": 557,
+  "by_year": {
+    "2015": 54,
+    "2016": 56,
+    "2017": 58,
+    "2018": 58,
+    "2019": 53,
+    "2020": 57,
+    "2021": 50,
+    "2022": 59,
+    "2023": 54,
+    "2024": 58
+  },
+  "by_topic": {
+    "Outros": 163,
+    "Geometria": 146,
+    "Funções": 103,
+    "Estatística e Probabilidade": 60,
+    "Álgebra": 34,
+    "Geometria Analítica": 22,
+    "Matemática Financeira": 15,
+    "Progressões": 13,
+    "Análise Combinatória": 1
+  }
+}

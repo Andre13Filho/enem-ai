@@ -1,0 +1,459 @@
+{
+  "package_info": {
+    "name": "Exercícios de Progressões",
+    "created_at": "2025-06-05T22:53:06.057962",
+    "total_exercises": 13,
+    "source": "ENEM Math Database",
+    "filter_applied": {
+      "topic": "Progressões",
+      "year": null,
+      "limit": 13
+    }
+  },
+  "exercises": [
+    {
+      "id": "ENEM_2024_Q138",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 138,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Para abrir a porta de uma empresa, cada funcionário deve cadastrar uma senha utilizando um teclado alfanumérico como o representado na figura. Por exemplo: a tecla que contém o número 2 traz as letras correlacionadas A, B e C. Cada toque nessa tecla mostra, sequencialmente, os seguintes caracteres: 2, A, B e C. Para os próximos toques, essa sequência se repete. As demais teclas funcionam da mesma maneira. As senhas a serem cadastradas pelos funcionários devem conter 5 caracteres, sendo 2 algarismos distintos seguidos de 3 letras diferentes, nessa ordem. Um funcionário irá cadastrar a sua primeira senha, podendo escolher entre as teclas que apresentam os números 1, 2, 5, 7 e 0 e as respectivas letras correlacionadas, quando houver. O número de possibilidades diferentes que esse funcionário tem para cadastrar sua senha é A 1 1 520. B 14 400. C 18 000. D 312 000. E 390 000.*020325AZ16* ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 16 MATEMÁTICA E SUAS TECNOLOGIAS • 2 º DIA • CADERNO 7 • AZUL • 020325AZ.indb   16020325AZ.indb   16 23/08/2024   18:26:2723/08/2024   18:26:27",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2022_Q147",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2022,
+        "question_number": 147,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Uma equipe de marketing digital foi contratada para aumentar as vendas de um produto ofertado em um site de\tcomércio\t eletrônico.\t Para\tisso,\telaborou\tum\tanúncio que, quando o cliente clica sobre ele, é direcionado para a página de vendas do produto. Esse anúncio foi divulgado em duas redes sociais, A e B, e foram obtidos os seguintes resultados: • rede social A: o anúncio foi visualizado por 3 000 pessoas; 10% delas clicaram sobre o anúncio e foram redirecionadas para o site; 3% das que clicaram sobre o anúncio compraram o produto. O\tinvestimento \tfeito\tpara\ta\tpublicação\t do\tanúncio nessa rede foi de R$ 100,00; • rede social B: o anúncio foi visualizado por 1 000 pessoas; 30% delas clicaram sobre o anúncio e foram redirecionadas para o site; 2% das que clicaram sobre o anúncio compraram o produto. O\tinvestimento \tfeito\tpara\ta\tpublicação\t do\tanúncio nessa rede foi de R$ 200,00. Por experiência, o pessoal da equipe de marketing considera\t que\ta\tquantidade\t de\tnovas\tpessoas\tque\tverão o anúncio é diretamente proporcional ao investimento realizado,\t e\tque\ta\tquantidade\t de\tpessoas\tque\tcomprarão o produto também se manterá proporcional à quantidade de\tpessoas\tque\tclicarão\tsobre\to\tanúncio. O\tresponsável\t pelo\tproduto\tdecidiu,\tentão,\tinvestir mais R$ 300,00 em cada uma das duas redes sociais para\ta\tdivulgação\t desse\tanúncio\te\tobteve,\tde\tfato,\to aumento proporcional esperado na quantidade de clientes que\tcompraram\t esse\tproduto.\tPara\tclassificar\t o\taumento obtido na quantidade (Q) de compradores desse produto, em\tconsequência\t dessa\tsegunda\tdivulgação,\t em\trelação aos\tresultados\t observados\t na\tprimeira\tdivulgação,\t o responsável pelo produto adotou o seguinte critério: • Q ≤\t60%:\tnão\tsatisfatório; • 60% < Q ≤ 100%: regular; • 100% < Q ≤ 150%: bom; • 150% < Q ≤ 190%: muito bom; • 190% < Q ≤ 200%: excelente. O aumento na quantidade de compradores, em consequência\t dessa\tsegunda\t divulgação,\t em\trelação ao\tque\tfoi\tregistrado\t com\ta\tprimeira\tdivulgação,\t foi classificado\tcomo A A não\tsatisfatório. B B regular. C C bom. D D muito bom. E E excelente.*020325AZ20* 21",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Confundir aumento/desconto percentual com valor final"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2022_Q156",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2022,
+        "question_number": 156,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "O professor de artes orientou seus estudantes a realizarem a seguinte sequência de atividades: • Dobrar uma folha de papel em formato quadrado duas vezes, em sequência, ao longo das linhas tracejadas, conforme\tilustrado\tnas\tfiguras\t1\te\t2,\tpara\tobter\to\tpapel\tdobrado,\tconforme\tFigura\t3. Figura 1 Figura 2 Figura 3OO  • Em seguida, no papel dobrado da Figura 3, considerar o ponto R , sobre o segmento OM, sendo M  o ponto médio do lado do quadrado original, de modo que OR = 1 4OM, traçar um arco de circunferência de raio medindo 1 2OM com centro no ponto R , obtendo a Figura 4. Por último, recortar o papel ao longo do arco de circunferência e excluir a parte que contém o setor circular, obtendo o papel dobrado, conforme Figura 5. ROM ⇒ Figura 4 Figura 5 Após\tdesdobrado\to\tpapel\tque\trestou\tna\tFigura\t5,\ta\tfigura\tplana\tque\tos\testudantes\tobterão\tserá AA BBCC DD EE*020325AZ24* 25 MT - 2° dia | Caderno 7 - AZUL - 1ª Aplicação",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2022_Q159",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2022,
+        "question_number": 159,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Um\tatleta\tiniciou\tseu\ttreinamento\t visando\tas\tcompetições\t de\tfim\tde\tano.\tSeu\ttreinamento\t consiste\tem\tcinco\ttipos diferentes de treinos: treino T1, treino T2, treino T3, treino T4 e treino T5. A sequência dos treinamentos deve seguir esta ordem: A\tletra\tR\tsignifica\trepouso.\tApós\tcompletar\t a\tsequência\t de\ttreinamentos,\t o\tatleta\tcomeça\tnovamente\t a\tsequência\t a partir do treino T1 e segue a ordem descrita. Após 24 semanas completas de treinamento, se dará o início das competições. A sequência de treinamentos que o atleta realizará na 24ª semana de treinos é A A T3  R  T4  R  R  T5  R. B B R  T3  R  T4  R  R  T5. C C R  T4  R  R  T5  R  T1. D D R  R  T5  R  T1  R  R. E E R  T5  R  T1  R  R  T2.*020325AZ25* 26 MT - 2° dia | Caderno 7 - AZUL - 1ª Aplicação ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022 ENEM 2022",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2022_Q168",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2022,
+        "question_number": 168,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Uma pessoa precisa se deslocar de automóvel do ponto P para o ponto Q,\t indicados\t na\tfigura,\tna\tqual\tas linhas verticais e horizontais simbolizam ruas. PQ Por causa do sentido de tráfego nessas ruas, o caminho poligonal destacado é a possibilidade mais curta\tde\tefetuar\tesse\tdeslocamento.\t Para\tdescrevê-lo, deve-se\tespecificar\t qual\to\tsentido\ta\tser\ttomado\tem\tcada cruzamento\t de\truas,\tem\trelação\tà\tdireção\tde\tdeslocamento do automóvel, que se movimentará continuamente. Para\tisso,\tempregam-se \tas\tletras\tE,\tF\te\tD\tpara\tindicar “vire\tà\tesquerda”,\t “siga\tem\tfrente”\te\t“vire\tà\tdireita”, respectivamente. A sequência de letras que descreve o caminho poligonal destacado é A A DDEFDDEEFFD. B B DFEFDDDEFFD. C C DFEFDDEEFFD. D D EFDFEEDDFFE. E E EFDFEEEDFFE.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2019_Q149",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2019,
+        "question_number": 149,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "O slogan  “Se beber não dirija” , muito utilizado em campanhas publicitárias no Brasil, chama a atenção para o grave problema da ingestão de bebida alcoólica por motoristas e suas consequências para o trânsito. A gravidade desse problema pode ser percebida observando como o assunto é tratado pelo Código de Trânsito Brasileiro. Em 2013, a quantidade máxima de álcool permitida no sangue do condutor de um veículo, que já era pequena, foi reduzida, e o valor da multa para motoristas alcoolizados foi aumentado. Em consequência dessas mudanças, observou-se queda no número de acidentes registrados em uma suposta rodovia nos anos que se seguiram às mudanças implantadas em 2013, conforme dados no quadro. Ano 2013 2014 2015 Número total de acidentes 1 050 900 850 Suponha que a tendência de redução no número de acidentes nessa rodovia para os anos subsequentes seja igual à redução absoluta observada de 2014 para 2015. Com base na situação apresentada, o número de acidentes esperados nessa rodovia em 2018 foi de A 150. B 450. C 550. D 700. E 800.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Análise Dados"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2019_Q155",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2019,
+        "question_number": 155,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Após o Fórum Nacional Contra a Pirataria (FNCP) incluir a linha de autopeças em campanha veiculada contra a falsificação, as agências fiscalizadoras divulgaram que os cinco principais produtos de autopeças falsificados são: rolamento, pastilha de freio, caixa de direção, catalisador e amortecedor. Após uma grande apreensão, as peças falsas foram cadastradas utilizando-se a codificação: Disponível em: www.oficinabrasil.com.br. Acesso em: 25 ago. 2014 (adaptado). 1: rolamento, 2: pastilha de freio, 3: caixa de direção, 4: catalisador e 5: amortecedor. Ao final obteve-se a sequência: 5, 4, 3, 2, 1, 2, 3, 4, 5, 4, 3, 2, 1, 2, 3, 4, 5, 4, 3, 2, 1, 2, 3, 4, ... que apresenta um padrão de formação que consiste na repetição de um bloco de números. Essa sequência descreve a ordem em que os produtos apreendidos foram cadastrados. O 2 015 º item cadastrado foi um(a) A rolamento. B catalisador. C amortecedor. D pastilha de freio. E caixa de direção.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2018_Q100",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2018,
+        "question_number": 100,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "No ciclo celular atuam moléculas reguladoras. Dentre elas, a proteína p53 é ativada em resposta a mutações no DNA, evitando a progressão do ciclo até que os danos sejam reparados, ou induzindo a célula à autodestruição. ALBERTS, B. et al. Fundamentos da biologia celular . Porto Alegre: Artmed, 2011 (adaptado). A ausência dessa proteína poderá favorecer a A redução da síntese de DNA, acelerando o ciclo celular. B saída imediata do ciclo celular, antecipando a proteção do DNA. C ativação de outras proteínas reguladoras, induzindo a apoptose. D manutenção da estabilidade genética, favorecendo a longevidade. E proliferação celular exagerada, resultando na formação de um tumor.*DO0725AZ4* CN - 2º dia | Caderno 7 - AZUL - Página 5",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2018_Q164",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2018,
+        "question_number": 164,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Um edifício tem a numeração dos andares iniciando no térreo (T  ), e continuando com primeiro, segundo, terceiro, ..., até o último andar. Uma criança entrou no elevador e, tocando no painel, seguiu uma sequência de andares, parando, abrindo e fechando a porta em diversos andares. A partir de onde entrou a criança, o elevador subiu sete andares, em seguida desceu dez, desceu mais treze, subiu nove, desceu quatro e parou no quinto andar, finalizando a sequência. Considere que, no trajeto seguido pela criança, o elevador parou uma vez no último andar do edifício. De acordo com as informações dadas, o último andar do edifício é o A 16 o B 22o C 23o D 25o E 32o",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2016_Q104",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2016,
+        "question_number": 104,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Quem procura a essência de um conto no espaço que ﬁca entre a obra e seu autor comete um erro: é muito melhor procurar não no terreno que ﬁca entre o escritor e sua obra, mas justamente no terreno que ﬁca entre o texto e seu leitor. OZ, A. De amor e trevas . São Paulo: Cia. das Letras, 2005 (fragmento). A progressão temática de um texto pode ser estruturada por meio de diferentes recursos coesivos, entre os quais se destaca a pontuação. Nesse texto, o emprego dos dois pontos caracteriza uma operação textual realizada com a ﬁnalidade de A comparar elementos opostos. B relacionar informações gradativas. C intensiﬁcar um problema conceitual. D introduzir um argumento esclarecedor. E assinalar uma consequência hipotética. LC - 2º dia | Caderno 7 - AZUL - Página 8*AZUL25DOM8*",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2016_Q130",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2016,
+        "question_number": 130,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "É possível considerar as modalidades esportivas coletivas dentro de uma mesma lógica, pois possuem uma estrutura comum: seis princípios operacionais divididos em dois grupos, o ataque e a defesa. Os três princípios operacionais de ataque são: conservação individual e coletiva da bola, progressão da equipe com a posse da bola em direção ao alvo adversário e ﬁnalização da jogada, visando a obtenção de ponto. Os três princípios operacionais da defesa são: recuperação da bola, impedimento do avanço da equipe contrária com a posse da bola e proteção do alvo para impedir a ﬁnalização da equipe adversária. DAOLIO, J. Jogos esportivos coletivos: dos princípios operacionais aos gestos técnicos — modelo pendular a partir das ideias de Claude Bayer. Revista Brasileira de Ciência e Movimento, out. 2002 (adaptado). Considerando os princípios expostos no texto, o drible no handebol caracteriza o princípio de A recuperação da bola. B progressão da equipe. C ﬁnalização da jogada. D proteção do próprio alvo. E impedimento do avanço adversário.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2016_Q135",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2016,
+        "question_number": 135,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "L.J.C. — 5 tiros? — É. — Brincando de pegador? — É. O PM pensou que… — Hoje? — Cedinho. COELHO, M. In: FREIRE, M. (Org.). Os cem menores contos brasileiros do século . São Paulo: Ateliê Editorial, 2004. Os sinais de pontuação são elementos com importantes funções para a progressão temática. Nesse miniconto, as reticências foram utilizadas para indicar A uma fala hesitante. B uma informação implícita. C uma situação incoerente. D a eliminação de uma ideia. E a interrupção de uma ação. MT - 2º dia | Caderno 7 - AZUL - Página 17*AZUL25DOM17* MATEMÁTICA E SUAS TECNOLOGIAS Questões de 136 a 180",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2015_Q134",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2015,
+        "question_number": 134,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Em junho de 1913, embarquei para a Europa a fim de me tratar num sanatório suíço. Escolhi o de Clavadel, perto de Davos-Platz, porque a respeito dele me falara João Luso, que ali passara um inverno com a senhora. Mais tarde vim a saber que antes de existir no lugar um sanatório, lá estivera por algum tempo Antônio Nobre. “Ao cair das folhas”, um de seus mais belos sonetos, talvez o meu predileto, está datado de “Clavadel, outubro, 1895”. Fiquei na Suíça até outubro de 1914. BANDEIRA, M. Poesia completa e prosa. Rio de Janeiro: Nova Aguilar, 1985. No relato de memórias do autor, entre os recursos usadospara organizar a sequência dos eventos narrados, destaca-se a A construção de frases curtas a fim de conferir dinamicidade ao texto. B presença de advérbios de lugar para indicar a progressão dos fatos. C alternância de tempos do pretérito para ordenar os acontecimentos. D inclusão de enunciados com comentários e avaliações pessoais. E alusão a pessoas marcantes na trajetória de vida do escritor.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Progressões",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Leia com atenção o enunciado",
+          "Identifique o que está sendo pedido"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "topics_included": [
+      "Progressões"
+    ],
+    "years_included": [
+      2016,
+      2018,
+      2019,
+      2022,
+      2024,
+      2015
+    ],
+    "difficulty_levels": [
+      "Médio"
+    ]
+  }
+}

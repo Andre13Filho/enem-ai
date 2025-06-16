@@ -1,0 +1,55 @@
+# Dependências Essenciais - ENEM AI Helper para Streamlit Cloud
+streamlit>=1.28.0
+groq>=0.4.0
+
+# LangChain Stack
+langchain>=0.1.0
+langchain-openai
+langchain-community
+langchain-chroma
+chromadb>=0.4.0
+
+# Embeddings e Processamento de Texto
+sentence-transformers>=2.2.0
+tiktoken
+langchain-huggingface
+
+# Processamento de Documentos
+python-docx>=0.8.11
+pypdf>=3.0.0
+PyMuPDF>=1.23.0
+
+# Utilitários Básicos
+python-dateutil>=2.8.0
+python-dotenv>=1.0.0
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Visualização
+matplotlib>=3.7.0
+plotly>=5.15.0
+
+# Processamento adicional
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+Pillow>=10.0.0
+
+# Formatadores específicos por matéria (incluídos no projeto)
+# physics_formatter.py - Formatação de fórmulas de física
+# math_formatter.py - Formatação de expressões matemáticas  
+# chemistry_formatter.py - Formatação de fórmulas químicas
+# biology_formatter.py - Formatação de termos biológicos
+# history_formatter.py - Formatação de datas e termos históricos
+# geography_formatter.py - Formatação de coordenadas e termos geográficos
+# portuguese_formatter.py - Formatação de termos literários
+
+# Remover dependências problemáticas para cloud:
+# pytesseract (requer instalação de sistema)
+# markmap-python (pode causar conflitos)
+# streamlit-markmap (versão específica pode não estar disponível)
+# faiss-cpu (muito pesado, usar chromadb)
+# seaborn (não essencial)
+# scikit-learn (não essencial para o core)
+# PyPDF2 (redundante com pypdf)
+# openpyxl (não essencial) 

@@ -1,0 +1,712 @@
+{
+  "package_info": {
+    "name": "Exercícios de Geometria Analítica",
+    "created_at": "2025-06-05T22:53:06.045701",
+    "total_exercises": 20,
+    "source": "ENEM Math Database",
+    "filter_applied": {
+      "topic": "Geometria Analítica",
+      "year": null,
+      "limit": 20
+    }
+  },
+  "exercises": [
+    {
+      "id": "ENEM_2024_Q144",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 144,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Para obter um sólido de revolução (rotação de 360 °° em torno de um eixo fixo), uma professora realizou as seguintes etapas: • recortou o trapézio retângulo PQRS de um material rígido; • afixou o lado PS do trapézio em uma vareta fixa retilínea (eixo de rotação); • girou o trapézio 360 °° em torno da vareta e obteve um sólido de revolução. Observe a figura que apresenta o trapézio afixado na vareta e o sentido de giro. O sólido obtido foi um(a)A cone. B cilindro. C pirâmide. D tronco de cone. E tronco de pirâmide.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica",
+          "Geometria Espacial"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q167",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 167,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Atualmente, há telefones celulares com telas de diversos tamanhos e em formatos retangulares. Alguns deles apresentam telas medindo 31 2 polegadas, com determinadas especificações técnicas. Além disso, em muitos modelos, com a inclusão de novas funções no celular, suas telas ficaram maiores, sendo muito comum encontrarmos atualmente telas medindo 45 6 polegadas, conforme a figura. Disponível em: www.tecmundo.com.br. Acesso em: 5 nov. 2014 (adaptado). A diferença de tamanho, em valor absoluto, entre as medidas, em polegada, das telas do celular 2 e do celular 1, representada apenas com uma casa decimal, é A 0,1. B 0,5. C 1,0. D 1,3. E 1,8.*020325AZ25* ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 25 • MATEMÁTICA E SUAS TECNOLOGIAS • 2 º DIA • CADERNO 7 • AZUL 020325AZ.indb   25020325AZ.indb   25 23/08/2024   18:26:4023/08/2024   18:26:40",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q179",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 179,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Uma empresa de engenharia foi contratada para realizar um serviço no valor de R$ 71  250, 00. Os sócios da empresa decidiram que 40% desse valor seria destinado ao pagamento de três engenheiros que gerenciaram o serviço. O pagamento para cada um deles será feito de forma diretamente proporcional ao total de horas trabalhadas. O número de dias e o número de horas diárias trabalhadas pelos engenheiros foram, respectivamente: • engenheiro I: 4 dias, numa jornada de 5 horas e meia por dia; • engenheiro II: 5 dias, numa jornada de 4 horas por dia; • engenheiro III: 6 dias, numa jornada de 2 horas e meia por dia. Qual a maior diferença, em real, entre os valores recebidos por esse serviço entre dois desses engenheiros? A 1 000 B 1 500 C 3 500 D 3 800 E 5 250",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Confundir aumento/desconto percentual com valor final"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2022_Q106",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2022,
+        "question_number": 106,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "A penicilamina é um medicamento de uso oral utilizado no tratamento de várias doenças. Esse composto é excretado na urina, cujo pH se situa entre 5 e 7. A penicilamina, cuja fórmula estrutural plana está apresentada, possui três grupos funcionais que podem ser ionizados: • carboxila:\t—COOH,\tcujo\tp Ka é igual a 1,8; • amino:\t—NH2, que pode ser convertido em amínio\t(—NH3+, cujo pKa é igual a 7,9); • tiol:\t—SH,\tcujo\tpKa é igual a 10,5. Sabe-se\tque\tp Ka\t=\t−log\tKa. SH CC CH3CH3 NH2H COOH Penicilamina Qual estrutura derivada da penicilamina é predominantemente\tencontrada\tna\turina? A CC CH3CH3 NH2H −S COO− B CC CH3CH3 NH2H −S COOH C SH CC CH3CH3H NH3+COO− D CC CH3CH3H −S COOH NH3+ E SH CC CH3CH3H NH3+COOH*020325AZ7* 8 CN - 2° dia | Caderno 7 - AZUL - 1ª Aplicação",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2022_Q150",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2022,
+        "question_number": 150,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Em jogos de voleibol, um saque é invalidado se a bola atingir o teto do ginásio onde ocorre o jogo. Um jogador de uma equipe tem um saque que atinge uma grande altura. Seu recorde foi quando a batida do saque se iniciou a uma altura de 1,5 m do piso da quadra, e a trajetória da bola foi descrita pela parábola yxx/g32/g16 /g16/g142 67 312, em que y\trepresenta\t a\taltura\tda\tbola\tem\trelação\tao\teixo x (das abscissas) que está localizado a 1,5 m do piso da\tquadra,\tcomo\trepresentado\t na\tfigura.\tSuponha\t que em todas as partidas algum saque desse jogador atinja a mesma altura do seu recorde. 1,5 m 1,5 m 1,5 my x A equipe desse jogador participou de um torneio de voleibol no qual jogou cinco partidas, cada uma delas em um ginásio diferente. As alturas dos tetos desses ginásios,\tem\trelação\taos\tpisos\tdas\tquadras,\tsão: • ginásio I: 17 m; • ginásio II: 18 m; • ginásio III: 19 m; • ginásio IV: 21 m; • ginásio V: 40 m. O saque desse atleta foi invalidado A A apenas no ginásio I. B B apenas nos ginásios I e II. C C apenas nos ginásios I, II e III. D D apenas nos ginásios I, II, III e IV. E E em todos os ginásios.*020325AZ21* 22 MT - 2° dia | Caderno 7 - AZUL - 1ª Aplicação",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2022_Q158",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2022,
+        "question_number": 158,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Ao analisar os dados de uma epidemia em uma cidade, peritos obtiveram um modelo que avalia a quantidade de pessoas infectadas a cada mês, ao longo de um ano. O modelo é dado por p (t) = -t 2 + 10t + 24, sendo t um número natural, variando de 1 a 12, que representa os meses do ano, e p(t) a quantidade de pessoas infectadas no mês t do ano.\tPara\ttentar\tdiminuir\to\tnúmero\tde\tinfectados\t no\tpróximo\tano,\ta\tSecretaria\t Municipal\t de\tSaúde\tdecidiu\tintensificar a\tpropaganda\t oficial\tsobre\tos\tcuidados\t com\ta\tepidemia.\t Foram\tapresentadas\t cinco\tpropostas\t (I,\tII,\tIII,\tIV\te\tV), com\tdiferentes\tperíodos\tde\tintensificação\tdas\tpropagandas: • I: 1 ≤ t ≤ 2; • II: 3 ≤ t ≤ 4; • III: 5 ≤ t ≤ 6; • IV: 7 ≤ t ≤ 9; • V: 10 ≤ t ≤ 12. A\tsugestão\tdos\tperitos\té\tque\tseja\tescolhida\t a\tproposta\tcujo\tperíodo\tde\tintensificação\t da\tpropaganda\t englobe\to mês\tem\tque,\tsegundo\to\tmodelo,\thá\ta\tmaior\tquantidade\tde\tinfectados.\t A\tsugestão\tfoi\taceita. A proposta escolhida foi a A A I. B B II. C C III. D D IV. E E V.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Análise Dados"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2022_Q160",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2022,
+        "question_number": 160,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Um\trobô,\tque\ttem\tum\tímã\tem\tsua\tbase,\tse\tdesloca sobre a superfície externa de um cubo metálico, ao longo de segmentos\t de\treta\tcujas\textremidades\t são\tpontos\tmédios\tde arestas e centros de faces. Ele inicia seu deslocamento no ponto P, centro da face superior do cubo, segue para o centro da próxima face, converte à esquerda e segue para o centro da face\tseguinte,\tconverte\tà\tdireita\te\tcontinua\tsua\tmovimentação, sempre alternando entre conversões à esquerda e à direita quando\talcança\to\tcentro\tde\tuma\tface.\tO\trobô\tsó\ttermina\tsua movimentação\t quando\tretorna\tao\tponto\t P.\tA\tfigura\tapresenta os\tdeslocamentos\tiniciais\tdesse\trobô. P A\tprojeção\tortogonal\t do\ttrajeto\tdescrito\tpor\tesse\trobô sobre\to\tplano\tda\tbase,\tapós\tterminada\t sua\tmovimentação, visualizada\t da\tposição\tem\tque\tse\testá\tenxergando\t esse cubo, é AA BB CC DD EE",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2022_Q175",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2022,
+        "question_number": 175,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Ao\tescutar\ta\tnotícia\tde\tque\tum\tfilme\trecém-lançado arrecadou,\t no\tprimeiro\tmês\tde\tlançamento,\t R$\t1,35\tbilhão em bilheteria, um estudante escreveu corretamente o número que representa essa quantia, com todos os seus algarismos. O número escrito pelo estudante foi A A 135 000,00. B B 1 350 000,00. C C 13 500 000,00. D D 135 000 000,00. E E 1 350 000 000,00.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2022_Q176",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2022,
+        "question_number": 176,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "O governo de um estado pretende realizar uma obra\tde\tinfraestrutura\t para\tauxiliar\tna\tintegração\t e no\tprocesso\t de\tescoamento\t da\tprodução\t agrícola de\tduas\tcidades.\t O\tprojeto\tconsiste\tna\tinterligação direta das cidades A e B com a Rodovia 003, pela construção\t das\tRodovias\t 001\te\t002.\tAs\tduas\trodovias serão\tconstruídas\t em\tlinha\treta\te\tdeverão\tse\tconectar à Rodovia 003 em um mesmo ponto, conforme esboço\tapresentado\t na\tfigura,\tna\tqual\testão\ttambém indicadas as posições das cidades A e B, considerando o eixo x posicionado sobre a Rodovia 003, e cinco localizações\t sugeridas\t para\to\tponto\tde\tconexão\tentre as três rodovias. 0 510152025303540455055 x (km)10203040y (km)Cidade A Cidade B Rodovia 003Rodovia 001 Rodovia 002 I IIIIIIV V Pretende-se\t que\ta\tdistância\tpercorrida\t entre\tas\tduas cidades, pelas Rodovias 001 e 002, passando pelo ponto de\tconexão,\tseja\ta\tmenor\tpossível. Dadas as exigências do projeto, qual das localizações sugeridas\t deve\tser\ta\tescolhida\tpara\to\tponto\tde\tconexão? A A I B B II C C III D D IV E E V",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2021_Q136",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2021,
+        "question_number": 136,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Um segmento de reta está dividido em duas partes /g81/g68/g3 /g83/g85/g82/g83/g82/g85/g111/g109/g82/g3 /g105/g88/g85/g72/g68/g3 /g84/g88/g68/g81/g71/g82/g3 /g82/g3 /g87/g82/g71/g82/g3 /g72/g86/g87/g105/g3 /g83/g68/g85/g68/g3 /g88/g80/g68/g3 /g71/g68/g86/g3/g83/g68/g85/g87/g72/g86/g3/g81/g68/g3/g80/g72/g86/g80/g68/g3/g85/g68/g93/g109/g82/g3/g72/g80/g3/g84/g88/g72/g3/g72/g86/g86/g68/g3/g83/g68/g85/g87/g72/g3/g72/g86/g87/g105/g3/g83/g68/g85/g68/g3/g68/g3 outra. Essa constante de proporcionalidade é comumente /g85/g72/g83/g85/g72/g86/g72/g81/g87/g68/g71/g68/g3/g83/g72/g79/g68/g3/g79/g72/g87/g85/g68/g3/g74/g85/g72/g74/g68/g3/g307/g15/g3/g72/g3/g86/g72/g88/g3/g89/g68/g79/g82/g85/g3/g112/g3/g71/g68/g71/g82/g3/g83/g72/g79/g68/g3 /g86/g82/g79/g88/g111/g109/g82/g3/g83/g82/g86/g76/g87/g76/g89/g68/g3/g71/g68/g3/g72/g84/g88/g68/g111/g109/g82/g3/g307 2/g3/g32/g3/g307/g3/g14/g3/g20/g17 /g36/g86/g86/g76/g80/g3/g70/g82/g80/g82/g3/g68/g3/g83/g82/g87/g114/g81/g70/g76/g68/g3/g3072, as potências superiores /g71/g72/g3/g307/g3/g83/g82/g71/g72/g80/g3/g86/g72/g85/g3/g72/g91/g83/g85/g72/g86/g86/g68/g86/g3/g71/g68/g3/g73/g82/g85/g80/g68/g3/g3 a/g307/g3/g14/g3b, em que a e b /g86/g109/g82/g3/g76/g81/g87/g72/g76/g85/g82/g86/g3/g83/g82/g86/g76/g87/g76/g89/g82/g86/g15/g3/g70/g82/g80/g82/g3/g68/g83/g85/g72/g86/g72/g81/g87/g68do no quadro. /g3072/g3073/g3074/g3075/g3076/g307/g26 /g307 + 12 /g307  + 13 /g307  + 25 /g307  + 38 /g307  + 5… /g36/g3/g83/g82/g87/g114/g81/g70/g76/g68/g3/g307/g26, escrita na forma a/g307/g3/g14/g3b (a e b/g3/g3/g86/g109/g82/g3/g76/g81/g87/g72/g76/g85/g82/g86/g3 positivos), é A /g3 /g24/g307/g3/g14/g3/g22 B /g3 /g26/g307 + 2 C /g3/g28/g307 + 6 D  11/g307/g3/g14/g3/g26 E  13/g307/g3/g14/g3/g27",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2021_Q166",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2021,
+        "question_number": 166,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "O projeto de um contêiner, em forma de paralelepípedo reto retangular, previa a pintura dos dois lados (interno e externo) de cada uma das quatro paredes com tinta acrílica e a pintura do piso interno com tinta epóxi. O construtor havia pedido, a cinco fornecedores diferentes, orçamentos das tintas necessárias, mas, antes de iniciar a obra, resolveu mudar o projeto original, alterando o comprimento e a largura para o dobro do originalmente previsto, mantendo inalterada a altura. Ao pedir novos orçamentos aos fornecedores, para as novas dimensões, cada um deu uma resposta diferente sobre as novas quantidades de tinta necessárias. /g40/g80/g3 /g85/g72/g79/g68/g111/g109/g82/g3 /g68/g82/g3 /g83/g85/g72/g89/g76/g86/g87/g82/g3 /g83/g68/g85/g68/g3 /g82/g3 /g83/g85/g82/g77/g72/g87/g82/g3 /g82/g85/g76/g74/g76/g81/g68/g79/g15/g3 /g68/g86/g3 novas quantidades de tinta necessárias informadas pelos fornecedores foram as seguintes: • /g41/g82/g85/g81/g72/g70/g72/g71/g82/g85/g3 /g44/g29/g3 /g179/g50/g3 /g71/g82/g69/g85/g82/g15/g3 /g87/g68/g81/g87/g82/g3 /g83/g68/g85/g68/g3 /g68/g86/g3 /g83/g68/g85/g72/g71/g72/g86/g3 quanto para o piso.” • /g41/g82/g85/g81/g72/g70/g72/g71/g82/g85/g3/g44/g44/g29/g3/g179/g50/g3/g71/g82/g69/g85/g82/g3/g83/g68/g85/g68/g3/g68/g86/g3/g83/g68/g85/g72/g71/g72/g86/g3/g72/g3/g84/g88/g68/g87/g85/g82/g3 vezes para o piso.” • /g41/g82/g85/g81/g72/g70/g72/g71/g82/g85/g3/g44/g44/g44/g29/g3/g179/g52/g88/g68/g87/g85/g82/g3/g89/g72/g93/g72/g86/g15/g3/g87/g68/g81/g87/g82/g3/g83/g68/g85/g68/g3/g68/g86/g3/g83/g68/g85/g72/g71/g72/g86/g3 quanto para o piso.” • /g41/g82/g85/g81/g72/g70/g72/g71/g82/g85/g3/g44/g57/g29/g3/g179/g52/g88/g68/g87/g85/g82/g3/g89/g72/g93/g72/g86/g3/g83/g68/g85/g68/g3/g68/g86/g3/g83/g68/g85/g72/g71/g72/g86/g3/g72/g3/g82/g3 dobro para o piso.” • Fornecedor V: “Oito vezes para as paredes e quatro vezes para o piso.” Analisando as informações dos fornecedores, o construtor providenciará a quantidade adequada de material. Considere a porta de acesso do contêiner como parte de uma das paredes. Qual dos fornecedores prestou as informações adequadas, /g71/g72/g89/g72/g81/g71/g82/g3/g86/g72/g85/g3/g82/g3/g72/g86/g70/g82/g79/g75/g76/g71/g82/g3/g83/g72/g79/g82/g3/g70/g82/g81/g86/g87/g85/g88/g87/g82/g85/g3/g83/g68/g85/g68/g3/g68/g3/g68/g84/g88/g76/g86/g76/g111/g109/g82/g3 do material? A /g3/g44 B /g3/g44 /g44 C /g44/g44/g44 D /g44/g57 E  V",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2021_Q177",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2021,
+        "question_number": 177,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Uma das bases mais utilizadas para representar um número é a base decimal. Entretanto, os computadores trabalham com números na base binária. Nessa base, qualquer número natural é representado usando apenas os algarismos 0 e 1. Por exemplo, as representações /g71/g82/g86/g3/g81/g126/g80/g72/g85/g82/g86/g3/g28/g3/g72/g3/g20/g21/g15/g3/g81/g68/g3/g69/g68/g86/g72/g3/g69/g76/g81/g105/g85/g76/g68/g15/g3/g86/g109/g82/g3/g20/g19/g19/g20/g3/g72/g3/g20/g20/g19/g19/g15/g3 /g85/g72/g86/g83/g72/g70/g87/g76/g89/g68/g80/g72/g81/g87/g72/g17/g3/g36/g3/g82/g83/g72/g85/g68/g111/g109/g82/g3/g71/g72/g3/g68/g71/g76/g111/g109/g82/g15/g3/g81/g68/g3/g69/g68/g86/g72/g3/g69/g76/g81/g105/g85/g76/g68/g15/g3segue um algoritmo similar ao utilizado na base decimal, como detalhado no quadro: ab a  /g14 b 00 0 01 1 10 1 11 1 0 Por exemplo, na base binária, a soma dos números 10 e 10 é 100, como apresentado: 10 /g14 10 ____ 100 Considerando as informações do texto, o resultado da /g68/g71/g76/g111/g109o 9 /g14 12 será representado, na base binária, por A  101. B  1101. C  1111. D  10101. E  11001.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2020_Q140",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2020,
+        "question_number": 140,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "O proprietário de um apartamento decidiu instalar porcelanato no piso da sala. Essa sala tem formato retangular com 3,2 m de largura e 3,6 m de comprimento. As peças do porcelanato têm formato de um quadrado com lado medindo 80 cm. Esse porcelanato é vendido em dois tipos de caixas, com os preços indicados a seguir. • Caixas do tipo A: 4 unidades de piso, R$ 35,00; • Caixas do tipo B: 3 unidades de piso, R$ 27,00. Na instalação do porcelanato, as peças podem ser recortadas e devem ser assentadas sem espaçamento entre elas, aproveitando-se ao máximo os recortes feitos. A compra que atende às necessidades do proprietário, proporciona a menor sobra de pisos e resulta no menor preço é A  5 caixas do tipo A. B  1 caixa do tipo A e 4 caixas do tipo B. C  3 caixas do tipo A e 2 caixas do tipo B. D  5 caixas do tipo A e 1 caixa do tipo B. E  6 caixas do tipo B.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2019_Q141",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2019,
+        "question_number": 141,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Em um jogo on-line, cada jogador procura subir de nível e aumentar sua experiência, que são dois parâmetros importantes no jogo, dos quais dependem as forças de defesa e de ataque do participante. A força de defesa de cada jogador é diretamente proporcional ao seu nível e ao quadrado de sua experiência, enquanto sua força de ataque é diretamente proporcional à sua experiência e ao quadrado do seu nível. Nenhum jogador sabe o nível ou a experiência dos demais. Os jogadores iniciam o jogo no nível 1 com experiência 1 e possuem força de ataque 2 e de defesa 1. Nesse jogo, cada participante se movimenta em uma cidade em busca de tesouros para aumentar sua experiência. Quando dois deles se encontram, um deles pode desafiar o outro para um confronto, sendo o desafiante considerado o atacante. Compara-se então a força de ataque do desafiante com a força de defesa do desafiado e vence o confronto aquele cuja força for maior. O vencedor do desafio aumenta seu nível em uma unidade. Caso haja empate no confronto, ambos os jogadores aumentam seus níveis em uma unidade. Durante um jogo, o jogador J1, de nível 4 e experiência 5, irá atacar o jogador J2, de nível 2 e experiência 6. O jogador J1 venceu esse confronto porque a diferença entre sua força de ataque e a força de defesa de seu oponente era A 112. B 88. C 60. D 28. E 24.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Lógico"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2018_Q157",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2018,
+        "question_number": 157,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Um mapa é a representação reduzida e simplificada de uma localidade. Essa redução, que é feita com o uso de uma escala, mantém a proporção do espaço representado em relação ao espaço real. Certo mapa tem escala 1 : 58 000 000. Disponível em: http://oblogdedaynabrigth.blogspot.com.br. Acesso em: 9 ago. 2012. Considere que, nesse mapa, o segmento de reta que liga o navio à marca do tesouro meça 7,6 cm. A medida real, em quilômetro, desse segmento de reta é A 4 408. B 7 632. C 44 080. D 76 316. E 440 800.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2018_Q163",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2018,
+        "question_number": 163,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "O artigo 33 da lei brasileira sobre drogas prevê a pena de reclusão de 5 a 15 anos para qualquer pessoa que seja condenada por tráfico ilícito ou produção não autorizada de drogas. Entretanto, caso o condenado seja réu primário, com bons antecedentes criminais, essa pena pode sofrer uma redução de um sexto a dois terços. Suponha que um réu primário, com bons antecedentes criminais, foi condenado pelo artigo 33 da lei brasileira sobre drogas. Após o benefício da redução de pena, sua pena poderá variar de A 1 ano e 8 meses a 12 anos e 6 meses. B 1 ano e 8 meses a 5 anos. C 3 anos e 4 meses a 10 anos. D 4 anos e 2 meses a 5 anos. E 4 anos e 2 meses a 12 anos e 6 meses. *DO0725AZ25* MT - 2º dia | Caderno 7 - AZUL - Página 26",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2018_Q180",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2018,
+        "question_number": 180,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Para decorar um cilindro circular reto será usada uma faixa retangular de papel transparente, na qual está desenhada em negrito uma diagonal que forma 30° com a borda inferior. O raio da base do cilindro mede π6 cm, e ao enrolar a faixa obtém-se uma linha em formato de hélice, como na figura. 30° O valor da medida da altura do cilindro, em centímetro, é A  363 B  243 C  43 D  36 E 72*DO0725AZ31* MT - 2º dia | Caderno 7 - AZUL - Página 32 *DO0725AZ32*",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2017_Q143",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2017,
+        "question_number": 143,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Um brinquedo infantil caminhão-cegonha é formado por uma carreta e dez carrinhos nela transportados, conforme a ﬁgura. No setor de produção da empresa que fabrica esse brinquedo, é feita a pintura de todos os carrinhos para que o aspecto do brinquedo ﬁque mais atraente. São utilizadas as cores amarelo, branco, laranja e verde, e cada carrinho é pintado apenas com uma cor. O caminhão-cegonha tem uma cor ﬁxa. A empresa determinou que em todo caminhão-cegonha deve haver pelo menos um carrinho de cada uma das quatro cores disponíveis. Mudança de posição dos carrinhos no caminhão-cegonha não gera um novo modelo do brinquedo. Com base nessas informações, quantos são os modelos distintos do brinquedo caminhão-cegonha que essa empresa poderá produzir? A C 6,4 B C9,3 C C10,4 D 64 E 46",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2017_Q144",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2017,
+        "question_number": 144,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Uma empresa especializada em conservação de piscinas utiliza um produto para tratamento da água cujas especiﬁcações técnicas sugerem que seja adicionado 1,5 mL desse produto para cada 1 000 L de água da piscina. Essa empresa foi contratada para cuidar de uma piscina de base retangular, de profundidade constante igual a 1,7 m, com largura e comprimento iguais a 3 m e 5 m, respectivamente. O nível da lâmina d’água dessa piscina é mantido a 50 cm da borda da piscina. A quantidade desse produto, em mililitro, que deve ser adicionada a essa piscina de modo a atender às suas especiﬁcações técnicas é A 11,25. B 27,00. C 28,80. D 32,25. E 49,50.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2017_Q148",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2017,
+        "question_number": 148,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Uma rede hoteleira dispõe de cabanas simples na ilha de Gotland, na Suécia, conforme Figura 1. A estrutura de sustentação de cada uma dessas cabanas está representada na Figura 2. A ideia é permitir ao hóspede uma estada livre de tecnologia, mas conectada com a natureza. Figura 2 ROMERO, L. Tendências. Superinteressante , n. 315, fev. 2013 (adaptado). A forma geométrica da superfície cujas arestas estão representadas na Figura 2 é A tetraedro. B pirâmide retangular. C tronco de pirâmide retangular. D prisma quadrangular reto. E prisma triangular reto.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Geometria Analítica",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Geometria Espacial"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Desenhe a figura para visualizar melhor o problema",
+          "Identifique as fórmulas de área e volume necessárias",
+          "Verifique as unidades de medida"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "topics_included": [
+      "Geometria Analítica"
+    ],
+    "years_included": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2024
+    ],
+    "difficulty_levels": [
+      "Médio"
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+Matemática Básica para o ENEM
+
+1. EQUAÇÕES QUADRÁTICAS
+Uma equação quadrática tem a forma: ax² + bx + c = 0
+
+Fórmula de Bhaskara:
+x = (-b ± √(b² - 4ac)) / 2a
+
+Discriminante: Δ = b² - 4ac
+- Se Δ > 0: duas raízes reais distintas
+- Se Δ = 0: duas raízes reais iguais
+- Se Δ < 0: não há raízes reais
+
+2. FUNÇÕES
+Função do 1º grau: f(x) = ax + b
+Função do 2º grau: f(x) = ax² + bx + c
+
+3. GEOMETRIA
+Área do triângulo: A = (base × altura) / 2
+Área do círculo: A = πr²
+Teorema de Pitágoras: a² + b² = c²
+
+4. ESTATÍSTICA
+Média aritmética: x̄ = (x₁ + x₂ + ... + xₙ) / n
+
+Estes são conceitos fundamentais que aparecem no ENEM. 

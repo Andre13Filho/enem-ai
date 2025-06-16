@@ -1,0 +1,26 @@
+# Dependências Essenciais - ENEM AI Helper RAG Local
+streamlit
+groq
+
+# LangChain Stack
+langchain
+langchain-openai
+langchain-community
+langchain-chroma
+chromadb
+
+# Embeddings e Processamento de Texto
+sentence-transformers
+tiktoken
+langchain-huggingface
+
+# Processamento de Documentos
+python-docx
+pypdf
+
+# Mapa Mental
+streamlit-markmap==1.0.1
+
+# Utilitários Básicos
+python-dateutil
+numpy 

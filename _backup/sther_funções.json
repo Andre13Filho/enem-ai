@@ -1,0 +1,702 @@
+{
+  "package_info": {
+    "name": "Exercícios de Funções",
+    "created_at": "2025-06-05T22:53:06.024346",
+    "total_exercises": 20,
+    "source": "ENEM Math Database",
+    "filter_applied": {
+      "topic": "Funções",
+      "year": null,
+      "limit": 20
+    }
+  },
+  "exercises": [
+    {
+      "id": "ENEM_2024_Q101",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 101,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "A saúde do professor: acústica arquitetônica Dentre os parâmetros acústicos que afetam a inteligibilidade dos sons emitidos em ambientes fechados, destacam-se o ruído de fundo do ambiente e o decréscimo do nível sonoro com a distância da fonte emissora. Assim, sentar-se no fundo da sala de aula pode prejudicar a aprendizagem dos estudantes, por impedir que eles distingam, com precisão, os sons emitidos, diminuindo a inteligibilidade da fala de seus professores. Considere a situação exemplificada pelo infográfico: à distância de 1 metro, o nível sonoro da fala de um professor é de 60 dB e diminui com a distância. Considere, ainda, que o ruído de fundo nessa sala de aula pode chegar a 45 dB e que, para ser compreendida, o nível sonoro da fala do professor deve estar 5 dB acima desse ruído. Disponível em: www.ufrrj.br. Acesso em: 2 dez. 2021 (adaptado). Para um valor máximo do ruído de fundo, a maior distância que um estudante pode estar do professor para que ainda consiga compreender sua fala é mais próxima de A 3,0 m. B 4,5 m. C 6,5 m. D 8,0 m. E 9,5 m.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q123",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 123,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Os pesticidas naturais vêm sendo utilizados no controle de pragas e doenças agrícolas como substituintes de pesticidas sintéticos tradicionais, por serem menos nocivos ao ambiente, biodegradáveis e minimizarem custos e riscos relativos à lavoura. Por exemplo, os compostos 1 e 2 estão envolvidos nas respostas de defesa das plantas. Os grupos funcionais presentes nesses compostos são importantes para suas propriedades no controle de pragas. PINTO-ZEVALLOS, D. M.; ZARBIN, P. H. G. A química na agricultura: perspectivas para o desenvolvimento de tecnologias sustentáveis. Química Nova, n. 10, 2013 (adaptado). Qual é a função orgânica correspondente ao grupo funcional comum presente nesses dois compostos? A Ácido carboxílico. B Cetona. C Alceno. D Álcool. E Fenol.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Confundir domínio com imagem da função"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q136",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 136,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "O tamanho mínimo que a visão humana é capaz de visualizar sem o uso de equipamento auxiliar é equivalente a 100 micrômetros (1 micrômetro =  10−3 milímetros). Uma estudante pretende visualizar e analisar hemácias do sangue humano, que medem 0,007 mm de diâmetro. Ela adquiriu um microscópio óptico que tem uma lente ocular que amplia em 10 vezes a imagem do objeto em observação, e um conjunto de lentes objetivas com estas capacidades de ampliação: • lente I: 2 vezes; • lente II: 10 vezes; • lente III: 15 vezes; • lente IV : 1,1 vez; • lente V : 1,4 vez. O funcionamento desse microscópio permite o uso da lente ocular sozinha ou a combinação dela com uma de suas lentes objetivas, proporcionando, nesse caso, um aumento de sua capacidade de ampliação final, que é dada pelo produto entre as capacidades de ampliação da ocular e da objetiva. Essa estudante pretende selecionar a lente objetiva de menor capacidade de ampliação que permita, na combinação com a ocular, visualizar hemácias do sangue humano. A lente objetiva a ser selecionada pela estudante é a A I. B II. C III. D I V. E V.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q141",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 141,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Três grandezas (I, II e III) se relacionam entre si. Os gráficos a seguir, formados por segmentos de reta, descrevem as relações de dependência existentes entre as grandezas I e II, e entre as grandezas II e III. O valor máximo assumido pela grandeza III, quando a grandeza I varia de 1 a 3, é A 1,0. B 2,5. C 3,0. D 3,5. E 4,0.*020325AZ17* ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 17 • MATEMÁTICA E SUAS TECNOLOGIAS • 2 º DIA • CADERNO 7 • AZUL 020325AZ.indb   17020325AZ.indb   17 23/08/2024   18:26:2923/08/2024   18:26:29",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q147",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 147,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Uma professora de matemática utiliza em suas aulas uma “máquina caça-números” para verificar os conhecimentos de seus estudantes sobre representações de números racionais. Essa máquina tem um visor dividido em seis compartimentos e, na lateral, uma alavanca. Cada estudante puxa a alavanca e espera que os compartimentos parem de girar. A partir daí, precisa responder para a professora em quais posições se encontram os números que representam a mesma quantidade. Um estudante puxou a alavanca, aguardou que os compartimentos parassem de girar e observou os números apresentados no visor. A configuração da máquina naquele instante está apresentada na imagem. Esse estudante respondeu corretamente à pergunta da professora. As posições indicadas pelo estudante foram A I, II e IV . B II, IV e V . C II, III e V . D III, V e VI. E III, IV e VI.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q148",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 148,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Uma caneca com água fervendo é retirada de um forno de micro-ondas. A temperatura T, em grau Celsius, da caneca, em função do tempo t , em minuto, pode ser modelada pela função T(t) = a + 80 bt, representada no gráfico a seguir. Os valores das constantes a e b são A a = 20; b = log(0,5) B a = 100; b = 0,5 C ab= =20 051 10 ;( ,) D ab= =2040 801 10 ;() Ea = 20; b = 40",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Confundir domínio com imagem da função"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q152",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 152,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "O gráfico apresenta o valor total de exportações e o valor total de importações, ao longo de um período, em bilhão de dólares. O saldo da balança comercial brasileira é dado pelo valor total de exportações menos o valor total de importações num mesmo período. Valor total de exportações e importações Disponível em: http://blogs.estadao.com.br. Acesso em: 20 fev. 2013 (adaptado). Considere que os saldos da balança comercial brasileira, nos três meses destacados no gráfico, sejam representados por: • S1: saldo em junho de 2009; • S2: saldo em janeiro de 2010; • S3: saldo em junho de 2010. A ordenação dos saldos S1, S2 e S3, do maior para o menor, é A S1, S3 e S2. B S2, S1 e S3. C S2, S3 e S1. D S3, S1 e S2. E S3, S2 e S1.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q156",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 156,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "O uso de aplicativos de transporte tem sido uma alternativa à população que busca preços mais competitivos para se locomover, principalmente nas grandes cidades. As formas usadas para determinar o valor cobrado por cada viagem variam de um aplicativo para outro, mas, em geral, o valor V a ser pago, em real, varia em função de: • tarifa base F: valor fixo, em real, cobrado no início da viagem; • tempo T: tempo, em minuto, de duração da viagem; • distância D : distância percorrida, em quilômetro. Um desses aplicativos cobra R$ 2,00 de valor fixo, acrescido de R$ 0,26 por minuto de viagem e de R$ 1,40 por quilômetro rodado. Nessas condições, a expressão que fornece o valor V a ser pago por uma viagem desse aplicativo é A 2,00 F + 0,26T + 1,40D B 2,00 + 0,26T + 1,40D C 2,00 + 0,26T + D D 0,26 T + 1,40D E F + T + D*020325AZ21* ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 21 • MATEMÁTICA E SUAS TECNOLOGIAS • 2 º DIA • CADERNO 7 • AZUL 020325AZ.indb   21020325AZ.indb   21 23/08/2024   18:26:3423/08/2024   18:26:34",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Confundir domínio com imagem da função"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q161",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 161,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Um tanque, em formato de paralelepípedo reto retângulo, tem em seu interior dois anteparos verticais, fixados na sua base e em duas paredes opostas, sendo perpendiculares a elas, conforme a figura. Esses anteparos, de espessuras desprezíveis, estão instalados de maneira a dividir a base do tanque em três retângulos congruentes, tendo suas alturas iguais à metade e a um quarto da altura do tanque. O tanque é abastecido por uma entrada situada no teto, através de um duto que despeja água a uma vazão constante, sendo necessárias 12 horas para finalizar o seu enchimento. O gráfico que descreve, em cada instante, a maior altura de coluna de água, dentre aquelas que vão sendo formadas ao longo do enchimento do tanque, é A B C D E *020325AZ23* ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 23 • MATEMÁTICA E SUAS TECNOLOGIAS • 2 º DIA • CADERNO 7 • AZUL 020325AZ.indb   23020325AZ.indb   23 23/08/2024   18:26:3723/08/2024   18:26:37",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica",
+          "Cálculo Numérico"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q168",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 168,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Projetistas de uma fábrica de amortecedores realizaram uma série de experimentos que produziram oscilações semelhantes ao comportamento do gráfico de uma senoide, para qualquer tipo de estrada. Cada experimento teve duração de 20 minutos, sendo os 9 primeiros minutos em superfície que simula uma rodovia asfaltada, e os 11 minutos restantes em superfície que simula uma estrada de chão. Para os amortecedores serem aprovados no experimento, exige-se que as amplitudes das ondas oscilatórias, em cada tipo de superfície, sejam constantes e, ainda, que a amplitude da oscilação do amortecedor no asfalto seja menor do que sua amplitude da oscilação na estrada de chão. O tipo de gráfico que descreve o comportamento oscilatório de um amortecedor aprovado nesse experimento é A B C D E *020325AZ26* ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 26 MATEMÁTICA E SUAS TECNOLOGIAS • 2 º DIA • CADERNO 7 • AZUL • 020325AZ.indb   26020325AZ.indb   26 23/08/2024   18:26:4223/08/2024   18:26:42",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q173",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 173,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Uma empresa tem 400 funcionários, distribuídos em três setores: administrativo, logística e produção. O gráfico apresenta a distribuição quantitativa desses funcionários, por setor e por faixa etária. Uma viagem de férias será sorteada entre esses funcionários, de forma que todos terão igual probabilidade de serem sorteados. A maior probabilidade é que o funcionário sorteado esteja na faixa etária A entre 25 e 45 anos, pois é a faixa etária com maior quantidade de funcionários. B entre 25 e 45 anos, pois é a única faixa etária cujas porcentagens são maiores do que as porcentagens mínimas de cada setor. C até 25 anos, pois é a única faixa etária cujos percentuais associados aos setores aumentam com o aumento da quantidade de funcionários por setor. D até 25 anos, pois é a faixa etária que apresenta maior quantidade de funcionários no setor de produção, que é o setor que emprega metade dos funcionários dessa empresa. E a partir de 45 anos, pois a soma das porcentagens associadas a essa faixa etária é 110%, que é maior do que as respectivas somas associadas às outras faixas etárias, que são 105% e 85%.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Confundir aumento/desconto percentual com valor final",
+          "Não considerar todos os casos possíveis"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2024_Q176",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2024,
+        "question_number": 176,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "As receitas anuais obtidas por uma indústria no período de 2014 a 2021, em milhão de reais, foram registradas, por pontos, em um gráfico. Nele, também está representada a reta que descreve a tendência de evolução das receitas. Essa reta pode ser utilizada para estimar as receitas dos anos seguintes. A estimativa da receita, em milhão de reais, dessa indústria, para o ano de 2026, obtida a partir dessa reta de tendência, é A 7. B 8. C 9. D 10. E 11 .*020325AZ30* ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM20E4ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024ENEM2024 30 MATEMÁTICA E SUAS TECNOLOGIAS • 2 º DIA • CADERNO 7 • AZUL • 020325AZ.indb   30020325AZ.indb   30 23/08/2024   18:26:5323/08/2024   18:26:53",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2023_Q104",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2023,
+        "question_number": 104,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "O\tvidro\tcontendo\t alumínio\t em\tsua\tcomposição\t é um excelente material para acondicionar medicamentos e suplementos, porque pode ser esterilizado por aquecimento. No entanto, quando o medicamento ou suplemento contém substâncias que se ligam fortemente\t ao\tíon\tdesse\tmetal,\ta\tdissolução\t do alumínio\t é\tpromovida\t em\tfunção\t do\tdeslocamento do equilíbrio químico estabelecido entre a espécie imobilizada\t no\tvidro\te\ta\tespécie\t em\tsolução.\t Por\tessa razão,\trecomenda-se\t que\tsuplementos\t de\tnutrição\t de recém-nascidos \tcontendo \tgluconato \tde\tcálcio\tsejam acondicionados\t em\tembalagens\t plásticas,\t e\tnão\tnesse tipo de vidro. Atualização da recomendação da Sociedade Portuguesa de Neonatologia . Disponível em: www.spneonatologia.pt. Acesso em: 22 out. 2021 (adaptado). Caso esse suplemento seja acondicionado em embalagem desse\ttipo\tde\tvidro,\to\trisco\tde\tcontaminação\tpor\talumínio será maior se o(a) A A vidro do frasco for translúcido. B B concentração\tde\tgluconato\tde\tcálcio\tfor\talta. C C frasco de vidro apresentar uma maior espessura. D D vidro for previamente esterilizado em altas temperaturas. E E reação\tdo\talumínio\t com\tgluconato\t de\tcálcio\tfor endotérmica.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Confundir domínio com imagem da função"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2023_Q106",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2023,
+        "question_number": 106,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "A tecnologia de vacinas de RNA mensageiro (RNAm) é\tinvestigada\t há\tanos.\tAvanços\t científicos\t em\tgenética molecular permitiram desenvolver uma vacina para controle\t da\tpandemia\t da\tcovid-19\t causada\t pelo\tvírus\tde RNA\tSARS-CoV-2. \tA\tvacina\tde\tRNAm\ttem\tsequências de genes do vírus. Entretanto, por ser muito instável, o RNAm deve ser recoberto por uma capa de lipídios que evita\tsua\tdegradação\t e\tfavorece\t sua\tação.\tDessa\tforma, o\tRNAm\tdesempenhará\t sua\tfunção\tespecífica\t atuando no mesmo compartimento celular de sempre. Disponível em: https://sbim.org.br. Acesso em: 29 nov. 2021 (adaptado). A\timunização\t produzida\t por\tesse\ttipo\tde\tvacina\té alcançada por meio da A A estimulação \tde\tleucócitos \tinduzida\tpela\tcapa\tlipídica contendo RNAm. B B atuação\t do\tRNAm\tcomo\tsequestrador\t do\tvírus\tpara o meio extracelular. C C tradução \tdo\tRNAm\tem\tproteína\tviral,\tdesencadeando a resposta antigênica. D D competição \tentre\to\tRNAm\tvacinal\te\to\tRNA\tviral\tpelos sítios dos ribossomos. E E incorporação \tdo\tRNAm\tviral\tao\tgenoma\tdo\thospedeiro, gerando novo fenótipo.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Confundir domínio com imagem da função"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2023_Q129",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2023,
+        "question_number": 129,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "O Aldrin é um inseticida agrícola organoclorado sintético de baixa polaridade, cuja estrutura molecular simétrica, de fórmula C12H8Cl6, está representada na figura.\tIntroduzido\t na\tagricultura\t a\tpartir\tda\tdécada\tde 1950, esse composto apresenta alta persistência no meio ambiente\t e\tacumulação\t nos\torganismos, \tsendo\tdanoso para a saúde. AldrinCl ClCl ClCl ClCH HC VIEGAS JÚNIOR, C. Terpenos com atividade inseticida: uma alternativa para o controle químico de insetos. Química Nova , v. 26, n. 3, 2003 (adaptado). Um\tpesquisador\t coletou\tfluidos\tbiológicos\t de\tindivíduos de\tuma\tpopulação \tcontaminada \tpor\tesse\tinseticida \tagrícola. Ele analisou amostras de saliva, sangue, lágrima, urina e leite quanto à presença dessa substância. Em\tqual\tdos\tfluidos\to\tpesquisador\t provavelmente\t encontrou a\tmaior\tconcentração\tdessa\tsubstância? A A Saliva, por consequência da atividade de enzimas. B B Sangue,\tem\tfunção\tdas\themácias\te\tleucócitos. C C Lágrima,\tem\trazão\tda\tconcentração\tde\tsais. D D Urina, pela presença de moléculas de ureia. E E Leite, por causa do alto teor de gorduras.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Confundir domínio com imagem da função"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2023_Q140",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2023,
+        "question_number": 140,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Uma empresa de transporte faz regularmente um levantamento do número de viagens realizadas durante o dia por todos os 160 motoristas cadastrados em seu aplicativo. Em um certo dia, foi gerado um relatório, por meio de um gráfico\tde\tbarras,\tno\tqual\tse\trelacionaram\t a\tquantidade\t de\tmotoristas\t com\ta\tquantidade\t de\tviagens\t realizadas\t até aquele instante do dia. Quantidade de viagens realizadas Quantidade de motoristas0 5 10 15 20 25 30 35 40 45 50 557 6 4 3 2 15 Comparando \tos\tvalores\tda\tmédia,\tda\tmediana \te\tda\tmoda\tda\tdistribuição \tdas\tquantidades \tde\tviagens\trealizadas pelos\tmotoristas\tcadastrados\tnessa\tempresa,\tobtém-se A A mediana = média < moda. B B mediana = moda < média. C C mediana < média < moda. D D moda < média < mediana. E E moda < mediana < média.*020325AZ17* 18 MT • 2 º DIA • CADERNO 7 • AZUL",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica",
+          "Análise Dados"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2023_Q145",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2023,
+        "question_number": 145,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Num certo momento de um jogo digital, a tela apresenta\t a\timagem\t representada\t na\tfigura.\tO\tponto\t Q1 representa\t a\tposição\tde\tum\tjogador\tque\testá\tcom\ta\tbola, os pontos Q2, Q3, Q4, Q5 e Q6 também indicam posições de jogadores da mesma equipe, e os pontos A  e B indicam os dois pés da trave mais próxima deles. No momento da partida retratado, o jogador Q1 tem a posse da bola, que será passada para um dos outros jogadores das posições Qn, n ∈ {2, 3, 4, 5, 6}, cujo ângulo AQBn tenha a mesma medida do ângulo AQB1.A B Q1Q2Q3 Q4 Q5 Q6α Qual\té\to\tjogador\tque\treceberá\ta\tbola? A A Q2 B B Q3 C C Q4 D D Q5 E E Q6",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Raciocínio Matemático"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2023_Q149",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2023,
+        "question_number": 149,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Um controlador de voo dispõe de um instrumento que descreve\ta\taltitude\tde\tuma\taeronave\tem\tvoo,\t em\tfunção da distância em solo. Essa distância em solo é a medida na horizontal entre o ponto de origem do voo até o ponto que representa\t a\tprojeção\t ortogonal\t da\tposição\tda\taeronave, em\tvoo,\tno\tsolo.\tEssas\tduas\tgrandezas\t são\tdadas\tnuma mesma unidade de medida. A tela do instrumento representa proporcionalmente as dimensões reais das distâncias associadas ao voo. A figura apresenta a tela do instrumento depois de concluída\t a\tviagem\tde\tum\tavião,\tsendo\ta\tmedida\tdo\tlado de cada quadradinho da malha igual a 1 cm. Altitude Origem do vooDestino Distância Essa tela apresenta os dados de um voo cuja maior altitude alcançada foi de 5 km. A escala em que essa tela representa as medidas reais é A A 1 : 5. B B 1 : 11. C C 1 : 55. D D 1 : 5 000. E E 1 : 500 000.",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Análise Dados"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Confundir domínio com imagem da função"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2023_Q151",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2023,
+        "question_number": 151,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Um investidor iniciante observou o gráfico que apresenta\t a\tevolução\t dos\tvalores\tde\tduas\tcriptomoedas A\te\tB\tem\trelação\tao\ttempo. Criptomoeda B (milhar de real) Criptomoeda A (milhar de real) Durante horas consecutivas, esses valores foram observados em nove instantes, representados por horas exatas. Em quantos desses instantes a criptomoeda A estava mais\tvalorizada\tdo\tque\ta\tcriptomoeda\tB? A A 3 B B 4 C C 6 D D 7 E E 9",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    },
+    {
+      "id": "ENEM_2023_Q156",
+      "source_info": {
+        "exam": "ENEM",
+        "year": 2023,
+        "question_number": 156,
+        "day": 2,
+        "subject": "Matemática"
+      },
+      "content": {
+        "statement": "Uma pessoa caminha por 30 minutos e utiliza um aplicativo instalado em seu celular para monitorar a variação \tda\tintensidade \tdo\tsinal\tde\tinternet\trecebido pelo aparelho durante o deslocamento. Chegando ao seu destino,\to\taplicativo\tforneceu\teste\tgráfico:Intensidade do sinal de internet Tempo (min)024681012141618202224262830 Por quantos minutos, durante essa caminhada, o celular dessa\tpessoa\tficou\tsem\treceber\tsinal\tde\tinternet? A A 6 B B 8 C C 10 D D 14 E E 24",
+        "alternatives": [],
+        "correct_answer": null
+      },
+      "classification": {
+        "topic": "Funções",
+        "difficulty": "Médio",
+        "skills_required": [
+          "Interpretação Gráfica"
+        ]
+      },
+      "teaching_notes": {
+        "solution_explanation": "",
+        "teaching_tips": [
+          "Analise o domínio e imagem da função",
+          "Faça um esboço do gráfico se possível",
+          "Identifique o tipo de função (linear, quadrática, etc.)"
+        ],
+        "common_mistakes": [
+          "Erro de cálculo",
+          "Interpretação incorreta do enunciado"
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "topics_included": [
+      "Funções"
+    ],
+    "years_included": [
+      2024,
+      2023
+    ],
+    "difficulty_levels": [
+      "Médio"
+    ]
+  }
+}

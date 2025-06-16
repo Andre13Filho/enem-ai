@@ -1,0 +1,26 @@
+[server]
+enableXsrfProtection = false
+enableCORS = false
+maxUploadSize = 200
+headless = true
+
+[theme]
+primaryColor = "#09278d"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f0f2f6"
+textColor = "#262730"
+
+[client]
+showErrorDetails = false
+toolbarMode = "minimal"
+
+[browser]
+gatherUsageStats = false
+
+[runner]
+magicEnabled = true
+installTracer = false
+fixMatplotlib = true
+
+[logger]
+level = "info" 

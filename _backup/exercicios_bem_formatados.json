@@ -1,0 +1,96 @@
+{
+  "exercicios_bem_formatados": [
+    {
+      "id": "ENEM_2024_Q136",
+      "year": 2024,
+      "question_number": 136,
+      "statement": "A criptografia refere-se à construção e análise de protocolos que impedem terceiros de lerem mensagens privadas.",
+      "alternatives": [
+        {
+          "letter": "A",
+          "text": "criptografia refere-se à construção e análise de protocolos que impedem terceiros de lerem mensagens privadas."
+        },
+        {
+          "letter": "B",
+          "text": "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z A B C Letra do texto codificado"
+        },
+        {
+          "letter": "C",
+          "text": "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Letra do texto original"
+        },
+        {
+          "letter": "D",
+          "text": "A probabilidade de se descobrir o padrão dessa Cifra de César apenas na terceira tentativa é dada por"
+        },
+        {
+          "letter": "E",
+          "text": "24"
+        }
+      ],
+      "topic": "Análise Combinatória"
+    },
+    {
+      "id": "ENEM_2024_Q137",
+      "year": 2024,
+      "question_number": 137,
+      "statement": "Uma mensagem, em um alfabeto de 26 letras, foi codificada usando uma Cifra de César. Considere a probabilidade de se descobrir, aleatoriamente, o padrão utilizado nessa codificação, e que uma tentativa frustrada deverá ser eliminada nas tentativas seguintes.",
+      "alternatives": [
+        {
+          "letter": "A",
+          "text": "1/26 + 1/25 + 1/24"
+        },
+        {
+          "letter": "B",
+          "text": "24/26 + 23/25 + 1/24"
+        },
+        {
+          "letter": "C",
+          "text": "1/26 × 23/25 × 1/24"
+        },
+        {
+          "letter": "D",
+          "text": "24/26 × 23/25 × 1/24"
+        },
+        {
+          "letter": "E",
+          "text": "24/26 × 23/25 × 22/24"
+        }
+      ],
+      "topic": "Probabilidade"
+    },
+    {
+      "id": "ENEM_2024_Q138",
+      "year": 2024,
+      "question_number": 138,
+      "statement": "Um triângulo ABC tem área igual a 12 cm². O ponto M é o ponto médio do lado AB, e o ponto N é o ponto médio do lado AC. Qual é a área do triângulo AMN?",
+      "alternatives": [
+        {
+          "letter": "A",
+          "text": "3 cm²"
+        },
+        {
+          "letter": "B",
+          "text": "4 cm²"
+        },
+        {
+          "letter": "C",
+          "text": "6 cm²"
+        },
+        {
+          "letter": "D",
+          "text": "8 cm²"
+        },
+        {
+          "letter": "E",
+          "text": "9 cm²"
+        }
+      ],
+      "topic": "Geometria"
+    }
+  ],
+  "resumo": {
+    "total": 3,
+    "status": "Exemplos criados conforme solicitado",
+    "formato": "Enunciado separado das alternativas"
+  }
+}
