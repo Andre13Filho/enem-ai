@@ -86,6 +86,12 @@ try:
 except ImportError:
     PROFESSOR_FERNANDO_LOCAL_AVAILABLE = False
 
+# Importa Professora Letícia com sistema RAG Local de Português
+try:
+    from professor_leticia_local import PORTUGUESE_RAG_AVAILABLE
+except ImportError:
+    PORTUGUESE_RAG_AVAILABLE = False
+
 # Importa sistema de exercícios do ENEM
 try:
     from enem_exercises_rag import enem_exercises_rag
