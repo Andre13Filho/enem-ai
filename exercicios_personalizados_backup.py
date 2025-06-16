@@ -119,16 +119,14 @@ def get_pdf_info(question_key):
         pdf_name = f"dia01_{year}.pdf"
         # Primeiro dia está na pasta raiz
         possible_paths = [
-            Path("Primeiro dia") / year / pdf_name,
-            Path("_backup") / "Primeiro dia" / year / pdf_name
+            Path("Primeiro dia") / year / pdf_name
         ]
     else:
         day = 2
         pdf_name = f"dia02_{year}.pdf"
-        # Segundo dia está no backup
+        # Segundo dia está na pasta raiz
         possible_paths = [
-            Path("_backup") / "Segundo dia" / year / pdf_name,
-            Path("Segundo dia") / year / pdf_name  # Caso exista na raiz também
+            Path("Segundo dia") / year / pdf_name
         ]
     
     # Procura o PDF nas pastas disponíveis
@@ -145,12 +143,10 @@ def get_pdf_info(question_key):
     # Se não encontrou com o nome padrão, tenta buscar qualquer PDF do ano na pasta
     if day == 1:
         year_folders = [
-            Path("Primeiro dia") / year,
-            Path("_backup") / "Primeiro dia" / year
+            Path("Primeiro dia") / year
         ]
     else:
         year_folders = [
-            Path("_backup") / "Segundo dia" / year,
             Path("Segundo dia") / year
         ]
     

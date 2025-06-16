@@ -20,7 +20,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 class PhysicsExercisesRAG:
     """Sistema RAG para exercícios de física do ENEM"""
     
-    def __init__(self, exercises_folder: str = "./_backup/Segundo dia"):
+    def __init__(self, exercises_folder: str = "./Segundo dia"):
         self.exercises_folder = exercises_folder
         self.persist_directory = "./chroma_physics_exercises_db"
         self.documents = []
