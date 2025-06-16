@@ -11,7 +11,7 @@ from pathlib import Path
 
 # LangChain imports
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_chroma import Chroma
+from langchain_community.vectorstores import Chroma
 try:
     from langchain_huggingface import HuggingFaceEmbeddings
 except ImportError:

@@ -13,7 +13,7 @@ import hashlib
 # LangChain imports
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_chroma import Chroma
+from langchain_community.vectorstores import Chroma
 try:
     from langchain_huggingface import HuggingFaceEmbeddings
 except ImportError:

@@ -6,13 +6,15 @@ groq>=0.4.0
 langchain>=0.1.0
 langchain-openai
 langchain-community
-langchain-chroma
-chromadb>=0.4.0
+chromadb==0.4.24
+protobuf==3.20.3
 
 # Embeddings e Processamento de Texto
 sentence-transformers>=2.2.0
 tiktoken
 langchain-huggingface
+grpcio==1.60.1
+grpcio-status==1.60.1
 
 # Processamento de Documentos
 python-docx>=0.8.11
