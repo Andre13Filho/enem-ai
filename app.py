@@ -360,14 +360,6 @@ for subject in SUBJECTS.keys():
     if f'last_message_{subject}' not in st.session_state:
         st.session_state[f'last_message_{subject}'] = ""
 
-# Validação da API Key
-if not api_key:
-    st.error("GROQ_API_KEY não encontrada.")
-    st.warning("Por favor, configure a secret GROQ_API_KEY no Streamlit Cloud para usar a aplicação.")
-    st.stop() # Interrompe a execução se a chave não estiver configurada
-else:
-    st.success("🔐 API Key carregada com sucesso.")
-
 class GroqTeacher:
     """Professor genérico usando DeepSeek R1 Distill via Groq"""
     
@@ -672,15 +664,27 @@ def main():
 
         # Validação da API Key
         if not api_key:
-            st.error("GROQ_API_KEY não encontrada.")
+            st.error("🔑 GROQ_API_KEY não encontrada.")
             st.warning("Por favor, configure a secret GROQ_API_KEY no Streamlit Cloud para usar a aplicação.")
-            st.stop() # Interrompe a execução se a chave não estiver configurada
+            st.stop()  # Interrompe a execução se a chave não estiver configurada
         else:
             st.success("🔐 API Key carregada com sucesso.")
         
         # Configuração específica para cada matéria (apenas se carregada)
         if current_subject == "Matemática" and "carlos" in _imported_modules:
             _imported_modules["carlos"]["setup"]()
+        elif current_subject == "Química" and "luciana" in _imported_modules:
+            _imported_modules["luciana"]["setup"]()
+        elif current_subject == "Biologia" and "roberto" in _imported_modules:
+            _imported_modules["roberto"]["setup"]()
+        elif current_subject == "História" and "eduardo" in _imported_modules:
+            _imported_modules["eduardo"]["setup"]()
+        elif current_subject == "Geografia" and "marina" in _imported_modules:
+            _imported_modules["marina"]["setup"]()
+        elif current_subject == "Língua Portuguesa" and "leticia" in _imported_modules:
+            _imported_modules["leticia"]["setup"]()
+        elif current_subject == "Física" and "fernando" in _imported_modules:
+            _imported_modules["fernando"]["setup"]()
 
     # --- Área Principal com Abas Condicionais ---
     
