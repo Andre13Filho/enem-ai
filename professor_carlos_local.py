@@ -58,6 +58,27 @@ class ProfessorCarlosLocal:
                 st.warning("Criando pasta matemática...")
                 os.makedirs(self.rag_system.math_folder_path, exist_ok=True)
             
+            # 🆕 NOVO: Tenta baixar documentos do Google Drive primeiro
+            try:
+                from cloud_documents import cloud_doc_loader
+                st.info("☁️ Verificando documentos no Google Drive...")
+                
+                # Verifica status dos documentos
+                status = cloud_doc_loader.check_documents_available()
+                disponivel = sum(status.values())
+                total = len(status)
+                
+                if disponivel < total:
+                    st.info(f"📥 Baixando documentos do Google Drive ({disponivel}/{total} disponíveis)...")
+                    cloud_doc_loader.ensure_documents_loaded()
+                    st.success("✅ Documentos baixados do Google Drive!")
+                else:
+                    st.success(f"✅ Todos os {total} documentos já estão disponíveis!")
+                    
+            except Exception as cloud_error:
+                st.warning(f"⚠️ Problema no download do Google Drive: {str(cloud_error)}")
+                st.info("📚 Continuando com documentos locais...")
+            
             # Tenta carregar vectorstore existente primeiro
             st.info("📚 Tentando carregar base de conhecimento existente...")
             vectorstore_carregado = self.rag_system.load_existing_vectorstore()
@@ -90,8 +111,22 @@ class ProfessorCarlosLocal:
                     st.warning(f"Erro ao listar arquivos: {str(e)}")
                 
                 if len(arquivos) == 0:
-                    st.warning("⚠️ Nenhum arquivo encontrado. Usando modo de emergência...")
-                    return self._try_emergency_initialization(api_key)
+                    st.warning("⚠️ Nenhum arquivo encontrado. Tentando baixar do Google Drive...")
+                    
+                    # 🆕 Tenta baixar documentos se não há arquivos locais
+                    try:
+                        from cloud_documents import cloud_doc_loader
+                        success = cloud_doc_loader.ensure_documents_loaded()
+                        if success:
+                            st.info("🔄 Reprocessando após download...")
+                            # Tenta novamente após download
+                            return self.initialize_system(api_key)
+                        else:
+                            st.warning("❌ Falha no download. Usando modo de emergência...")
+                            return self._try_emergency_initialization(api_key)
+                    except Exception as download_error:
+                        st.error(f"❌ Erro no download: {str(download_error)}")
+                        return self._try_emergency_initialization(api_key)
                 
                 with st.spinner("Processando documentos da pasta matemática..."):
                     try:
