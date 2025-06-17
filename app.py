@@ -36,6 +36,11 @@ try:
 except ImportError:
     pass
 
+# Carrega a chave da API Groq a partir das variáveis de ambiente
+# No Streamlit Cloud, defina em "Settings" > "Secrets"
+# Localmente, pode estar em um arquivo .env
+api_key = os.environ.get("GROQ_API_KEY")
+
 # Configuração da página - DEVE SER A PRIMEIRA CHAMADA STREAMLIT
 st.set_page_config(
     page_title="ENEM AI Helper - Professores Particulares para Sther",
@@ -76,7 +81,7 @@ def lazy_import_professor(subject: str):
             PROFESSOR_CARLOS_LOCAL_AVAILABLE = True
         except ImportError:
             pass
-    
+
     elif subject == "Química" and "luciana" not in _imported_modules:
         try:
             from professor_luciana_local import setup_professor_luciana_local_ui, get_professor_luciana_local_response
@@ -87,7 +92,7 @@ def lazy_import_professor(subject: str):
             PROFESSOR_LUCIANA_LOCAL_AVAILABLE = True
         except ImportError:
             pass
-    
+
     elif subject == "Biologia" and "roberto" not in _imported_modules:
         try:
             from professor_roberto_local import setup_professor_roberto_local_ui, get_professor_roberto_local_response
@@ -98,7 +103,7 @@ def lazy_import_professor(subject: str):
             PROFESSOR_ROBERTO_LOCAL_AVAILABLE = True
         except ImportError:
             pass
-    
+
     elif subject == "História" and "eduardo" not in _imported_modules:
         try:
             from professor_eduardo_local import setup_professor_eduardo_local_ui, get_professor_eduardo_local_response
@@ -109,7 +114,7 @@ def lazy_import_professor(subject: str):
             PROFESSOR_EDUARDO_LOCAL_AVAILABLE = True
         except ImportError:
             pass
-    
+
     elif subject == "Geografia" and "marina" not in _imported_modules:
         try:
             from professor_marina_local import setup_professor_marina_local_ui, get_professor_marina_local_response
@@ -120,7 +125,7 @@ def lazy_import_professor(subject: str):
             PROFESSOR_MARINA_LOCAL_AVAILABLE = True
         except ImportError:
             pass
-    
+
     elif subject == "Física" and "fernando" not in _imported_modules:
         try:
             from professor_fernando_local import setup_professor_fernando_local_ui, get_professor_fernando_local_response
@@ -662,32 +667,16 @@ def main():
         """, unsafe_allow_html=True)
         
         # Configuração da API Key
-        if AUTO_API_KEY:
-            # API Key configurada automaticamente - não mostra interface
-            st.markdown("### ✅ Sistema Configurado")
-            st.success("🔐 API Key carregada automaticamente")
-        else:
-            # Mostra interface para configurar API Key manualmente
-            st.markdown("### 🔑 Configuração Necessária")
-            manual_api_key = st.text_input(
-                "API Key Groq:",
-                type="password",
-                value=st.session_state.api_key if not AUTO_API_KEY else "",
-                placeholder="Cole sua API Key aqui",
-                help="Obtenha em: https://console.groq.com"
-            )
-            if manual_api_key:
-                st.session_state.api_key = manual_api_key
-                st.success("✅ API Key configurada!")
+        if not api_key:
+            st.error("A chave GROQ_API_KEY não foi encontrada.")
+            st.warning("Por favor, configure a chave API nas secrets do Streamlit Cloud ou em um arquivo .env local.")
+            if cloud_config and cloud_config.is_cloud:
+                st.info("💡 **Dica:** Configure `GROQ_API_KEY` nas secrets do Streamlit Cloud.")
             else:
-                st.warning("⚠️ Configure sua API Key para usar os professores")
-                if cloud_config and cloud_config.is_cloud:
-                    st.info("💡 **Dica:** Configure GROQ_API_KEY nas secrets do Streamlit Cloud")
-                else:
-                    st.info("💡 **Dica:** Crie um arquivo `.env` com `GROQ_API_KEY=sua_chave` para configuração automática")
-        
-        # Define a API key final a ser usada
-        api_key = AUTO_API_KEY if AUTO_API_KEY else st.session_state.api_key
+                st.info("💡 **Dica:** Crie um arquivo `.env` com `GROQ_API_KEY=sua_chave` para configuração automática.")
+            st.stop()
+        else:
+            st.success("🔐 API Key carregada com sucesso!")
         
         # Configuração específica para cada matéria (apenas se carregada)
         if current_subject == "Matemática" and "carlos" in _imported_modules:
