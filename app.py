@@ -338,8 +338,13 @@ SUBJECTS = {
     },
 }
 
-# Carrega a chave da API diretamente das variáveis de ambiente
-api_key = os.environ.get("GROQ_API_KEY")
+# Carrega a chave da API do Streamlit secrets ou variáveis de ambiente
+try:
+    # Tenta primeiro carregar do Streamlit secrets (para deployment no Streamlit Cloud)
+    api_key = st.secrets.get("GROQ_API_KEY")
+except:
+    # Fallback para variáveis de ambiente (para desenvolvimento local)
+    api_key = os.environ.get("GROQ_API_KEY")
 
 # Inicialização do session state
 if 'chat_history' not in st.session_state:
