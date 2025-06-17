@@ -50,9 +50,20 @@ class ProfessorCarlosLocal:
         try:
             st.info("🔄 Inicializando sistema RAG...")
             
-            # Tenta carregar vectorstore existente primeiro ou criar em memória
-            if self.rag_system.load_existing_vectorstore():
-                st.info("📚 Base de conhecimento carregada!")
+            # Debug: Verifica se a pasta matemática existe
+            pasta_existe = os.path.exists(self.rag_system.math_folder_path)
+            st.info(f"📁 Pasta matemática ({self.rag_system.math_folder_path}): {'✅ Existe' if pasta_existe else '❌ Não existe'}")
+            
+            if not pasta_existe:
+                st.warning("Criando pasta matemática...")
+                os.makedirs(self.rag_system.math_folder_path, exist_ok=True)
+            
+            # Tenta carregar vectorstore existente primeiro
+            st.info("📚 Tentando carregar base de conhecimento existente...")
+            vectorstore_carregado = self.rag_system.load_existing_vectorstore()
+            
+            if vectorstore_carregado:
+                st.success("✅ Base de conhecimento carregada!")
                 try:
                     self.rag_system.create_rag_chain(api_key)
                     self.current_api_key = api_key
@@ -60,11 +71,27 @@ class ProfessorCarlosLocal:
                     st.success("✅ Sistema RAG inicializado com sucesso!")
                     return True
                 except Exception as chain_error:
-                    st.error(f"Erro ao criar cadeia RAG: {str(chain_error)}")
-                    return False
+                    st.error(f"❌ Erro ao criar cadeia RAG: {str(chain_error)}")
+                    return self._try_emergency_initialization(api_key)
             else:
                 # Se load_existing_vectorstore falhou, tenta processar documentos
-                st.info("🔄 Processando documentos de matemática...")
+                st.info("📚 Processando documentos de matemática...")
+                
+                # Verifica se há arquivos na pasta
+                arquivos = []
+                try:
+                    for root, dirs, files in os.walk(self.rag_system.math_folder_path):
+                        for file in files:
+                            if file.lower().endswith(('.pdf', '.docx', '.txt')):
+                                arquivos.append(file)
+                    
+                    st.info(f"📄 Encontrados {len(arquivos)} arquivos: {', '.join(arquivos[:3])}{'...' if len(arquivos) > 3 else ''}")
+                except Exception as e:
+                    st.warning(f"Erro ao listar arquivos: {str(e)}")
+                
+                if len(arquivos) == 0:
+                    st.warning("⚠️ Nenhum arquivo encontrado. Usando modo de emergência...")
+                    return self._try_emergency_initialization(api_key)
                 
                 with st.spinner("Processando documentos da pasta matemática..."):
                     try:
@@ -79,44 +106,135 @@ class ProfessorCarlosLocal:
                             return True
                         else:
                             st.error("❌ Falha ao processar documentos")
-                            return False
+                            return self._try_emergency_initialization(api_key)
                     except Exception as processing_error:
                         st.error(f"❌ Erro no processamento: {str(processing_error)}")
                         # Tenta fallback com documentos básicos
-                        return self._try_fallback_initialization(api_key)
+                        return self._try_emergency_initialization(api_key)
                     
         except Exception as e:
             st.error(f"❌ Erro na inicialização: {str(e)}")
-            return self._try_fallback_initialization(api_key)
+            return self._try_emergency_initialization(api_key)
     
-    def _try_fallback_initialization(self, api_key: str) -> bool:
-        """Tenta inicialização de fallback com conteúdo básico"""
+    def _try_emergency_initialization(self, api_key: str) -> bool:
+        """Inicialização de emergência com conteúdo básico"""
         try:
-            st.warning("🔄 Tentando inicialização de emergência...")
+            st.warning("🚨 Tentando inicialização de emergência...")
             
             # Cria documento básico de matemática
             from langchain.schema import Document
             
             basic_content = """
-            # Matemática - Conceitos ENEM
-            
-            ## Funções Quadráticas
-            Uma função quadrática tem a forma f(x) = ax² + bx + c, onde a ≠ 0.
-            A fórmula de Bhaskara é: x = (-b ± √(b² - 4ac)) / 2a
-            
-            ## Geometria
-            Área do círculo: A = πr²
-            Volume do cilindro: V = πr²h
-            
-            ## Trigonometria
-            sen²θ + cos²θ = 1
-            """
+# Matemática - Guia ENEM 2024
+
+## Funções Quadráticas
+A função quadrática tem a forma: f(x) = ax² + bx + c, onde a ≠ 0
+
+### Fórmula de Bhaskara
+Para resolver equações do tipo ax² + bx + c = 0:
+x = (-b ± √(b² - 4ac)) / 2a
+
+### Discriminante (Δ)
+Δ = b² - 4ac
+- Se Δ > 0: duas raízes reais distintas
+- Se Δ = 0: uma raiz real (raiz dupla)
+- Se Δ < 0: não há raízes reais
+
+## Geometria Plana
+
+### Áreas
+- Retângulo: A = base × altura
+- Triângulo: A = (base × altura) / 2
+- Círculo: A = πr²
+- Trapézio: A = ((B + b) × h) / 2
+
+### Perímetros
+- Retângulo: P = 2(base + altura)
+- Círculo: P = 2πr
+- Triângulo: P = a + b + c
+
+## Geometria Espacial
+
+### Volumes
+- Cubo: V = a³
+- Paralelepípedo: V = a × b × c
+- Cilindro: V = πr²h
+- Cone: V = (πr²h) / 3
+- Esfera: V = (4πr³) / 3
+
+## Trigonometria
+
+### Relações Fundamentais
+- sen²θ + cos²θ = 1
+- tan θ = sen θ / cos θ
+
+### Ângulos Notáveis
+- 30°: sen = 1/2, cos = √3/2, tan = √3/3
+- 45°: sen = √2/2, cos = √2/2, tan = 1
+- 60°: sen = √3/2, cos = 1/2, tan = √3
+
+## Progressões
+
+### Progressão Aritmética (PA)
+- Termo geral: an = a1 + (n-1)r
+- Soma dos n primeiros termos: Sn = n(a1 + an)/2
+
+### Progressão Geométrica (PG)
+- Termo geral: an = a1 × q^(n-1)
+- Soma dos n primeiros termos: Sn = a1(q^n - 1)/(q - 1)
+
+## Estatística
+
+### Medidas de Tendência Central
+- Média: M = (x1 + x2 + ... + xn) / n
+- Mediana: valor central dos dados ordenados
+- Moda: valor que mais se repete
+
+### Probabilidade
+- P(A) = número de casos favoráveis / número total de casos
+- P(A ∪ B) = P(A) + P(B) - P(A ∩ B)
+- P(A ∩ B) = P(A) × P(B|A)
+
+## Análise Combinatória
+
+### Arranjos
+- A(n,p) = n! / (n-p)!
+
+### Combinações
+- C(n,p) = n! / (p! × (n-p)!)
+
+### Permutações
+- P(n) = n!
+
+## Logaritmos
+
+### Propriedades
+- log(a × b) = log a + log b
+- log(a / b) = log a - log b
+- log(a^n) = n × log a
+- log_a(a) = 1
+- log_a(1) = 0
+
+## Funções
+
+### Função Afim
+f(x) = ax + b
+- Coeficiente angular: a
+- Coeficiente linear: b
+
+### Função Exponencial
+f(x) = a^x (a > 0, a ≠ 1)
+
+### Função Logarítmica
+f(x) = log_a(x) (a > 0, a ≠ 1, x > 0)
+"""
             
             basic_doc = Document(
                 page_content=basic_content,
-                metadata={"source": "conteudo_emergencia", "topic": "matemática_geral"}
+                metadata={"source": "conteudo_emergencia_enem", "topic": "matemática_completa"}
             )
             
+            # Configura sistema com documento básico
             self.rag_system.documents = [basic_doc]
             self.rag_system._create_vectorstore()
             self.rag_system.create_rag_chain(api_key)
@@ -124,7 +242,8 @@ class ProfessorCarlosLocal:
             self.current_api_key = api_key
             self.is_initialized = True
             
-            st.success("⚠️ Sistema inicializado em modo básico - funcionando com conteúdo limitado")
+            st.success("🚨 Sistema inicializado em modo EMERGÊNCIA - funcionando com conteúdo básico do ENEM")
+            st.info("📚 O Professor Carlos está pronto com os principais tópicos de matemática do ENEM!")
             return True
             
         except Exception as fallback_error:
