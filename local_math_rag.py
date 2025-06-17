@@ -355,27 +355,42 @@ class LocalMathRAG:
         if not self.retriever:
             raise Exception("Retriever não configurado")
         
-        # Configura LLM
-        llm = GroqLLM(api_key=api_key)
-        
-        # Configura memória
-        self.memory = ConversationBufferMemory(
-            memory_key="chat_history",
-            return_messages=True,
-            output_key="answer"
-        )
-        
-        # Cria chain conversacional
-        self.rag_chain = ConversationalRetrievalChain.from_llm(
-            llm=llm,
-            retriever=self.retriever,
-            memory=self.memory,
-            return_source_documents=True,
-            verbose=False
-        )
+        try:
+            print(f"🔗 Criando chain RAG com API key: {api_key[:10]}...")
+            
+            # Configura LLM
+            llm = GroqLLM(api_key=api_key)
+            print("✅ LLM GroqLLM configurado")
+            
+            # Configura memória
+            self.memory = ConversationBufferMemory(
+                memory_key="chat_history",
+                return_messages=True,
+                output_key="answer"
+            )
+            print("✅ Memória conversacional configurada")
+            
+            # Cria chain conversacional
+            self.rag_chain = ConversationalRetrievalChain.from_llm(
+                llm=llm,
+                retriever=self.retriever,
+                memory=self.memory,
+                return_source_documents=True,
+                verbose=False
+            )
+            print("✅ Chain RAG conversacional criada")
+            
+        except Exception as e:
+            print(f"❌ Erro ao criar chain RAG: {str(e)}")
+            print(f"• Tipo do erro: {type(e).__name__}")
+            print(f"• API key fornecida: {api_key[:10] if api_key else 'None'}...")
+            print(f"• Retriever disponível: {self.retriever is not None}")
+            raise Exception(f"Falha na criação da chain RAG: {str(e)}")
         
         # Personaliza o prompt
-        self.rag_chain.combine_docs_chain.llm_chain.prompt.template = """
+        if self.rag_chain:
+            try:
+                self.rag_chain.combine_docs_chain.llm_chain.prompt.template = """
 Você é o Professor Carlos, especialista em matemática do ENEM. Responda APENAS como professor, SEM mostrar seu raciocínio interno.
 
 CONTEXTO: {context}
@@ -406,31 +421,60 @@ onde $n$ é o número de lados.
 $$D = \\frac{{5(5-3)}}{{2}} = \\frac{{5 \\times 2}}{{2}} = 5$$"
 
 Responda de forma didática para estudante de 17 anos, usando o contexto fornecido:"""
+                print("✅ Prompt personalizado configurado")
+            except Exception as prompt_error:
+                print(f"⚠️ Erro ao configurar prompt: {str(prompt_error)}")
+        
+        # Verificação final
+        if self.rag_chain is None:
+            raise Exception("Chain RAG é None após criação - falha crítica")
+        
+        print("🎉 Chain RAG criada e configurada com sucesso!")
     
     def get_response(self, question: str) -> Dict[str, Any]:
         """Gera resposta usando RAG"""
         if not self.rag_chain:
+            print("❌ get_response: rag_chain é None")
+            print(f"• Retriever disponível: {self.retriever is not None}")
+            print(f"• Documentos carregados: {len(self.documents) if self.documents else 0}")
+            print(f"• Vectorstore configurado: {self.vectorstore is not None}")
+            
             return {
-                "answer": "Sistema RAG não inicializado. Configure sua API key.",
+                "answer": "⚠️ Sistema RAG não inicializado. A cadeia RAG não foi criada. Verifique: 1) API key válida, 2) Documentos processados, 3) Vectorstore criado.",
                 "source_documents": []
             }
         
         try:
+            print(f"🤖 Gerando resposta para: {question[:50]}...")
             result = self.rag_chain({
                 "question": question,
                 "chat_history": []
             })
+            print("✅ Resposta gerada com sucesso")
             
             # Aplica formatação melhorada na resposta
-            from math_formatter import format_professor_response
-            if "answer" in result:
-                result["answer"] = format_professor_response(result["answer"])
+            try:
+                from math_formatter import format_professor_response
+                if "answer" in result:
+                    result["answer"] = format_professor_response(result["answer"])
+            except ImportError:
+                print("⚠️ math_formatter não disponível - pulando formatação")
             
             return result
             
         except Exception as e:
+            error_msg = str(e)
+            print(f"❌ Erro ao gerar resposta: {error_msg}")
+            
+            # Verifica se é erro de API key
+            if "401" in error_msg or "invalid" in error_msg.lower() or "unauthorized" in error_msg.lower():
+                return {
+                    "answer": "🔑 Erro de autenticação com a API Groq. Verifique se sua API key está correta e válida.",
+                    "source_documents": []
+                }
+            
             return {
-                "answer": f"Erro ao gerar resposta: {str(e)}",
+                "answer": f"❌ Erro ao gerar resposta: {error_msg}",
                 "source_documents": []
             }
     
