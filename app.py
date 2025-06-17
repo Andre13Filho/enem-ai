@@ -36,11 +36,6 @@ try:
 except ImportError:
     pass
 
-# Carrega a chave da API Groq a partir das variáveis de ambiente
-# No Streamlit Cloud, defina em "Settings" > "Secrets"
-# Localmente, pode estar em um arquivo .env
-api_key = os.environ.get("GROQ_API_KEY")
-
 # Configuração da página - DEVE SER A PRIMEIRA CHAMADA STREAMLIT
 st.set_page_config(
     page_title="ENEM AI Helper - Professores Particulares para Sther",
@@ -343,20 +338,14 @@ SUBJECTS = {
     },
 }
 
-# Carrega chave da API automaticamente do arquivo .env
-# Obtém chave de API de forma adaptativa
-if cloud_config:
-    AUTO_API_KEY = cloud_config.get_api_key('GROQ_API_KEY') or ''
-else:
-    AUTO_API_KEY = os.getenv('GROQ_API_KEY', '')
+# Carrega a chave da API diretamente das variáveis de ambiente
+api_key = os.environ.get("GROQ_API_KEY")
 
 # Inicialização do session state
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = {subject: [] for subject in SUBJECTS.keys()}
 if 'current_subject' not in st.session_state:
     st.session_state.current_subject = "Matemática"
-if 'api_key' not in st.session_state:
-    st.session_state.api_key = ""
 if 'processing_message' not in st.session_state:
     st.session_state.processing_message = False
 if 'generated_exercises' not in st.session_state:
@@ -364,16 +353,20 @@ if 'generated_exercises' not in st.session_state:
 if 'last_user_question' not in st.session_state:
     st.session_state.last_user_question = {subject: "" for subject in SUBJECTS.keys()}
 
-# Se há API key no .env, sempre usa ela (prioridade máxima)
-if AUTO_API_KEY:
-    st.session_state.api_key = AUTO_API_KEY
-
 # Inicializa variáveis de controle para Enter
 for subject in SUBJECTS.keys():
     if f'send_message_{subject}' not in st.session_state:
         st.session_state[f'send_message_{subject}'] = False
     if f'last_message_{subject}' not in st.session_state:
         st.session_state[f'last_message_{subject}'] = ""
+
+# Validação da API Key
+if not api_key:
+    st.error("GROQ_API_KEY não encontrada.")
+    st.warning("Por favor, configure a secret GROQ_API_KEY no Streamlit Cloud para usar a aplicação.")
+    st.stop() # Interrompe a execução se a chave não estiver configurada
+else:
+    st.success("🔐 API Key carregada com sucesso.")
 
 class GroqTeacher:
     """Professor genérico usando DeepSeek R1 Distill via Groq"""
@@ -666,34 +659,6 @@ def main():
         </div>
         """, unsafe_allow_html=True)
         
-        # Configuração da API Key
-        if not api_key:
-            st.error("A chave GROQ_API_KEY não foi encontrada.")
-            st.warning("Por favor, configure a chave API nas secrets do Streamlit Cloud ou em um arquivo .env local.")
-            if cloud_config and cloud_config.is_cloud:
-                st.info("💡 **Dica:** Configure `GROQ_API_KEY` nas secrets do Streamlit Cloud.")
-            else:
-                st.info("💡 **Dica:** Crie um arquivo `.env` com `GROQ_API_KEY=sua_chave` para configuração automática.")
-            st.stop()
-        else:
-            st.success("🔐 API Key carregada com sucesso!")
-        
-        # Configuração específica para cada matéria (apenas se carregada)
-        if current_subject == "Matemática" and "carlos" in _imported_modules:
-            _imported_modules["carlos"]["setup"]()
-        elif current_subject == "Química" and "luciana" in _imported_modules:
-            _imported_modules["luciana"]["setup"]()
-        elif current_subject == "Biologia" and "roberto" in _imported_modules:
-            _imported_modules["roberto"]["setup"]()
-        elif current_subject == "História" and "eduardo" in _imported_modules:
-            _imported_modules["eduardo"]["setup"]()
-        elif current_subject == "Geografia" and "marina" in _imported_modules:
-            _imported_modules["marina"]["setup"]()
-        elif current_subject == "Língua Portuguesa" and "leticia" in _imported_modules:
-            _imported_modules["leticia"]["setup"]()
-        elif current_subject == "Física" and "fernando" in _imported_modules:
-            _imported_modules["fernando"]["setup"]()
-        
         # Estatísticas
         st.markdown("### 📊 Seu Progresso")
         progress_value = min(len(st.session_state.chat_history[current_subject]) * 10, 100)
@@ -704,6 +669,18 @@ def main():
         if st.button("🗑️ Limpar Chat", key="clear_chat"):
             st.session_state.chat_history[current_subject] = []
             st.rerun()
+
+        # Validação da API Key
+        if not api_key:
+            st.error("GROQ_API_KEY não encontrada.")
+            st.warning("Por favor, configure a secret GROQ_API_KEY no Streamlit Cloud para usar a aplicação.")
+            st.stop() # Interrompe a execução se a chave não estiver configurada
+        else:
+            st.success("🔐 API Key carregada com sucesso.")
+        
+        # Configuração específica para cada matéria (apenas se carregada)
+        if current_subject == "Matemática" and "carlos" in _imported_modules:
+            _imported_modules["carlos"]["setup"]()
 
     # --- Área Principal com Abas Condicionais ---
     
