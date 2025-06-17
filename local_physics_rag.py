@@ -237,23 +237,29 @@ class LocalPhysicsRAG:
         return topic.title()
     
     def _create_vectorstore(self):
-        """Cria vectorstore com os documentos processados"""
+        """Cria vectorstore com fallback para ambiente cloud"""
+        if not self.documents:
+            raise ValueError("Nenhum documento disponível para criar vectorstore")
+        
         try:
-            if not self.documents:
-                st.error("Nenhum documento para criar vectorstore")
-                return
-            
-            # Remove vectorstore existente se houver
-            if os.path.exists(self.persist_directory):
-                import shutil
-                shutil.rmtree(self.persist_directory)
-            
-            # Cria novo vectorstore
-            self.vectorstore = Chroma.from_documents(
-                documents=self.documents,
-                embedding=self.embeddings,
-                persist_directory=self.persist_directory
-            )
+            # Primeira tentativa: vectorstore persistente
+            try:
+                os.makedirs(self.persist_directory, exist_ok=True)
+                self.vectorstore = Chroma.from_documents(
+                    documents=self.documents,
+                    embedding=self.embeddings,
+                    persist_directory=self.persist_directory
+                )
+                self.vectorstore.persist()
+                print(f"✅ Vectorstore de física persistente criado em {self.persist_directory}")
+            except Exception as persist_error:
+                print(f"⚠️ Falha na criação persistente de física: {persist_error}")
+                # Segunda tentativa: vectorstore em memória
+                self.vectorstore = Chroma.from_documents(
+                    documents=self.documents,
+                    embedding=self.embeddings
+                )
+                print("✅ Vectorstore de física em memória criado com sucesso")
             
             # Configura retriever
             self.retriever = self.vectorstore.as_retriever(
@@ -261,33 +267,52 @@ class LocalPhysicsRAG:
                 search_kwargs={"k": 5}
             )
             
-            print(f"✅ VectorStore criado com {len(self.documents)} documentos")
+            # Teste básico de funcionamento
+            test_docs = self.retriever.invoke("física")
+            print(f"✅ Vectorstore de física funcionando - teste retornou {len(test_docs)} documentos")
             
         except Exception as e:
-            st.error(f"Erro ao criar vectorstore: {str(e)}")
+            print(f"❌ Erro crítico na criação do vectorstore de física: {str(e)}")
+            raise
     
     def load_existing_vectorstore(self) -> bool:
-        """Carrega vectorstore existente se disponível"""
+        """Carrega vectorstore existente ou cria um novo em memória"""
         try:
-            if not os.path.exists(self.persist_directory):
+            # Primeiro tenta carregar vectorstore persistente
+            if os.path.exists(self.persist_directory):
+                self.vectorstore = Chroma(
+                    persist_directory=self.persist_directory,
+                    embedding_function=self.embeddings
+                )
+                self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 5})
+                print("✅ Vectorstore persistente de física carregado com sucesso")
+                return True
+        except Exception as e:
+            print(f"⚠️ Erro ao carregar vectorstore persistente de física: {str(e)}")
+        
+        # Se falhar, tenta criar vectorstore em memória
+        try:
+            # Processa documentos se ainda não foram processados
+            if not self.documents:
+                print("🔄 Processando documentos de física para vectorstore em memória...")
+                if not self.process_physics_documents():
+                    return False
+            
+            if self.documents:
+                # Cria vectorstore em memória (sem persistência)
+                self.vectorstore = Chroma.from_documents(
+                    documents=self.documents,
+                    embedding=self.embeddings
+                )
+                self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 5})
+                print("✅ Vectorstore de física em memória criado com sucesso")
+                return True
+            else:
+                print("❌ Nenhum documento de física disponível para criar vectorstore")
                 return False
-            
-            self.vectorstore = Chroma(
-                persist_directory=self.persist_directory,
-                embedding_function=self.embeddings
-            )
-            
-            # Configura retriever
-            self.retriever = self.vectorstore.as_retriever(
-                search_type="similarity",
-                search_kwargs={"k": 5}
-            )
-            
-            print("✅ VectorStore carregado")
-            return True
                 
         except Exception as e:
-            print(f"❌ Erro ao carregar vectorstore: {str(e)}")
+            print(f"❌ Erro ao criar vectorstore de física em memória: {str(e)}")
             return False
     
     def create_rag_chain(self, api_key: str):

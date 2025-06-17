@@ -42,38 +42,93 @@ class ProfessorCarlosLocal:
             self.exercises_rag = ENEMExercisesRAG()
     
     def initialize_system(self, api_key: str) -> bool:
-        """Inicializa o sistema RAG local"""
+        """Inicializa o sistema RAG local com melhor tratamento de erros"""
         if not LOCAL_RAG_AVAILABLE:
             st.error("Sistema RAG local não disponível. Verifique local_math_rag.py")
             return False
         
         try:
-            # Tenta carregar vectorstore existente primeiro
+            st.info("🔄 Inicializando sistema RAG...")
+            
+            # Tenta carregar vectorstore existente primeiro ou criar em memória
             if self.rag_system.load_existing_vectorstore():
-                st.info("📚 Base de conhecimento existente carregada!")
-                self.rag_system.create_rag_chain(api_key)
-                self.current_api_key = api_key
-                self.is_initialized = True
-                return True
-            else:
-                # Se não existe, precisa processar documentos
-                st.info("🔄 Processando documentos de matemática pela primeira vez...")
-                
-                with st.spinner("Processando documentos da pasta matemática..."):
-                    success = self.rag_system.process_math_documents()
-                
-                if success:
+                st.info("📚 Base de conhecimento carregada!")
+                try:
                     self.rag_system.create_rag_chain(api_key)
                     self.current_api_key = api_key
                     self.is_initialized = True
                     st.success("✅ Sistema RAG inicializado com sucesso!")
                     return True
-                else:
-                    st.error("❌ Falha ao processar documentos")
+                except Exception as chain_error:
+                    st.error(f"Erro ao criar cadeia RAG: {str(chain_error)}")
                     return False
+            else:
+                # Se load_existing_vectorstore falhou, tenta processar documentos
+                st.info("🔄 Processando documentos de matemática...")
+                
+                with st.spinner("Processando documentos da pasta matemática..."):
+                    try:
+                        success = self.rag_system.process_math_documents()
+                        if success:
+                            # Força criação do vectorstore após processamento
+                            self.rag_system._create_vectorstore()
+                            self.rag_system.create_rag_chain(api_key)
+                            self.current_api_key = api_key
+                            self.is_initialized = True
+                            st.success("✅ Sistema RAG inicializado com sucesso!")
+                            return True
+                        else:
+                            st.error("❌ Falha ao processar documentos")
+                            return False
+                    except Exception as processing_error:
+                        st.error(f"❌ Erro no processamento: {str(processing_error)}")
+                        # Tenta fallback com documentos básicos
+                        return self._try_fallback_initialization(api_key)
                     
         except Exception as e:
-            st.error(f"Erro na inicialização: {str(e)}")
+            st.error(f"❌ Erro na inicialização: {str(e)}")
+            return self._try_fallback_initialization(api_key)
+    
+    def _try_fallback_initialization(self, api_key: str) -> bool:
+        """Tenta inicialização de fallback com conteúdo básico"""
+        try:
+            st.warning("🔄 Tentando inicialização de emergência...")
+            
+            # Cria documento básico de matemática
+            from langchain.schema import Document
+            
+            basic_content = """
+            # Matemática - Conceitos ENEM
+            
+            ## Funções Quadráticas
+            Uma função quadrática tem a forma f(x) = ax² + bx + c, onde a ≠ 0.
+            A fórmula de Bhaskara é: x = (-b ± √(b² - 4ac)) / 2a
+            
+            ## Geometria
+            Área do círculo: A = πr²
+            Volume do cilindro: V = πr²h
+            
+            ## Trigonometria
+            sen²θ + cos²θ = 1
+            """
+            
+            basic_doc = Document(
+                page_content=basic_content,
+                metadata={"source": "conteudo_emergencia", "topic": "matemática_geral"}
+            )
+            
+            self.rag_system.documents = [basic_doc]
+            self.rag_system._create_vectorstore()
+            self.rag_system.create_rag_chain(api_key)
+            
+            self.current_api_key = api_key
+            self.is_initialized = True
+            
+            st.success("⚠️ Sistema inicializado em modo básico - funcionando com conteúdo limitado")
+            return True
+            
+        except Exception as fallback_error:
+            st.error(f"❌ Falha total na inicialização: {str(fallback_error)}")
             return False
     
     def get_response(self, user_message: str, api_key: str) -> str:

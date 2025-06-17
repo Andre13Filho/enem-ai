@@ -272,17 +272,29 @@ class LocalMathRAG:
         return topic.title()
     
     def _create_vectorstore(self):
-        """Cria ou atualiza o vectorstore"""
+        """Cria vectorstore com fallback para ambiente cloud"""
+        if not self.documents:
+            raise ValueError("Nenhum documento disponível para criar vectorstore")
+        
         try:
-            if not self.embeddings:
-                raise Exception("Embeddings não configurados")
-            
-            # Cria vectorstore ChromaDB
-            self.vectorstore = Chroma.from_documents(
-                documents=self.documents,
-                embedding=self.embeddings,
-                persist_directory=self.persist_directory
-            )
+            # Primeira tentativa: vectorstore persistente
+            try:
+                os.makedirs(self.persist_directory, exist_ok=True)
+                self.vectorstore = Chroma.from_documents(
+                    documents=self.documents,
+                    embedding=self.embeddings,
+                    persist_directory=self.persist_directory
+                )
+                self.vectorstore.persist()
+                print(f"✅ Vectorstore persistente criado em {self.persist_directory}")
+            except Exception as persist_error:
+                print(f"⚠️ Falha na criação persistente: {persist_error}")
+                # Segunda tentativa: vectorstore em memória
+                self.vectorstore = Chroma.from_documents(
+                    documents=self.documents,
+                    embedding=self.embeddings
+                )
+                print("✅ Vectorstore em memória criado com sucesso")
             
             # Configura retriever
             self.retriever = self.vectorstore.as_retriever(
@@ -290,47 +302,53 @@ class LocalMathRAG:
                 search_kwargs={"k": 5}
             )
             
+            # Teste básico de funcionamento
+            test_docs = self.retriever.invoke("matemática")
+            print(f"✅ Vectorstore funcionando - teste retornou {len(test_docs)} documentos")
+            
         except Exception as e:
-            st.error(f"Erro ao criar vectorstore: {str(e)}")
+            print(f"❌ Erro crítico na criação do vectorstore: {str(e)}")
             raise
     
     def load_existing_vectorstore(self) -> bool:
-        """Carrega vectorstore existente se disponível"""
+        """Carrega vectorstore existente ou cria um novo em memória"""
         try:
-            if os.path.exists(self.persist_directory) and self.embeddings:
+            # Primeiro tenta carregar vectorstore persistente
+            if os.path.exists(self.persist_directory):
                 self.vectorstore = Chroma(
                     persist_directory=self.persist_directory,
                     embedding_function=self.embeddings
                 )
-                
-                self.retriever = self.vectorstore.as_retriever(
-                    search_type="similarity",
-                    search_kwargs={"k": 5}
-                )
-                
-                # Testa se a vectorstore tem conteúdo
-                try:
-                    test_docs = self.retriever.invoke("teste")
-                    print(f"✅ VectorStore carregada com {len(test_docs)} documentos de teste")
-                    
-                    # Simula documents para estatísticas
-                    # Como não temos acesso direto aos documentos originais,
-                    # vamos buscar uma amostra para estatísticas
-                    sample_docs = self.vectorstore.similarity_search("matemática", k=100)
-                    self.documents = sample_docs
-                    print(f"📊 Amostra carregada: {len(sample_docs)} chunks")
-                    
-                except Exception as e:
-                    print(f"⚠️ Erro no teste da VectorStore: {e}")
-                
+                self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 5})
+                print("✅ Vectorstore persistente carregado com sucesso")
                 return True
         except Exception as e:
-            if 'st' in globals():
-                st.warning(f"Não foi possível carregar vectorstore existente: {str(e)}")
-            else:
-                print(f"Não foi possível carregar vectorstore existente: {str(e)}")
+            print(f"⚠️ Erro ao carregar vectorstore persistente: {str(e)}")
         
-        return False
+        # Se falhar, tenta criar vectorstore em memória
+        try:
+            # Processa documentos se ainda não foram processados
+            if not self.documents:
+                print("🔄 Processando documentos para vectorstore em memória...")
+                if not self.process_math_documents():
+                    return False
+            
+            if self.documents:
+                # Cria vectorstore em memória (sem persistência)
+                self.vectorstore = Chroma.from_documents(
+                    documents=self.documents,
+                    embedding=self.embeddings
+                )
+                self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 5})
+                print("✅ Vectorstore em memória criado com sucesso")
+                return True
+            else:
+                print("❌ Nenhum documento disponível para criar vectorstore")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Erro ao criar vectorstore em memória: {str(e)}")
+            return False
     
     def create_rag_chain(self, api_key: str):
         """Cria chain RAG conversacional"""

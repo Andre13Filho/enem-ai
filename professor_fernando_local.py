@@ -39,38 +39,99 @@ class ProfessorFernandoLocal:
             self.exercises_rag = ENEMExercisesRAG()
     
     def initialize_system(self, api_key: str) -> bool:
-        """Inicializa o sistema RAG local"""
+        """Inicializa o sistema RAG local com melhor tratamento de erros"""
         if not LOCAL_RAG_AVAILABLE:
             st.error("Sistema RAG local não disponível. Verifique local_physics_rag.py")
             return False
         
         try:
-            # Tenta carregar vectorstore existente primeiro
+            st.info("🔄 Inicializando sistema RAG de Física...")
+            
+            # Tenta carregar vectorstore existente primeiro ou criar em memória
             if self.rag_system.load_existing_vectorstore():
-                st.info("📚 Base de conhecimento existente carregada!")
-                self.rag_system.create_rag_chain(api_key)
-                self.current_api_key = api_key
-                self.is_initialized = True
-                return True
-            else:
-                # Se não existe, precisa processar documentos
-                st.info("🔄 Processando documentos de física pela primeira vez...")
-                
-                with st.spinner("Processando documentos da pasta física..."):
-                    success = self.rag_system.process_physics_documents()
-                
-                if success:
+                st.info("📚 Base de conhecimento carregada!")
+                try:
                     self.rag_system.create_rag_chain(api_key)
                     self.current_api_key = api_key
                     self.is_initialized = True
-                    st.success("✅ Sistema RAG inicializado com sucesso!")
+                    st.success("✅ Sistema RAG de Física inicializado com sucesso!")
                     return True
-                else:
-                    st.error("❌ Falha ao processar documentos")
+                except Exception as chain_error:
+                    st.error(f"Erro ao criar cadeia RAG: {str(chain_error)}")
                     return False
+            else:
+                # Se load_existing_vectorstore falhou, tenta processar documentos
+                st.info("🔄 Processando documentos de física...")
+                
+                with st.spinner("Processando documentos da pasta física..."):
+                    try:
+                        success = self.rag_system.process_physics_documents()
+                        if success:
+                            # Força criação do vectorstore após processamento
+                            self.rag_system._create_vectorstore()
+                            self.rag_system.create_rag_chain(api_key)
+                            self.current_api_key = api_key
+                            self.is_initialized = True
+                            st.success("✅ Sistema RAG de Física inicializado com sucesso!")
+                            return True
+                        else:
+                            st.error("❌ Falha ao processar documentos")
+                            return False
+                    except Exception as processing_error:
+                        st.error(f"❌ Erro no processamento: {str(processing_error)}")
+                        # Tenta fallback com documentos básicos
+                        return self._try_fallback_initialization(api_key)
                     
         except Exception as e:
-            st.error(f"Erro na inicialização: {str(e)}")
+            st.error(f"❌ Erro na inicialização: {str(e)}")
+            return self._try_fallback_initialization(api_key)
+    
+    def _try_fallback_initialization(self, api_key: str) -> bool:
+        """Tenta inicialização de fallback com conteúdo básico de física"""
+        try:
+            st.warning("🔄 Tentando inicialização de emergência para Física...")
+            
+            # Cria documento básico de física
+            from langchain.schema import Document
+            
+            basic_content = """
+            # Física - Conceitos ENEM
+            
+            ## Cinemática
+            Velocidade média: v = Δs/Δt
+            Movimento uniformemente variado: v = v₀ + at
+            Equação de Torricelli: v² = v₀² + 2aΔs
+            
+            ## Dinâmica
+            Segunda Lei de Newton: F = ma
+            Força de atrito: Fat = μN
+            
+            ## Energia
+            Energia cinética: Ec = ½mv²
+            Energia potencial gravitacional: Epg = mgh
+            
+            ## Eletricidade
+            Lei de Ohm: V = RI
+            Potência elétrica: P = VI
+            """
+            
+            basic_doc = Document(
+                page_content=basic_content,
+                metadata={"source": "conteudo_emergencia", "topic": "física_geral"}
+            )
+            
+            self.rag_system.documents = [basic_doc]
+            self.rag_system._create_vectorstore()
+            self.rag_system.create_rag_chain(api_key)
+            
+            self.current_api_key = api_key
+            self.is_initialized = True
+            
+            st.success("⚠️ Sistema de Física inicializado em modo básico - funcionando com conteúdo limitado")
+            return True
+            
+        except Exception as fallback_error:
+            st.error(f"❌ Falha total na inicialização de Física: {str(fallback_error)}")
             return False
     
     def get_response(self, user_message: str, api_key: str) -> str:
