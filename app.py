@@ -841,12 +841,24 @@ def main():
                 
                 # Gera resposta do professor
                 with st.spinner(f"{SUBJECTS[current_subject]['teacher']} está pensando..."):
-                    assistant_response = get_teacher_response(current_subject, message_to_process, api_key)
+                    with st.chat_message("assistant", avatar=subject_info[current_subject]["avatar"]):
+                        message_placeholder = st.empty()
+                        
+                        # Obtém a resposta do professor adequado
+                        try:
+                            full_response = get_teacher_response(current_subject, message_to_process, api_key)
+                        except Exception as e:
+                            from encoding_utils import safe_api_error
+                            full_response = safe_api_error(e)
+                        
+                        # Simula efeito de digitação
+                        message_placeholder.markdown(full_response + "▌")
+                        time.sleep(0.01) # Pequeno delay para UX
                 
                 # Adiciona resposta do assistente
                 assistant_message = {
                     "role": "assistant",
-                    "content": assistant_response,
+                    "content": full_response,
                     "timestamp": datetime.now().strftime("%H:%M")
                 }
                 st.session_state.chat_history[current_subject].append(assistant_message)
