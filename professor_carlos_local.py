@@ -86,13 +86,21 @@ class ProfessorCarlosLocal:
             if vectorstore_carregado:
                 st.success("✅ Base de conhecimento carregada!")
                 try:
+                    # CRÍTICO: Sempre cria a cadeia RAG
+                    st.info("🔗 Criando cadeia RAG com API key...")
                     self.rag_system.create_rag_chain(api_key)
+                    
+                    # Testa se a cadeia foi criada corretamente
+                    if self.rag_system.rag_chain is None:
+                        raise Exception("Cadeia RAG é None após criação")
+                    
                     self.current_api_key = api_key
                     self.is_initialized = True
                     st.success("✅ Sistema RAG inicializado com sucesso!")
                     return True
                 except Exception as chain_error:
                     st.error(f"❌ Erro ao criar cadeia RAG: {str(chain_error)}")
+                    st.error(f"• Detalhes: {type(chain_error).__name__}: {str(chain_error)}")
                     return self._try_emergency_initialization(api_key)
             else:
                 # Se load_existing_vectorstore falhou, tenta processar documentos
@@ -134,7 +142,15 @@ class ProfessorCarlosLocal:
                         if success:
                             # Força criação do vectorstore após processamento
                             self.rag_system._create_vectorstore()
+                            
+                            # CRÍTICO: Sempre cria a cadeia RAG
+                            st.info("🔗 Criando cadeia RAG com API key...")
                             self.rag_system.create_rag_chain(api_key)
+                            
+                            # Testa se a cadeia foi criada corretamente
+                            if self.rag_system.rag_chain is None:
+                                raise Exception("Cadeia RAG é None após criação")
+                            
                             self.current_api_key = api_key
                             self.is_initialized = True
                             st.success("✅ Sistema RAG inicializado com sucesso!")
@@ -170,38 +186,44 @@ class ProfessorCarlosLocal:
                 self.is_initialized = False  # Marca como não inicializado mas continua
                 return True
             
-            # Cria documento básico de matemática
-            basic_content = """
-# Matemática - Guia ENEM 2024
+            # Cria documentos básicos de matemática ENEM
+            emergency_docs = []
+            
+            # Documento 1: Funções
+            functions_content = """
+# Funções - ENEM 2024
 
-## Funções Quadráticas
-A função quadrática tem a forma: f(x) = ax² + bx + c, onde a ≠ 0
+## Função Quadrática
+f(x) = ax² + bx + c, onde a ≠ 0
 
 ### Fórmula de Bhaskara
-Para resolver equações do tipo ax² + bx + c = 0:
 x = (-b ± √(b² - 4ac)) / 2a
 
 ### Discriminante (Δ)
 Δ = b² - 4ac
-- Se Δ > 0: duas raízes reais distintas
-- Se Δ = 0: uma raiz real (raiz dupla)
-- Se Δ < 0: não há raízes reais
+- Δ > 0: duas raízes reais distintas
+- Δ = 0: uma raiz real (raiz dupla) 
+- Δ < 0: não há raízes reais
 
-## Determinantes
+### Vértice da Parábola
+xv = -b/(2a)
+yv = -Δ/(4a)
 
-### Determinante 2x2
-Para uma matriz A = [[a, b], [c, d]]:
-det(A) = ad - bc
+## Função Exponencial
+f(x) = a^x, onde a > 0 e a ≠ 1
 
-### Determinante 3x3 (Regra de Sarrus)
-Para uma matriz 3x3:
-det(A) = a₁₁(a₂₂a₃₃ - a₂₃a₃₂) - a₁₂(a₂₁a₃₃ - a₂₃a₃₁) + a₁₃(a₂₁a₃₂ - a₂₂a₃₁)
+## Função Logarítmica  
+f(x) = log_a(x), onde a > 0 e a ≠ 1
 
-### Propriedades dos Determinantes
-- Se uma linha/coluna é nula, det = 0
-- Trocar duas linhas/colunas muda o sinal
-- Determinante da transposta = determinante original
-- det(AB) = det(A) × det(B)
+### Propriedades dos Logaritmos
+- log(ab) = log(a) + log(b)
+- log(a/b) = log(a) - log(b)
+- log(a^n) = n·log(a)
+"""
+            
+            # Documento 2: Geometria
+            geometry_content = """
+# Geometria - ENEM 2024
 
 ## Geometria Plana
 
@@ -210,6 +232,7 @@ det(A) = a₁₁(a₂₂a₃₃ - a₂₃a₃₂) - a₁₂(a₂₁a₃₃ - a�
 - Triângulo: A = (base × altura) / 2
 - Círculo: A = πr²
 - Trapézio: A = ((B + b) × h) / 2
+- Paralelogramo: A = base × altura
 
 ### Perímetros
 - Retângulo: P = 2(base + altura)
@@ -224,23 +247,96 @@ det(A) = a₁₁(a₂₂a₃₃ - a₂₃a₃₂) - a₁₂(a₂₁a₃₃ - a�
 - Cilindro: V = πr²h
 - Cone: V = (πr²h) / 3
 - Esfera: V = (4πr³) / 3
+- Pirâmide: V = (área_base × altura) / 3
 
-## Trigonometria
+### Áreas de Superfície
+- Esfera: A = 4πr²
+- Cilindro: A = 2πr(r + h)
+"""
+            
+            # Documento 3: Trigonometria
+            trigonometry_content = """
+# Trigonometria - ENEM 2024
 
-### Relações Fundamentais
+## Relações Fundamentais
 - sen²θ + cos²θ = 1
 - tan θ = sen θ / cos θ
+- sec θ = 1 / cos θ
+- csc θ = 1 / sen θ
+- cot θ = 1 / tan θ
 
-### Ângulos Notáveis
-- 30°: sen = 1/2, cos = √3/2, tan = √3/3
-- 45°: sen = √2/2, cos = √2/2, tan = 1
-- 60°: sen = √3/2, cos = 1/2, tan = √3
+## Ângulos Notáveis
+### 30° (π/6 rad)
+- sen 30° = 1/2
+- cos 30° = √3/2  
+- tan 30° = √3/3
 
-## Progressões
+### 45° (π/4 rad)
+- sen 45° = √2/2
+- cos 45° = √2/2
+- tan 45° = 1
 
-### Progressão Aritmética (PA)
-- Termo geral: an = a1 + (n-1)r
-- Soma dos n primeiros termos: Sn = n(a1 + an)/2
+### 60° (π/3 rad)
+- sen 60° = √3/2
+- cos 60° = 1/2
+- tan 60° = √3
+
+## Lei dos Senos
+a/sen A = b/sen B = c/sen C
+
+## Lei dos Cossenos  
+a² = b² + c² - 2bc·cos A
+"""
+            
+            # Documento 4: Determinantes e Matrizes
+            determinants_content = """
+# Determinantes e Matrizes - ENEM 2024
+
+## Determinante 2x2
+Para matriz A = [[a, b], [c, d]]:
+det(A) = ad - bc
+
+## Determinante 3x3 (Regra de Sarrus)
+Para matriz 3x3, expande-se pela primeira linha:
+det(A) = a₁₁(a₂₂a₃₃ - a₂₃a₃₂) - a₁₂(a₂₁a₃₃ - a₂₃a₃₁) + a₁₃(a₂₁a₃₂ - a₂₂a₃₁)
+
+## Propriedades dos Determinantes
+- Se uma linha/coluna é nula, det = 0
+- Trocar duas linhas/colunas muda o sinal
+- Determinante da transposta = determinante original
+- det(AB) = det(A) × det(B)
+- Se multiplicar linha/coluna por k, det fica k·det(A)
+
+## Sistemas Lineares
+Sistema 2x2: ax + by = e, cx + dy = f
+Se det ≠ 0: sistema possível e determinado
+Se det = 0: sistema impossível ou indeterminado
+"""
+            
+            # Documento 5: Estatística e Probabilidade
+            statistics_content = """
+# Estatística e Probabilidade - ENEM 2024
+
+## Medidas de Tendência Central
+- Média: x̄ = (x₁ + x₂ + ... + xₙ) / n
+- Mediana: valor central dos dados ordenados
+- Moda: valor mais frequente
+
+## Medidas de Dispersão
+- Amplitude: maior valor - menor valor
+- Variância: σ² = Σ(xi - x̄)² / n
+- Desvio padrão: σ = √variância
+
+## Probabilidade
+- P(A) = casos favoráveis / casos possíveis
+- P(A ∪ B) = P(A) + P(B) - P(A ∩ B)
+- P(A ∩ B) = P(A) × P(B|A)
+
+## Análise Combinatória
+- Arranjos: A(n,p) = n! / (n-p)!
+- Combinações: C(n,p) = n! / (p! × (n-p)!)
+- Permutações: P(n) = n!
+"""
 
 ### Progressão Geométrica (PG)
 - Termo geral: an = a1 × q^(n-1)
@@ -459,8 +555,9 @@ Sobre: "{user_message}"
             answer = result.get("answer", "Desculpe, não consegui gerar uma resposta.")
             source_docs = result.get("source_documents", [])
             
-            # Verifica se a resposta contém erro de API
-            if "Erro na API" in answer or "Error code: 401" in answer or "Invalid API Key" in answer:
+            # Verifica se há problemas na resposta
+            if ("Erro na API" in answer or "Error code: 401" in answer or "Invalid API Key" in answer or 
+                "Sistema RAG não inicializado" in answer):
                 return f"""
 🔑 **Problema com a API Key da Groq**
 
