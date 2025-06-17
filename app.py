@@ -74,7 +74,7 @@ def lazy_import_professor(subject: str):
                 "response": get_professor_carlos_local_response
             }
             PROFESSOR_CARLOS_LOCAL_AVAILABLE = True
-        except ImportError:
+        except ImportError as e:
             pass
 
     elif subject == "Química" and "luciana" not in _imported_modules:
@@ -85,7 +85,7 @@ def lazy_import_professor(subject: str):
                 "response": get_professor_luciana_local_response
             }
             PROFESSOR_LUCIANA_LOCAL_AVAILABLE = True
-        except ImportError:
+        except ImportError as e:
             pass
 
     elif subject == "Biologia" and "roberto" not in _imported_modules:
@@ -96,7 +96,7 @@ def lazy_import_professor(subject: str):
                 "response": get_professor_roberto_local_response
             }
             PROFESSOR_ROBERTO_LOCAL_AVAILABLE = True
-        except ImportError:
+        except ImportError as e:
             pass
 
     elif subject == "História" and "eduardo" not in _imported_modules:
@@ -107,7 +107,7 @@ def lazy_import_professor(subject: str):
                 "response": get_professor_eduardo_local_response
             }
             PROFESSOR_EDUARDO_LOCAL_AVAILABLE = True
-        except ImportError:
+        except ImportError as e:
             pass
 
     elif subject == "Geografia" and "marina" not in _imported_modules:
@@ -118,7 +118,7 @@ def lazy_import_professor(subject: str):
                 "response": get_professor_marina_local_response
             }
             PROFESSOR_MARINA_LOCAL_AVAILABLE = True
-        except ImportError:
+        except ImportError as e:
             pass
 
     elif subject == "Física" and "fernando" not in _imported_modules:
@@ -129,7 +129,7 @@ def lazy_import_professor(subject: str):
                 "response": get_professor_fernando_local_response
             }
             PROFESSOR_FERNANDO_LOCAL_AVAILABLE = True
-        except ImportError:
+        except ImportError as e:
             pass
     
     elif subject == "Língua Portuguesa" and "leticia" not in _imported_modules:
@@ -140,7 +140,7 @@ def lazy_import_professor(subject: str):
                 "response": get_professor_leticia_local_response
             }
             PORTUGUESE_RAG_AVAILABLE = PORTUGUESE_AVAILABLE
-        except ImportError:
+        except ImportError as e:
             pass
     
     elif subject == "Redação" and "redacao" not in _imported_modules:
@@ -151,7 +151,7 @@ def lazy_import_professor(subject: str):
                 "analyze": analyze_redacao_pdf
             }
             REDACAO_AVAILABLE = True
-        except ImportError:
+        except ImportError as e:
             pass
 
 def lazy_import_exercises():
@@ -489,41 +489,69 @@ Detalhes: {error_msg}
 """
 
 def get_teacher_response(subject: str, user_message: str, api_key: str) -> str:
-    """Retorna resposta do professor específico"""
+    """Retorna resposta do professor específico com melhor tratamento de erro"""
     
-    # Professor Carlos especializado (RAG Local)
-    if subject == "Matemática" and "carlos" in _imported_modules:
-        return _imported_modules["carlos"]["response"](user_message, api_key)
-    
-    # Professora Luciana especializada (RAG Local de Química)
-    elif subject == "Química" and "luciana" in _imported_modules:
-        return _imported_modules["luciana"]["response"](user_message, api_key)
-    
-    # Professor Roberto especializado (RAG Local de Biologia)
-    elif subject == "Biologia" and "roberto" in _imported_modules:
-        return _imported_modules["roberto"]["response"](user_message, api_key)
-    
-    # Professor Eduardo especializado (RAG Local de História)
-    elif subject == "História" and "eduardo" in _imported_modules:
-        return _imported_modules["eduardo"]["response"](user_message, api_key)
-    
-    # Professora Marina especializada (RAG Local de Geografia)
-    elif subject == "Geografia" and "marina" in _imported_modules:
-        return _imported_modules["marina"]["response"](user_message, api_key)
-    
-    # Professora Letícia (RAG Local de Português)
-    elif subject == "Língua Portuguesa" and "leticia" in _imported_modules:
-        return _imported_modules["leticia"]["response"](user_message, api_key)
-    
-    # Professor Fernando especializado (RAG Local de Física)
-    elif subject == "Física" and "fernando" in _imported_modules:
-        return _imported_modules["fernando"]["response"](user_message, api_key)
-    
-    # Outros professores (Groq genérico)
-    else:
-        teacher = GroqTeacher(SUBJECTS[subject])
-        teacher.subject = subject
-        return teacher.get_response(user_message, api_key)
+    try:
+        # Professor Carlos especializado (RAG Local)
+        if subject == "Matemática" and "carlos" in _imported_modules:
+            return _imported_modules["carlos"]["response"](user_message, api_key)
+        
+        # Professora Luciana especializada (RAG Local de Química)
+        elif subject == "Química" and "luciana" in _imported_modules:
+            return _imported_modules["luciana"]["response"](user_message, api_key)
+        
+        # Professor Roberto especializado (RAG Local de Biologia)
+        elif subject == "Biologia" and "roberto" in _imported_modules:
+            return _imported_modules["roberto"]["response"](user_message, api_key)
+        
+        # Professor Eduardo especializado (RAG Local de História)
+        elif subject == "História" and "eduardo" in _imported_modules:
+            return _imported_modules["eduardo"]["response"](user_message, api_key)
+        
+        # Professora Marina especializada (RAG Local de Geografia)
+        elif subject == "Geografia" and "marina" in _imported_modules:
+            return _imported_modules["marina"]["response"](user_message, api_key)
+        
+        # Professora Letícia (RAG Local de Português)
+        elif subject == "Língua Portuguesa" and "leticia" in _imported_modules:
+            return _imported_modules["leticia"]["response"](user_message, api_key)
+        
+        # Professor Fernando especializado (RAG Local de Física)
+        elif subject == "Física" and "fernando" in _imported_modules:
+            return _imported_modules["fernando"]["response"](user_message, api_key)
+        
+        # Outros professores (Groq genérico)
+        else:
+            teacher = GroqTeacher(SUBJECTS[subject])
+            teacher.subject = subject
+            return teacher.get_response(user_message, api_key)
+            
+    except Exception as e:
+        # Resposta de fallback em caso de erro
+        error_response = f"""
+❌ **Erro no Sistema do Professor**
+
+Ocorreu um erro ao processar sua mensagem:
+```
+{str(e)}
+```
+
+💡 **Tente:**
+1. Reformular sua pergunta
+2. Verificar se a matéria está funcionando
+3. Tentar uma pergunta mais simples
+
+🔄 **Modo de emergência**: Vou tentar responder de forma básica...
+
+---
+
+Olá, Sther! Desculpe, tive um problema técnico, mas estou aqui para te ajudar com {subject}. 
+
+Pode reformular sua pergunta? Vou fazer o meu melhor para responder sobre o tópico que você perguntou: "{user_message}"
+
+💪 Não desista! Estamos aqui para te ajudar a conquistar o ENEM!
+"""
+        return error_response
 
 def add_teacher_intro(subject: str):
     """Adiciona mensagem de introdução do professor"""
@@ -662,13 +690,30 @@ def main():
             st.session_state.chat_history[current_subject] = []
             st.rerun()
 
-        # Validação da API Key
-        if not api_key:
-            st.error("🔑 GROQ_API_KEY não encontrada.")
-            st.warning("Por favor, configure a secret GROQ_API_KEY no Streamlit Cloud para usar a aplicação.")
-            st.stop()  # Interrompe a execução se a chave não estiver configurada
-        else:
+        # Status da API Key (sem bloquear a aplicação)
+        if api_key:
             st.success("🔐 API Key carregada com sucesso.")
+        else:
+            st.error("🔑 GROQ_API_KEY não encontrada.")
+            st.warning("Configure a secret GROQ_API_KEY no Streamlit Cloud.")
+        
+        # Status do professor carregado
+        professor_status = "🟢 Professor Genérico"
+        if current_subject in ["Matemática", "Química", "Biologia", "História", "Geografia", "Física", "Língua Portuguesa"]:
+            module_map = {
+                "Matemática": "carlos",
+                "Química": "luciana", 
+                "Biologia": "roberto",
+                "História": "eduardo",
+                "Geografia": "marina",
+                "Física": "fernando",
+                "Língua Portuguesa": "leticia"
+            }
+            module_key = module_map.get(current_subject)
+            if module_key and module_key in _imported_modules:
+                professor_status = "🔵 Professor RAG Local"
+        
+        st.caption(f"Status: {professor_status}")
         
         # Configuração específica para cada matéria (apenas se carregada)
         if current_subject == "Matemática" and "carlos" in _imported_modules:
@@ -762,6 +807,12 @@ def main():
     # Processa mensagem do usuário quando botão é clicado OU Enter é pressionado
     if send_button and user_input and user_input.strip():
         message_to_process = user_input.strip()
+        
+        # Verifica se a API key está disponível
+        if not api_key:
+            st.error("❌ Não é possível enviar mensagem: GROQ_API_KEY não configurada.")
+            st.info("Configure a secret GROQ_API_KEY no Streamlit Cloud para usar os professores.")
+            return
         
         # Verifica se não está processando e se não é a mesma mensagem
         if not st.session_state.processing_message:
