@@ -145,14 +145,13 @@ O sistema RAG local não está disponível. Verifique:
 💡 O sistema funciona com documentos locais da pasta matemática!
 """
         
-        if not api_key:
+        if not api_key or api_key.strip() == "":
             return """
-🔑 **Configure sua API Key do OpenRouter**
+🔑 **API Key da Groq Necessária**
 
 Para ativar o Professor Carlos com RAG Local:
-1. Obtenha uma API Key do OpenRouter (https://openrouter.ai)
-2. Insira a chave na barra lateral
-3. O sistema processará seus documentos locais automaticamente!
+1. Configure a secret GROQ_API_KEY no Streamlit Cloud
+2. O sistema processará seus documentos locais automaticamente!
 
 📚 **Recursos do Sistema RAG Local:**
 - Processa documentos DOCX e PDF
@@ -161,10 +160,67 @@ Para ativar o Professor Carlos com RAG Local:
 - Base totalmente local (sem Google Drive)
 """
         
+        # Debug: Mostra informações da API key (apenas os primeiros caracteres)
+        api_key_preview = api_key[:10] + "..." if len(api_key) > 10 else api_key
+        
         # Inicializa sistema se necessário
         if not self.is_initialized or api_key != self.current_api_key:
-            if not self.initialize_system(api_key):
-                return "❌ Falha na inicialização do sistema. Verifique sua API key e documentos."
+            try:
+                if not self.initialize_system(api_key):
+                    return f"""
+❌ **Falha na Inicialização do Sistema RAG**
+
+O sistema não conseguiu inicializar corretamente.
+
+**Debug Info:**
+- API Key recebida: {api_key_preview}
+- RAG System disponível: {self.rag_system is not None}
+- Pasta matemática: {self.rag_system.math_folder_path if self.rag_system else 'N/A'}
+
+**Modo de Emergência Ativado:**
+
+Olá, Sther! Sou o Professor Carlos, especialista em matemática do ENEM. 
+
+Infelizmente, meu sistema RAG local está com problemas técnicos, mas ainda posso te ajudar!
+
+Sobre sua pergunta: "{user_message}"
+
+**Resposta básica de matemática:**
+Para questões de matemática do ENEM, geralmente envolvem:
+- Funções (1º e 2º grau, exponencial, logarítmica)
+- Geometria (áreas, volumes, trigonometria)
+- Estatística e probabilidade
+- Razão e proporção
+
+💡 **Dica:** Reformule sua pergunta de forma mais específica que posso tentar te ajudar melhor!
+
+🔧 **Para administradores:** Verifique a configuração da API key da Groq no Streamlit Cloud.
+"""
+            except Exception as init_error:
+                return f"""
+❌ **Erro Crítico na Inicialização**
+
+Ocorreu um erro durante a inicialização do sistema:
+
+```
+{str(init_error)}
+```
+
+**Modo Professor Básico Ativado:**
+
+Olá, Sther! Mesmo com problemas técnicos, vou te ajudar com matemática!
+
+Sobre: "{user_message}"
+
+**Orientações gerais de matemática para o ENEM:**
+
+1. **Funções Quadráticas:** Use a fórmula de Bhaskara: x = (-b ± √(b²-4ac))/2a
+2. **Geometria:** Lembre das fórmulas básicas de área e volume
+3. **Trigonometria:** sen²θ + cos²θ = 1
+4. **Estatística:** Média = Soma/Quantidade
+
+💪 Pode refazer sua pergunta de forma mais específica que vou tentar ajudar melhor!
+"""
         
         try:
             # Gera resposta usando RAG
@@ -172,6 +228,41 @@ Para ativar o Professor Carlos com RAG Local:
             
             answer = result.get("answer", "Desculpe, não consegui gerar uma resposta.")
             source_docs = result.get("source_documents", [])
+            
+            # Verifica se a resposta contém erro de API
+            if "Erro na API" in answer or "Error code: 401" in answer or "Invalid API Key" in answer:
+                return f"""
+🔑 **Problema com a API Key da Groq**
+
+Detectei um problema de autenticação com a API da Groq.
+
+**Modo Professor Básico Ativado:**
+
+Olá, Sther! Sou o Professor Carlos de Matemática. Mesmo com limitações técnicas, vou te ajudar!
+
+**Sobre sua pergunta:** "{user_message}"
+
+**Resposta baseada no conhecimento geral:**
+
+Para questões de matemática do ENEM, é importante focar em:
+
+**🎯 Tópicos Principais:**
+- **Funções:** f(x) = ax² + bx + c (quadráticas), exponenciais, logarítmicas
+- **Geometria:** Áreas, volumes, teorema de Pitágoras
+- **Trigonometria:** seno, cosseno, tangente e suas relações
+- **Estatística:** média, mediana, moda, probabilidade
+- **Razão e Proporção:** regra de três, porcentagem
+
+**💡 Dicas de Estudo:**
+1. Pratique muito com exercícios do ENEM
+2. Memorize as fórmulas principais
+3. Faça resumos visuais
+4. Resolva questões por etapas
+
+Pode me fazer uma pergunta mais específica sobre algum desses tópicos que eu posso ajudar melhor!
+
+🔧 **Nota técnica:** Sistema RAG temporariamente indisponível, mas estou aqui para ajudar!
+"""
             
             # Aplica formatação matemática melhorada
             if MATH_FORMATTER_AVAILABLE:
