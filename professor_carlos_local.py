@@ -86,13 +86,21 @@ class ProfessorCarlosLocal:
             if vectorstore_carregado:
                 st.success("✅ Base de conhecimento carregada!")
                 try:
+                    # CRÍTICO: Sempre cria a cadeia RAG
+                    st.info("🔗 Criando cadeia RAG com API key...")
                     self.rag_system.create_rag_chain(api_key)
+                    
+                    # Testa se a cadeia foi criada corretamente
+                    if self.rag_system.rag_chain is None:
+                        raise Exception("Cadeia RAG é None após criação")
+                    
                     self.current_api_key = api_key
                     self.is_initialized = True
                     st.success("✅ Sistema RAG inicializado com sucesso!")
                     return True
                 except Exception as chain_error:
                     st.error(f"❌ Erro ao criar cadeia RAG: {str(chain_error)}")
+                    st.error(f"• Detalhes: {type(chain_error).__name__}: {str(chain_error)}")
                     return self._try_emergency_initialization(api_key)
             else:
                 # Se load_existing_vectorstore falhou, tenta processar documentos
@@ -134,7 +142,15 @@ class ProfessorCarlosLocal:
                         if success:
                             # Força criação do vectorstore após processamento
                             self.rag_system._create_vectorstore()
+                            
+                            # CRÍTICO: Sempre cria a cadeia RAG
+                            st.info("🔗 Criando cadeia RAG com API key...")
                             self.rag_system.create_rag_chain(api_key)
+                            
+                            # Testa se a cadeia foi criada corretamente
+                            if self.rag_system.rag_chain is None:
+                                raise Exception("Cadeia RAG é None após criação")
+                            
                             self.current_api_key = api_key
                             self.is_initialized = True
                             st.success("✅ Sistema RAG inicializado com sucesso!")
@@ -459,16 +475,20 @@ Sobre: "{user_message}"
             answer = result.get("answer", "Desculpe, não consegui gerar uma resposta.")
             source_docs = result.get("source_documents", [])
             
-            # Verifica se a resposta contém erro de API
-            if "Erro na API" in answer or "Error code: 401" in answer or "Invalid API Key" in answer:
+            # Verifica se há problemas na resposta
+            if ("Erro na API" in answer or "Error code: 401" in answer or "Invalid API Key" in answer or 
+                "Sistema RAG não inicializado" in answer):
                 return f"""
-🔑 **Problema com a API Key da Groq**
+🔑 **Problema com a API Key da Groq ou com a Inicialização do RAG**
 
-Detectei um problema de autenticação com a API da Groq.
+Detectei um problema de autenticação ou inicialização.
+
+**Mensagem do Sistema:**
+`{answer}`
 
 **Modo Professor Básico Ativado:**
 
-Olá, Sther! Sou o Professor Carlos de Matemática. Mesmo com limitações técnicas, vou te ajudar!
+Olá! Sou o Professor Carlos de Matemática. Mesmo com limitações técnicas, vou te ajudar!
 
 **Sobre sua pergunta:** "{user_message}"
 
@@ -482,12 +502,6 @@ Para questões de matemática do ENEM, é importante focar em:
 - **Trigonometria:** seno, cosseno, tangente e suas relações
 - **Estatística:** média, mediana, moda, probabilidade
 - **Razão e Proporção:** regra de três, porcentagem
-
-**💡 Dicas de Estudo:**
-1. Pratique muito com exercícios do ENEM
-2. Memorize as fórmulas principais
-3. Faça resumos visuais
-4. Resolva questões por etapas
 
 Pode me fazer uma pergunta mais específica sobre algum desses tópicos que eu posso ajudar melhor!
 
