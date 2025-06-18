@@ -649,6 +649,41 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
+    # Validação da API Key
+    api_key = get_api_key()
+
+    if not api_key:
+        st.warning("🔑 **API Key não configurada!**")
+        st.info("""
+            Para usar o ENEM AI Helper, você precisa configurar sua API Key da Groq.
+            
+            **Se você estiver executando no Streamlit Cloud:**
+            1. Crie um arquivo `secrets.toml` na pasta `.streamlit`.
+            2. Adicione sua chave da seguinte forma:
+               ```toml
+               GROQ_API_KEY = "sua_chave_aqui"
+               ```
+            
+            **Se você estiver executando localmente:**
+            1. Crie um arquivo chamado `.env` na pasta principal do projeto.
+            2. Adicione sua chave da seguinte forma:
+               ```
+               GROQ_API_KEY="sua_chave_aqui"
+               ```
+
+            Após configurar a chave, reinicie a aplicação.
+        """)
+        st.stop()
+
+    # Inicializa estado da sessão
+    if "current_subject" not in st.session_state:
+        st.session_state.current_subject = "Boas-vindas"
+    
+    # Inicializa o histórico de chat para todas as matérias
+    for subject in SUBJECTS.keys():
+        if f"chat_history_{subject}" not in st.session_state:
+            st.session_state[f"chat_history_{subject}"] = []
+
     # Sidebar
     with st.sidebar:
         st.markdown("### 🎯 Selecione a Matéria")
@@ -661,21 +696,14 @@ def main():
             format_func=lambda x: f"{SUBJECTS[x]['icon']} {x}"
         )
         
-        # Atualiza matéria atual e carrega professor sob demanda
         if current_subject != st.session_state.current_subject:
             st.session_state.current_subject = current_subject
-            # Reset das flags ao mudar de matéria
-            st.session_state.processing_message = False
-            # Limpa módulos não utilizados para economizar memória
             cleanup_unused_modules(current_subject)
-            # Carrega professor da matéria selecionada
             lazy_import_professor(current_subject)
             st.rerun()
         else:
-            # Carrega professor da matéria atual se ainda não foi carregado
             lazy_import_professor(current_subject)
         
-        # Informações do professor atual
         subject_info = SUBJECTS[current_subject]
         st.markdown(f"""
         <div class="teacher-intro">
@@ -684,199 +712,51 @@ def main():
         </div>
         """, unsafe_allow_html=True)
         
-        # Estatísticas
-        st.markdown("### 📊 Seu Progresso")
-        progress_value = min(len(st.session_state.chat_history[current_subject]) * 10, 100)
-        st.progress(progress_value / 100)
-        st.caption(f"Mensagens trocadas: {len(st.session_state.chat_history[current_subject])}")
-        
-        # Limpar chat
-        if st.button("🗑️ Limpar Chat", key="clear_chat"):
-            st.session_state.chat_history[current_subject] = []
+        if st.button("🗑️ Limpar Histórico da Matéria"):
+            st.session_state[f"chat_history_{current_subject}"] = []
             st.rerun()
 
-        # Status da API Key (sem bloquear a aplicação)
-        if api_key:
-            st.success("🔐 API Key carregada com sucesso.")
-        else:
-            st.error("🔑 GROQ_API_KEY não encontrada.")
-            st.warning("Configure a secret GROQ_API_KEY no Streamlit Cloud.")
-        
-        # Status do professor carregado
-        professor_status = "🟢 Professor Genérico"
-        if current_subject in ["Matemática", "Química", "Biologia", "História", "Geografia", "Física", "Língua Portuguesa"]:
-            module_map = {
-                "Matemática": "carlos",
-                "Química": "luciana", 
-                "Biologia": "roberto",
-                "História": "eduardo",
-                "Geografia": "marina",
-                "Física": "fernando",
-                "Língua Portuguesa": "leticia"
-            }
-            module_key = module_map.get(current_subject)
-            if module_key and module_key in _imported_modules:
-                professor_status = "🔵 Professor RAG Local"
-        
-        st.caption(f"Status: {professor_status}")
-        
-        # Configuração específica para cada matéria (apenas se carregada)
-        if current_subject == "Matemática" and "carlos" in _imported_modules:
-            _imported_modules["carlos"]["setup"]()
-        elif current_subject == "Química" and "luciana" in _imported_modules:
-            _imported_modules["luciana"]["setup"]()
-        elif current_subject == "Biologia" and "roberto" in _imported_modules:
-            _imported_modules["roberto"]["setup"]()
-        elif current_subject == "História" and "eduardo" in _imported_modules:
-            _imported_modules["eduardo"]["setup"]()
-        elif current_subject == "Geografia" and "marina" in _imported_modules:
-            _imported_modules["marina"]["setup"]()
-        elif current_subject == "Língua Portuguesa" and "leticia" in _imported_modules:
-            _imported_modules["leticia"]["setup"]()
-        elif current_subject == "Física" and "fernando" in _imported_modules:
-            _imported_modules["fernando"]["setup"]()
+    # Área de Chat Principal
+    st.header(f"Conversando com {subject_info['teacher']}")
 
-    # --- Área Principal com Abas Condicionais ---
-    
-    # Lógica para Redação
-    if current_subject == "Redação":
-        tab_chat, tab_mindmap, tab_revisao = st.tabs([
-            "💬 Chat", 
-            "🧠 Mapa Mental", 
-            "📝 Revisão de Redação"
-        ])
-        
-        with tab_chat:
-            add_teacher_intro(current_subject)
-            display_chat_history(current_subject)
-        
-        with tab_mindmap:
-            # Lógica do mapa mental
-            lazy_import_mindmap()
-            if "mindmap" in _imported_modules:
-                _imported_modules["mindmap"]()
-            else:
-                st.error("O sistema de mapa mental não está disponível.")
+    # Adiciona introdução do professor se o chat estiver vazio
+    if not st.session_state[f"chat_history_{current_subject}"]:
+        st.session_state[f"chat_history_{current_subject}"].append(
+            AIMessage(content=subject_info["intro"])
+        )
 
-        with tab_revisao:
-            # Lógica da revisão de redação
-            if "redacao" in _imported_modules:
-                _imported_modules["redacao"]["setup"]()
-            else:
-                st.warning("⚠️ O módulo de revisão de redação não está disponível.")
+    # Exibe o histórico de chat
+    for message in st.session_state[f"chat_history_{current_subject}"]:
+        # CORREÇÃO APLICADA AQUI
+        avatar = subject_info['avatar'] if isinstance(message, AIMessage) else "🧑‍🎓"
+        with st.chat_message(name="assistant" if isinstance(message, AIMessage) else "user", avatar=avatar):
+            st.markdown(message.content)
 
-    # Lógica para todas as outras matérias
-    else:
-        tab_chat, tab_mindmap, tab_exercicios = st.tabs([
-            "💬 Chat", 
-            "🧠 Mapa Mental", 
-            "📚 Exercícios Personalizados"
-        ])
-        
-        with tab_chat:
-            add_teacher_intro(current_subject)
-            display_chat_history(current_subject)
-        
-        with tab_mindmap:
-            # Lógica do mapa mental
-            lazy_import_mindmap()
-            if "mindmap" in _imported_modules:
-                _imported_modules["mindmap"]()
-            else:
-                st.error("O sistema de mapa mental não está disponível.")
-        
-        with tab_exercicios:
-            # Lógica dos exercícios personalizados
-            lazy_import_exercises()
-            if "exercicios" in _imported_modules:
-                _imported_modules["exercicios"].setup_ui()
-            else:
-                st.warning("⚠️ O módulo de exercícios personalizados não está disponível.")
-    
     # Input do usuário
-    with st.container():
-        # Usa form para permitir envio via Enter
-        with st.form(key=f"message_form_{current_subject}", clear_on_submit=True):
-            user_input = st.text_input(
-                "Digite sua pergunta:",
-                placeholder=f"Pergunte algo sobre {current_subject} para {SUBJECTS[current_subject]['teacher']}...",
-                key=f"user_input_{current_subject}"
-            )
-            
-            col1, col2 = st.columns([8, 2])
-            with col1:
-                st.empty()  # Espaço
-            with col2:
-                send_button = st.form_submit_button("📤 Enviar", use_container_width=True)
-    
-    # Processa mensagem do usuário quando botão é clicado OU Enter é pressionado
-    if send_button and user_input and user_input.strip():
-        message_to_process = user_input.strip()
+    if prompt := st.chat_input(f"Envie uma mensagem para {subject_info['teacher']}..."):
+        st.session_state[f"chat_history_{current_subject}"].append(HumanMessage(content=prompt))
         
-        # Verifica se a API key está disponível
-        if not api_key:
-            st.error("❌ Não é possível enviar mensagem: GROQ_API_KEY não configurada.")
-            st.info("Configure a secret GROQ_API_KEY no Streamlit Cloud para usar os professores.")
-            return
-        
-        # Verifica se não está processando e se não é a mesma mensagem
-        if not st.session_state.processing_message:
-            # Evita processar a mesma mensagem duas vezes
-            last_msg_key = f"last_message_{current_subject}"
-            if last_msg_key not in st.session_state:
-                st.session_state[last_msg_key] = ""
+        with st.chat_message("user", avatar="🧑‍🎓"):
+            st.markdown(prompt)
             
-            if message_to_process != st.session_state[last_msg_key]:
-                # Marca como processando
-                st.session_state.processing_message = True
-                st.session_state[last_msg_key] = message_to_process
-                
-                # Adiciona mensagem do usuário
-                user_message = {
-                    "role": "user",
-                    "content": message_to_process,
-                    "timestamp": datetime.now().strftime("%H:%M")
-                }
-                st.session_state.chat_history[current_subject].append(user_message)
-                
-                # Gera resposta do professor
-                with st.spinner(f"{SUBJECTS[current_subject]['teacher']} está pensando..."):
-                    with st.chat_message("assistant", avatar=subject_info[current_subject]["avatar"]):
-                        message_placeholder = st.empty()
-                        
-                        # Obtém a resposta do professor adequado
-                        try:
-                            full_response = get_teacher_response(current_subject, message_to_process, api_key)
-                        except Exception as e:
-                            from encoding_utils import safe_api_error
-                            full_response = safe_api_error(e)
-                        
-                        # Simula efeito de digitação
-                        message_placeholder.markdown(full_response + "▌")
-                        time.sleep(0.01) # Pequeno delay para UX
-                
-                # Adiciona resposta do assistente
-                assistant_message = {
-                    "role": "assistant",
-                    "content": full_response,
-                    "timestamp": datetime.now().strftime("%H:%M")
-                }
-                st.session_state.chat_history[current_subject].append(assistant_message)
-                
-                # Marca como não processando mais
-                st.session_state.processing_message = False
-                
-                # Atualiza página para mostrar nova mensagem
-                st.rerun()
+        # CORREÇÃO APLICADA AQUI
+        with st.chat_message("assistant", avatar=subject_info["avatar"]):
+            message_placeholder = st.empty()
+            
+            # Obtém a resposta do professor adequado
+            try:
+                full_response = get_teacher_response(current_subject, prompt, api_key)
+            except Exception as e:
+                from encoding_utils import safe_api_error
+                full_response = safe_api_error(e)
+            
+            # Simula efeito de digitação
+            message_placeholder.markdown(full_response + "▌")
+            time.sleep(0.01)
+            message_placeholder.markdown(full_response)
 
-    # Footer
-    st.markdown("---")
-    st.markdown("""
-    <div style="text-align: center; color: #64748b; padding: 1rem;">
-        <p>🎓 <strong>ENEM AI Helper</strong> - Sistema personalizado para a Sther</p>
-        <p>Powered by DeepSeek R1 Distill via Groq • Carregamento otimizado para economia de memória</p>
-    </div>
-    """, unsafe_allow_html=True)
+        st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
+        st.rerun()
 
 if __name__ == "__main__":
     main() 
