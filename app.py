@@ -9,6 +9,19 @@ from local_redacao_rag import setup_redacao_ui, analyze_redacao_pdf
 from local_portuguese_rag import local_portuguese_rag, LocalPortugueseRAG
 from professor_leticia_local import setup_professor_leticia_local_ui, get_professor_leticia_local_response
 
+# Import for chat message types
+try:
+    from langchain_core.messages import HumanMessage, AIMessage
+except ImportError:
+    # Fallback if langchain is not available
+    class HumanMessage:
+        def __init__(self, content):
+            self.content = content
+    
+    class AIMessage:
+        def __init__(self, content):
+            self.content = content
+
 # Sistema de configuração adaptativo para cloud e local
 try:
     from cloud_config import get_config
@@ -338,13 +351,14 @@ SUBJECTS = {
     },
 }
 
-# Carrega a chave da API do Streamlit secrets ou variáveis de ambiente
-try:
-    # Tenta primeiro carregar do Streamlit secrets (para deployment no Streamlit Cloud)
-    api_key = st.secrets.get("GROQ_API_KEY")
-except:
-    # Fallback para variáveis de ambiente (para desenvolvimento local)
-    api_key = os.environ.get("GROQ_API_KEY")
+def get_api_key():
+    """Carrega a chave da API do Streamlit secrets ou variáveis de ambiente"""
+    try:
+        # Tenta primeiro carregar do Streamlit secrets (para deployment no Streamlit Cloud)
+        return st.secrets.get("GROQ_API_KEY")
+    except:
+        # Fallback para variáveis de ambiente (para desenvolvimento local)
+        return os.environ.get("GROQ_API_KEY")
 
 # Inicialização do session state
 if 'chat_history' not in st.session_state:
