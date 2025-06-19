@@ -368,36 +368,41 @@ SUBJECTS = {
 }
 
 def get_api_key():
-    """Carrega a chave da API do Streamlit secrets ou variáveis de ambiente com depuração."""
-    key_source = None
-    api_key = None
+    """Carrega a chave da API e exibe um status claro e persistente na barra lateral."""
     
-    # Tenta primeiro carregar do Streamlit secrets (ideal para deployment)
+    # Este controle garante que a verificação rode apenas uma vez por sessão.
+    if 'api_key_checked' in st.session_state:
+        return st.session_state.get('GROQ_API_KEY')
+
+    api_key = None
+    key_source = None
+
+    # Tenta obter a chave dos segredos do Streamlit (para nuvem)
     try:
-        if hasattr(st, 'secrets'):
-            api_key = st.secrets.get("GROQ_API_KEY")
-            if api_key:
-                key_source = "Streamlit Secrets"
-    except Exception:
-        # st.secrets pode não estar disponível em todos os contextos
+        if hasattr(st, 'secrets') and "GROQ_API_KEY" in st.secrets:
+            api_key = st.secrets["GROQ_API_KEY"]
+            key_source = "Streamlit Secrets"
+    except Exception as e:
+        # Erro silencioso se st.secrets não estiver disponível
         pass
 
-    # Fallback para variáveis de ambiente (para desenvolvimento local)
+    # Se não encontrou na nuvem, tenta do ambiente local
     if not api_key:
         api_key = os.environ.get("GROQ_API_KEY")
         if api_key:
-            key_source = "Variável de Ambiente"
+            key_source = "Variável de Ambiente Local"
 
-    # Adiciona uma mensagem de depuração visível no app para diagnóstico
-    if 'api_key_status_message' not in st.session_state:
-        if api_key:
-            st.session_state.api_key_status_message = f"✅ API Key carregada com sucesso via {key_source}."
-        else:
-            st.session_state.api_key_status_message = "❌ API Key não encontrada. Verifique suas configurações."
-        
-        # Mostra a mensagem uma vez na barra lateral
-        st.sidebar.info(st.session_state.api_key_status_message)
+    # Exibe o status na barra lateral
+    if api_key:
+        st.sidebar.success(f"✅ API Key Carregada via {key_source}.")
+    else:
+        st.sidebar.error("❌ API Key NÃO encontrada.")
+        st.sidebar.warning("Verifique o nome e o valor da chave em 'Settings > Secrets'.")
 
+    # Armazena o resultado no estado da sessão
+    st.session_state['api_key_checked'] = True
+    st.session_state['GROQ_API_KEY'] = api_key
+    
     return api_key
 
 # Inicialização do session state
