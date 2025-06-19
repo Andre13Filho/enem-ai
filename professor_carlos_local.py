@@ -10,7 +10,7 @@ import os
 
 # Importa sistema RAG local
 try:
-    from local_math_rag import LocalMathRAG, local_math_rag
+    from local_math_rag import get_local_math_rag_instance
     from enem_exercises_rag import ENEMExercisesRAG
     from math_formatter import format_professor_response
     LOCAL_RAG_AVAILABLE = True
@@ -38,7 +38,7 @@ class ProfessorCarlosLocal:
         self.is_initialized = False
         
         if LOCAL_RAG_AVAILABLE:
-            self.rag_system = local_math_rag
+            self.rag_system = get_local_math_rag_instance()
             self.exercises_rag = ENEMExercisesRAG()
     
     def initialize_system(self, api_key: str) -> bool:

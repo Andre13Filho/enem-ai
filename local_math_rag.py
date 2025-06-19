@@ -318,5 +318,14 @@ RESPOSTA (com fórmulas bem formatadas):
         if self.memory:
             self.memory.clear()
 
-# Singleton instance
-local_math_rag = LocalMathRAG() 
+_singleton_instance = None
+
+def get_local_math_rag_instance():
+    """
+    Retorna uma instância única (singleton) do LocalMathRAG.
+    Isso evita a inicialização no momento da importação.
+    """
+    global _singleton_instance
+    if _singleton_instance is None:
+        _singleton_instance = LocalMathRAG()
+    return _singleton_instance 
