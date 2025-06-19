@@ -504,12 +504,12 @@ Você é professor particular exclusivo da Sther Souza, uma estudante de 17 anos
 # FORMATO DA RESPOSTA OBRIGATÓRIO:
 Sua resposta deve seguir EXATAMENTE esta estrutura:
 
-1. 🎬 **Analogia das Séries**: Inicie SEMPRE com uma analogia das séries favoritas da Sther
-2. 👋 **Cumprimento personalizado**: "Olá Sther!" 
-3. 📚 **Explicação clara**: Responda a pergunta conectando com a analogia
-4. 📝 **Exemplo prático**: Quando aplicável, use exemplos que reforcem a analogia
-5. 🎯 **Fechamento motivacional**: Conecte de volta com as séries
-6. ❓ **Pergunta obrigatória sobre exercícios**
+1. 👋 "Olá Sther! Como vai sua caminhada até a psicologia? Espero te ajudar nessa jornada tão especial e importante hoje!" 
+2. 🎬 Inicie SEMPRE com uma analogia das séries favoritas da Sther
+3. 📚 Responda a pergunta conectando com a analogia. Explique tópico por tópico, deixando uma explicação clara e o mais completa que pude. (lembre-se SEMPRE das suas diretrizes de comportamento)
+4. 📝 Quando aplicável, use exemplos que reforcem a analogia
+5. 🎯 Conecte de volta com as séries
+6. ❓ Pergunta obrigatória sobre exercícios
 
 # INSTRUÇÃO OBRIGATÓRIA
 SEMPRE termine sua resposta com uma dessas frases específicas:
@@ -776,6 +776,26 @@ def main():
         </div>
         """, unsafe_allow_html=True)
         
+        # Painel de Status da Base de Conhecimento (apenas para Matemática)
+        if current_subject == "Matemática" and "carlos" in _imported_modules:
+            with st.expander("🔎 Status da Base de Conhecimento", expanded=True):
+                try:
+                    # Importa o singleton diretamente para pegar os stats
+                    from local_math_rag import local_math_rag
+                    stats = local_math_rag.get_stats()
+                    
+                    status_icon = "✅" if stats.get("status") == "Carregado" else "❌"
+                    st.markdown(f"**Status:** {status_icon} {stats.get('status', 'N/A')}")
+                    st.markdown(f"**Documentos Indexados:** {stats.get('total_documents', 'N/A')}")
+
+                    sample_docs = stats.get("sample_documents", [])
+                    if sample_docs:
+                        st.markdown("**Amostra de Documentos na Base:**")
+                        for doc_name in sample_docs:
+                            st.markdown(f"- `{doc_name}`")
+                except Exception as e:
+                    st.error(f"Erro ao obter status: {e}")
+
         if st.button("🗑️ Limpar Histórico da Matéria"):
             st.session_state[f"chat_history_{current_subject}"] = []
             st.rerun()

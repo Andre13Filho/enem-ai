@@ -227,15 +227,46 @@ class LocalMathRAG:
             return []
 
     def get_stats(self) -> Dict[str, Any]:
-        """Retorna estatísticas do sistema RAG."""
-        stats = {
-            "initialized": self.is_initialized,
-            "vectorstore_type": "FAISS (Remote)",
-            "documents_in_store": "N/A"
-        }
-        if self.vectorstore and hasattr(self.vectorstore, 'index'):
-             stats["documents_in_store"] = self.vectorstore.index.ntotal
-        return stats
+        """
+        Retorna estatísticas detalhadas do sistema RAG, incluindo uma amostra de documentos.
+        """
+        if not self.is_initialized or not self.vectorstore:
+            return {
+                "status": "Não Carregado",
+                "total_documents": 0,
+                "sample_documents": []
+            }
+
+        try:
+            total_documents = self.vectorstore.index.ntotal
+            
+            # Pega uma amostra de metadados dos primeiros 5 documentos
+            sample_docs_metadata = []
+            docstore = self.vectorstore.docstore
+            doc_ids = list(docstore._dict.keys())
+            
+            for i in range(min(5, len(doc_ids))):
+                doc = docstore._dict[doc_ids[i]]
+                if doc.metadata:
+                    sample_docs_metadata.append(doc.metadata)
+
+            # Extrai nomes de arquivos únicos da amostra
+            sample_files = sorted(list(set(
+                meta.get("source", "Fonte Desconhecida") for meta in sample_docs_metadata
+            )))
+
+            return {
+                "status": "Carregado",
+                "total_documents": total_documents,
+                "sample_documents": sample_files
+            }
+        except Exception as e:
+            print(f"Erro ao obter estatísticas do RAG: {e}")
+            return {
+                "status": "Erro na Leitura",
+                "total_documents": 0,
+                "sample_documents": [str(e)]
+            }
 
     def clear_memory(self):
         """Limpa a memória da conversa."""
