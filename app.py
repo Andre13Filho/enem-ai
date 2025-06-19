@@ -368,13 +368,37 @@ SUBJECTS = {
 }
 
 def get_api_key():
-    """Carrega a chave da API do Streamlit secrets ou variáveis de ambiente"""
+    """Carrega a chave da API do Streamlit secrets ou variáveis de ambiente com depuração."""
+    key_source = None
+    api_key = None
+    
+    # Tenta primeiro carregar do Streamlit secrets (ideal para deployment)
     try:
-        # Tenta primeiro carregar do Streamlit secrets (para deployment no Streamlit Cloud)
-        return st.secrets.get("GROQ_API_KEY")
-    except:
-        # Fallback para variáveis de ambiente (para desenvolvimento local)
-        return os.environ.get("GROQ_API_KEY")
+        if hasattr(st, 'secrets'):
+            api_key = st.secrets.get("GROQ_API_KEY")
+            if api_key:
+                key_source = "Streamlit Secrets"
+    except Exception:
+        # st.secrets pode não estar disponível em todos os contextos
+        pass
+
+    # Fallback para variáveis de ambiente (para desenvolvimento local)
+    if not api_key:
+        api_key = os.environ.get("GROQ_API_KEY")
+        if api_key:
+            key_source = "Variável de Ambiente"
+
+    # Adiciona uma mensagem de depuração visível no app para diagnóstico
+    if 'api_key_status_message' not in st.session_state:
+        if api_key:
+            st.session_state.api_key_status_message = f"✅ API Key carregada com sucesso via {key_source}."
+        else:
+            st.session_state.api_key_status_message = "❌ API Key não encontrada. Verifique suas configurações."
+        
+        # Mostra a mensagem uma vez na barra lateral
+        st.sidebar.info(st.session_state.api_key_status_message)
+
+    return api_key
 
 # Inicialização do session state
 if 'chat_history' not in st.session_state:
