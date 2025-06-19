@@ -75,12 +75,17 @@ class LocalMathRAG:
         self.rag_chain = None
         self.embeddings = None
         self.is_initialized = False
+        self.math_folder_path = FAISS_INDEX_DIR
         
-        # O modelo de embedding DEVE ser o mesmo usado na criação do índice
-        self._setup_embeddings("sentence-transformers/distiluse-base-multilingual-cased-v1")
-    
+        # O setup de embeddings foi movido para o método initialize()
+        # para evitar carregamento pesado durante a importação.
+
     def _setup_embeddings(self, model_name: str):
-        """Configura embeddings usando HuggingFace"""
+        """Configura o modelo de embeddings do Hugging Face."""
+        # Se os embeddings já estiverem carregados, não faz nada
+        if self.embeddings:
+            return
+        
         try:
             self.embeddings = HuggingFaceEmbeddings(
                 model_name=model_name,
@@ -88,8 +93,8 @@ class LocalMathRAG:
                 encode_kwargs={'normalize_embeddings': True}
             )
         except Exception as e:
-            st.error(f"Erro ao configurar embeddings: {str(e)}")
-            print(f"❌ Erro ao configurar embeddings: {str(e)}")
+            if 'st' in globals() and hasattr(st, 'error'):
+                st.error(f"Falha ao carregar o modelo de embeddings: {e}")
             self.embeddings = None
 
     def _download_file(self, url: str, local_path: str):
@@ -142,7 +147,7 @@ class LocalMathRAG:
                 os.remove(index_file)
             if os.path.exists(pkl_file): 
                 os.remove(pkl_file)
-                return False
+            return False
             
     def initialize(self, api_key: str) -> bool:
         """
@@ -151,6 +156,9 @@ class LocalMathRAG:
         if self.is_initialized:
             return True
             
+        # Passo 0: Configurar embeddings (movido para cá)
+        self._setup_embeddings(model_name="sentence-transformers/distiluse-base-multilingual-cased-v1")
+        
         if not self.embeddings:
             st.error("Embeddings não foram inicializadas. Abortando.")
             return False
@@ -184,19 +192,19 @@ class LocalMathRAG:
             st.info("🔗 Criando a cadeia de conversação RAG...")
             print("🔗 Criando a cadeia de conversação RAG...")
             
-        self.memory = ConversationBufferMemory(
-            memory_key="chat_history",
-            return_messages=True,
-            output_key="answer"
-        )
-        
+            self.memory = ConversationBufferMemory(
+                memory_key="chat_history",
+                return_messages=True,
+                output_key="answer"
+            )
+            
             llm = GroqLLM(api_key=api_key)
 
-        self.rag_chain = ConversationalRetrievalChain.from_llm(
-            llm=llm,
-            retriever=self.retriever,
-            memory=self.memory,
-            return_source_documents=True,
+            self.rag_chain = ConversationalRetrievalChain.from_llm(
+                llm=llm,
+                retriever=self.retriever,
+                memory=self.memory,
+                return_source_documents=True,
                 output_key="answer",
             )
             
