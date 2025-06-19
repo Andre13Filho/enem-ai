@@ -106,7 +106,7 @@ class LocalMathRAG:
             st.error(f"Erro de rede ao baixar {url}: {e}")
             print(f"❌ Erro de rede ao baixar {url}: {e}")
             return False
-
+        
     def _ensure_faiss_index_is_ready(self) -> bool:
         """
         Garante que o índice FAISS esteja disponível, baixando-o se necessário.
@@ -140,19 +140,19 @@ class LocalMathRAG:
             # Limpa arquivos parciais em caso de falha
             if os.path.exists(index_file): os.remove(index_file)
             if os.path.exists(pkl_file): os.remove(pkl_file)
-            return False
-
+                return False
+            
     def initialize(self, api_key: str) -> bool:
         """
         Inicializa o sistema: baixa o índice, carrega o vectorstore e cria a cadeia RAG.
         """
         if self.is_initialized:
             return True
-
+            
         if not self.embeddings:
             st.error("Embeddings não foram inicializadas. Abortando.")
             return False
-
+    
         # 1. Garantir que o índice FAISS está disponível
         if not self._ensure_faiss_index_is_ready():
             return False
@@ -176,24 +176,24 @@ class LocalMathRAG:
             st.error(f"Erro ao carregar o índice FAISS: {e}")
             print(f"❌ Erro ao carregar o índice FAISS: {e}")
             return False
-
+    
         # 3. Criar a cadeia RAG
         try:
             st.info("🔗 Criando a cadeia de conversação RAG...")
             print("🔗 Criando a cadeia de conversação RAG...")
-            self.memory = ConversationBufferMemory(
-                memory_key="chat_history",
-                return_messages=True,
-                output_key="answer"
-            )
-            
+        self.memory = ConversationBufferMemory(
+            memory_key="chat_history",
+            return_messages=True,
+            output_key="answer"
+        )
+        
             llm = GroqLLM(api_key=api_key)
 
-            self.rag_chain = ConversationalRetrievalChain.from_llm(
-                llm=llm,
-                retriever=self.retriever,
-                memory=self.memory,
-                return_source_documents=True,
+        self.rag_chain = ConversationalRetrievalChain.from_llm(
+            llm=llm,
+            retriever=self.retriever,
+            memory=self.memory,
+            return_source_documents=True,
                 output_key="answer",
             )
             st.success("✅ Cadeia RAG pronta!")
@@ -204,7 +204,7 @@ class LocalMathRAG:
             st.error(f"Erro ao criar a cadeia RAG: {e}")
             print(f"❌ Erro ao criar a cadeia RAG: {e}")
             return False
-
+    
     def get_response(self, question: str) -> Dict[str, Any]:
         """Obtém uma resposta do sistema RAG."""
         if not self.rag_chain:
@@ -214,7 +214,7 @@ class LocalMathRAG:
             return self.rag_chain({"question": question})
         except Exception as e:
             return {"answer": f"Erro ao processar a pergunta: {str(e)}"}
-
+    
     def search_relevant_content(self, query: str, k: int = 3) -> List[Document]:
         """Busca por conteúdo relevante no vectorstore."""
         if not self.vectorstore:
@@ -225,7 +225,7 @@ class LocalMathRAG:
         except Exception as e:
             print(f"Erro na busca de similaridade: {str(e)}")
             return []
-
+    
     def get_stats(self) -> Dict[str, Any]:
         """
         Retorna estatísticas detalhadas do sistema RAG, incluindo uma amostra de documentos.
@@ -267,11 +267,11 @@ class LocalMathRAG:
                 "total_documents": 0,
                 "sample_documents": [str(e)]
             }
-
+    
     def clear_memory(self):
         """Limpa a memória da conversa."""
         if self.memory:
             self.memory.clear()
 
 # Singleton instance
-local_math_rag = LocalMathRAG()
+local_math_rag = LocalMathRAG() 

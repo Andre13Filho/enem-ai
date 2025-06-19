@@ -48,7 +48,7 @@ class ProfessorCarlosLocal:
         if not LOCAL_RAG_AVAILABLE:
             st.error("O arquivo 'local_math_rag.py' é essencial e não foi encontrado.")
             return False
-            
+        
         if self.is_initialized and self.current_api_key == api_key:
             st.success("✅ Sistema de Matemática já inicializado.")
             return True
@@ -60,25 +60,25 @@ class ProfessorCarlosLocal:
             success = self.rag_system.initialize(api_key)
             
             if success:
-                self.current_api_key = api_key
-                self.is_initialized = True
+                    self.current_api_key = api_key
+                    self.is_initialized = True
                 st.success("✅ Professor Carlos (Matemática) pronto!")
                 # Atualiza o estado da sessão para refletir a inicialização bem-sucedida
                 st.session_state.rag_initialized_carlos = True
-                return True
+                    return True
             else:
                 st.error("❌ Falha ao inicializar o sistema de Matemática.")
                 st.warning("O Professor Carlos pode não responder corretamente.")
                 self.is_initialized = False
                 st.session_state.rag_initialized_carlos = False
-                return False
-
+                            return False
+                    
         except Exception as e:
             st.error(f"❌ Ocorreu um erro crítico durante a inicialização: {str(e)}")
             self.is_initialized = False
             st.session_state.rag_initialized_carlos = False
             return False
-
+    
     def get_response(self, user_message: str, api_key: str) -> str:
         """Gera uma resposta para a mensagem do usuário."""
         

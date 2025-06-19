@@ -368,42 +368,64 @@ SUBJECTS = {
 }
 
 def get_api_key():
-    """Carrega a chave da API e exibe um status claro e persistente na barra lateral."""
+    """Carrega a chave da API do Streamlit secrets ou variáveis de ambiente"""
+    try:
+        # Tenta primeiro carregar do Streamlit secrets (para deployment no Streamlit Cloud)
+        return st.secrets.get("GROQ_API_KEY")
+    except:
+        # Fallback para variáveis de ambiente (para desenvolvimento local)
+        return os.environ.get("GROQ_API_KEY")
+
+def diagnose_api_key():
+    """Diagnóstico completo da API Key para identificar problemas"""
+    diagnostic_info = {
+        "key_found": False,
+        "source": None,
+        "key_preview": None,
+        "key_length": 0,
+        "key_format_valid": False,
+        "groq_test_result": None
+    }
     
-    # Este controle garante que a verificação rode apenas uma vez por sessão.
-    if 'api_key_checked' in st.session_state:
-        return st.session_state.get('GROQ_API_KEY')
-
     api_key = None
-    key_source = None
-
-    # Tenta obter a chave dos segredos do Streamlit (para nuvem)
+    
+    # Tenta carregar do Streamlit secrets
     try:
         if hasattr(st, 'secrets') and "GROQ_API_KEY" in st.secrets:
             api_key = st.secrets["GROQ_API_KEY"]
-            key_source = "Streamlit Secrets"
+            if api_key:
+                diagnostic_info["source"] = "Streamlit Secrets"
     except Exception as e:
-        # Erro silencioso se st.secrets não estiver disponível
-        pass
-
-    # Se não encontrou na nuvem, tenta do ambiente local
+        diagnostic_info["secrets_error"] = str(e)
+    
+    # Fallback para variáveis de ambiente
     if not api_key:
         api_key = os.environ.get("GROQ_API_KEY")
         if api_key:
-            key_source = "Variável de Ambiente Local"
-
-    # Exibe o status na barra lateral
-    if api_key:
-        st.sidebar.success(f"✅ API Key Carregada via {key_source}.")
-    else:
-        st.sidebar.error("❌ API Key NÃO encontrada.")
-        st.sidebar.warning("Verifique o nome e o valor da chave em 'Settings > Secrets'.")
-
-    # Armazena o resultado no estado da sessão
-    st.session_state['api_key_checked'] = True
-    st.session_state['GROQ_API_KEY'] = api_key
+            diagnostic_info["source"] = "Variável de Ambiente"
     
-    return api_key
+    if api_key:
+        diagnostic_info["key_found"] = True
+        diagnostic_info["key_length"] = len(api_key)
+        # Mostra apenas os primeiros 7 e últimos 4 caracteres para segurança
+        diagnostic_info["key_preview"] = f"{api_key[:7]}...{api_key[-4:]}" if len(api_key) > 11 else "***"
+        # Verifica se tem o formato típico das chaves Groq (começam com 'gsk_')
+        diagnostic_info["key_format_valid"] = api_key.startswith('gsk_')
+        
+        # Testa a chave com uma requisição simples à Groq
+        try:
+            client = Groq(api_key=api_key)
+            # Faz uma requisição muito simples para testar a autenticação
+            response = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": "Hi"}],
+                max_tokens=5
+            )
+            diagnostic_info["groq_test_result"] = "✅ Chave válida - Groq respondeu com sucesso"
+        except Exception as e:
+            diagnostic_info["groq_test_result"] = f"❌ Erro da Groq: {str(e)}"
+    
+    return diagnostic_info
 
 # Inicialização do session state
 if 'chat_history' not in st.session_state:
@@ -416,6 +438,10 @@ if 'generated_exercises' not in st.session_state:
     st.session_state.generated_exercises = {subject: [] for subject in SUBJECTS.keys()}
 if 'last_user_question' not in st.session_state:
     st.session_state.last_user_question = {subject: "" for subject in SUBJECTS.keys()}
+
+# Adiciona diagnóstico de API key se necessário
+if 'show_api_diagnostic' not in st.session_state:
+    st.session_state.show_api_diagnostic = False
 
 # Inicializa variáveis de controle para Enter
 for subject in SUBJECTS.keys():
