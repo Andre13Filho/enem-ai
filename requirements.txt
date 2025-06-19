@@ -27,6 +27,9 @@ pandas>=2.0.0
 # Processamento adicional
 requests>=2.31.0
 
+# Funcionalidades extras
+streamlit-markmap==1.0.1  # Para mapas mentais interativos
+
 # Formatadores específicos por matéria (incluídos no projeto)
 # physics_formatter.py - Formatação de fórmulas de física
 # math_formatter.py - Formatação de expressões matemáticas  
@@ -39,7 +42,6 @@ requests>=2.31.0
 # Remover dependências problemáticas para cloud:
 # pytesseract (requer instalação de sistema)
 # markmap-python (pode causar conflitos)
-# streamlit-markmap (versão específica pode não estar disponível)
 # faiss-cpu (muito pesado, usar chromadb)
 # seaborn (não essencial)
 # scikit-learn (não essencial para o core)

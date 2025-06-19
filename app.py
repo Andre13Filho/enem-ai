@@ -789,6 +789,9 @@ def main():
     if "current_subject" not in st.session_state:
         st.session_state.current_subject = "Boas-vindas"
     
+    # Salva API key no session state para funcionalidades extras
+    st.session_state.api_key = api_key
+    
     # Adiciona a chave de Boas-vindas se não existir
     if "Boas-vindas" not in SUBJECTS:
         SUBJECTS["Boas-vindas"] = {
@@ -874,57 +877,101 @@ def main():
             st.info("✅ Cache da API Key limpo! A aplicação tentará recarregar a chave.")
             st.rerun()
 
-    # Área de Chat Principal
-    st.header(f"Conversando com {subject_info.get('teacher', 'Assistente')}")
-
-    # Adiciona introdução do professor se o chat estiver vazio
-    if not st.session_state[f"chat_history_{current_subject}"]:
-        st.session_state[f"chat_history_{current_subject}"].append(
-            AIMessage(content=subject_info["intro"])
-        )
-
-    # Exibe o histórico de chat
-    for message in st.session_state[f"chat_history_{current_subject}"]:
-        avatar = subject_info.get('avatar', '🤖') if isinstance(message, AIMessage) else "🧑‍🎓"
-        with st.chat_message(name="assistant" if isinstance(message, AIMessage) else "user", avatar=avatar):
-            st.markdown(message.content)
+    # Área Principal com Abas
+    tab1, tab2, tab3 = st.tabs(["💬 Chat", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
     
-    # Input do usuário
-    if prompt := st.chat_input(f"Envie uma mensagem para {subject_info.get('teacher', 'Assistente')}..."):
-        st.session_state[f"chat_history_{current_subject}"].append(HumanMessage(content=prompt))
-        
-        with st.chat_message("user", avatar="🧑‍🎓"):
-            st.markdown(prompt)
-            
-        with st.chat_message("assistant", avatar=subject_info.get("avatar", "🤖")):
-            message_placeholder = st.empty()
-            
-            # Obtém a resposta do professor adequado
-            try:
-                full_response = get_teacher_response(current_subject, prompt, api_key)
-                
-                # Verifica se há erro de API key e tenta resolver
-                if handle_api_error(full_response):
-                    # Tenta novamente com uma nova API key
-                    new_api_key = get_api_key()
-                    if new_api_key and new_api_key != api_key:
-                        st.info("🔄 Tentando novamente com API key atualizada...")
-                        full_response = get_teacher_response(current_subject, prompt, new_api_key)
-                    else:
-                        full_response += "\n\n⚠️ **Por favor, gere uma nova API key no Groq Console e atualize as configurações.**"
-                        
-            except Exception as e:
-                from encoding_utils import safe_api_error
-                full_response = safe_api_error(e)
-                handle_api_error(full_response)  # Tenta resolver automaticamente
-            
-            # Simula efeito de digitação
-            message_placeholder.markdown(full_response + "▌")
-            time.sleep(0.01)
-            message_placeholder.markdown(full_response)
+    with tab1:
+        # Área de Chat Principal
+        st.header(f"Conversando com {subject_info.get('teacher', 'Assistente')}")
 
-            st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
-            st.rerun()
+        # Adiciona introdução do professor se o chat estiver vazio
+        if not st.session_state[f"chat_history_{current_subject}"]:
+            st.session_state[f"chat_history_{current_subject}"].append(
+                AIMessage(content=subject_info["intro"])
+            )
+
+        # Exibe o histórico de chat
+        for message in st.session_state[f"chat_history_{current_subject}"]:
+            avatar = subject_info.get('avatar', '🤖') if isinstance(message, AIMessage) else "🧑‍🎓"
+            with st.chat_message(name="assistant" if isinstance(message, AIMessage) else "user", avatar=avatar):
+                st.markdown(message.content)
+        
+        # Input do usuário
+        if prompt := st.chat_input(f"Envie uma mensagem para {subject_info.get('teacher', 'Assistente')}..."):
+            # Salva a última pergunta para os exercícios personalizados
+            st.session_state.last_user_question = {
+                'content': prompt,
+                'subject': current_subject
+            }
+            
+            st.session_state[f"chat_history_{current_subject}"].append(HumanMessage(content=prompt))
+            
+            with st.chat_message("user", avatar="🧑‍🎓"):
+                st.markdown(prompt)
+                
+            with st.chat_message("assistant", avatar=subject_info.get("avatar", "🤖")):
+                message_placeholder = st.empty()
+                
+                # Obtém a resposta do professor adequado
+                try:
+                    full_response = get_teacher_response(current_subject, prompt, api_key)
+                    
+                    # Verifica se há erro de API key e tenta resolver
+                    if handle_api_error(full_response):
+                        # Tenta novamente com uma nova API key
+                        new_api_key = get_api_key()
+                        if new_api_key and new_api_key != api_key:
+                            st.info("🔄 Tentando novamente com API key atualizada...")
+                            full_response = get_teacher_response(current_subject, prompt, new_api_key)
+                        else:
+                            full_response += "\n\n⚠️ **Por favor, gere uma nova API key no Groq Console e atualize as configurações.**"
+                            
+                except Exception as e:
+                    from encoding_utils import safe_api_error
+                    full_response = safe_api_error(e)
+                    handle_api_error(full_response)  # Tenta resolver automaticamente
+                
+                # Simula efeito de digitação
+                message_placeholder.markdown(full_response + "▌")
+                time.sleep(0.01)
+                message_placeholder.markdown(full_response)
+
+                st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
+                st.rerun()
+    
+    with tab2:
+        # Mapa Mental
+        try:
+            lazy_import_mindmap()
+            if "mindmap" in _imported_modules:
+                _imported_modules["mindmap"]()
+            else:
+                st.error("❌ Sistema de Mapa Mental não disponível")
+                st.info("Verifique se o arquivo `mapa_mental_markmap.py` está presente e as dependências estão instaladas.")
+        except Exception as e:
+            st.error(f"❌ Erro ao carregar Mapa Mental: {e}")
+            st.info("""
+            **Para ativar o Mapa Mental:**
+            1. Instale: `pip install streamlit-markmap==1.0.1`
+            2. Verifique se o arquivo `mapa_mental_markmap.py` está presente
+            """)
+    
+    with tab3:
+        # Exercícios Personalizados
+        try:
+            lazy_import_exercises()
+            if "exercicios" in _imported_modules:
+                _imported_modules["exercicios"].setup_ui()
+            else:
+                st.error("❌ Sistema de Exercícios Personalizados não disponível")
+                st.info("Verifique se o arquivo `exercicios_personalizados.py` está presente e os arquivos JSON de questões estão disponíveis.")
+        except Exception as e:
+            st.error(f"❌ Erro ao carregar Exercícios Personalizados: {e}")
+            st.info("""
+            **Para ativar os Exercícios Personalizados:**
+            1. Verifique se o arquivo `exercicios_personalizados.py` está presente
+            2. Certifique-se de que os arquivos `questions_primeiro_dia.json` e `questions_segundo_enem.json` existem
+            """)
 
 if __name__ == "__main__":
     main() 
