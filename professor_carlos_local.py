@@ -112,7 +112,8 @@ Para ativar o Professor Carlos com RAG Local:
         api_key_preview = api_key[:10] + "..." if len(api_key) > 10 else api_key
         
         # Inicializa sistema se necessário
-        if not self.is_initialized or api_key != self.current_api_key:
+        # Remove comparação direta de API key para evitar reinicializações desnecessárias
+        if not self.is_initialized:
             try:
                 st.info("🔧 Iniciando processo de inicialização...")
                 init_success = self.initialize_system(api_key)

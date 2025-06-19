@@ -38,7 +38,6 @@ class GroqLLM(LLM):
     
     def __init__(self, api_key: str, **kwargs):
         super().__init__(api_key=api_key, model_name="deepseek-r1-distill-llama-70b", **kwargs)
-        self._client = Groq(api_key=api_key)
     
     @property
     def _llm_type(self) -> str:
@@ -52,7 +51,9 @@ class GroqLLM(LLM):
         **kwargs: Any,
     ) -> str:
         try:
-            response = self._client.chat.completions.create(
+            # Cria uma nova instância do cliente a cada chamada para evitar cache corrompido
+            client = Groq(api_key=self.api_key)
+            response = client.chat.completions.create(
                 model=self.model_name,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.7,
@@ -60,8 +61,7 @@ class GroqLLM(LLM):
             )
             return response.choices[0].message.content
         except Exception as e:
-            from encoding_utils import safe_api_error
-            return safe_api_error(e)
+            return f"Erro na API: {str(e)}"
 
 class LocalGeographyRAG:
     """Sistema RAG Local para Geografia"""

@@ -31,14 +31,12 @@ class GroqLLM(LLM):
     model_name: str = "deepseek-r1-distill-llama-70b"
     temperature: float = 0.1
     max_tokens: int = 4000
-    client: Optional[Any] = None
     
     class Config:
         arbitrary_types_allowed = True
     
     def __init__(self, api_key: str, **kwargs):
         super().__init__(api_key=api_key, **kwargs)
-        self.client = Groq(api_key=api_key)
     
     @property
     def _llm_type(self) -> str:
@@ -56,7 +54,9 @@ class GroqLLM(LLM):
             # Adiciona instruções específicas contra mostrar raciocínio
             system_message = """Você é uma professora. NUNCA mostre seu raciocínio interno ou processo de pensamento. Responda DIRETAMENTE como uma professora explicando para uma aluna. NÃO use frases como "Vou analisar", "Preciso calcular", "Vamos pensar", etc."""
             
-            response = self.client.chat.completions.create(
+            # Cria uma nova instância do cliente a cada chamada para evitar cache corrompido
+            client = Groq(api_key=self.api_key)
+            response = client.chat.completions.create(
                 model=self.model_name,
                 messages=[
                     {"role": "system", "content": system_message},
