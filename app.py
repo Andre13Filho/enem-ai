@@ -298,57 +298,73 @@ SUBJECTS = {
     "Matemática": {
         "teacher": "Prof. Carlos",
         "icon": "🧮",
+        "avatar": "🧑‍🏫",
         "description": "Especialista em matemática do ENEM com sistema RAG local e formatação matemática aprimorada",
         "intro": "Olá, Futura Senhora Sther Souza! Sou o Professor Carlos, seu professor particular de Matemática! Agora tenho formatação matemática melhorada com LaTeX, respostas mais claras e sem duplicações. Vamos dominar a matemática do ENEM juntos! 🚀"
     },
     "Português": {
         "teacher": "Profa. Ana",
         "icon": "📚",
+        "avatar": "👩‍🏫",
         "description": "Literatura, gramática e interpretação de texto",
         "intro": "Olá, Futura Dra. Sther! Sou a Professora Ana, especialista em Português para o ENEM. Vou te ajudar com gramática, literatura e redação!"
     },
     "Biologia": {
         "teacher": "Prof. Roberto",
         "icon": "🧬",
+        "avatar": "🧑‍🔬",
         "description": "Especialista em biologia do ENEM com sistema RAG local e analogias das suas séries favoritas",
         "intro": "E aí, Futura Psicóloga Sther! Sou o Professor Roberto de Biologia! Tenho acesso direto aos seus materiais de biologia e vou usar analogias das suas séries favoritas para te ensinar. Vamos desvendar os mistérios da vida juntos! 🧬🔬"
     },
     "Geografia": {
         "teacher": "Profa. Marina",
         "icon": "🌍",
+        "avatar": "👩‍🏫",
         "description": "Geografia física, humana e geopolítica",
         "intro": "Fala, Futura Psicóloga Sther Souza! Sou a Professora Marina de Geografia. Vamos explorar o mundo e suas transformações!"
     },
     "História": {
         "teacher": "Prof. Eduardo",
         "icon": "🏛️",
+        "avatar": "🧑‍🏫",
         "description": "Especialista em história do ENEM com sistema RAG local e analogias das suas séries favoritas",
         "intro": "Eai, Sther! Sou o Professor Eduardo de História! Tenho acesso direto aos seus materiais de história e vou usar analogias das suas séries favoritas para te ensinar. Vamos viajar no tempo e entender nosso passado juntos! 🏛️📚"
     },
     "Química": {
         "teacher": "Profa. Luciana",
         "icon": "⚗️",
+        "avatar": "👩‍🔬",
         "description": "Química orgânica, inorgânica e físico-química",
         "intro": "Oi, Lindíssima Sther! Sou a Professora Luciana de Química. Vamos misturar conhecimento e descobrir reações incríveis!"
     },
     "Física": {
         "teacher": "Prof. Fernando",
         "icon": "🧪",
+        "avatar": "🧑‍🔬",
         "description": "Especialista em física do ENEM com sistema RAG local e analogias das suas séries favoritas",
         "intro": "E aí, Minha futura psicóloga Sther! Sou o Professor Fernando de Física! Tenho acesso direto aos seus materiais de física e vou usar analogias das suas séries favoritas para te ensinar. Vamos desvendar os mistérios do universo juntos! 🧪⚡"
     },
     "Redação": {
         "teacher": "Profa. Carla",
         "icon": "✍️",
+        "avatar": "👩‍🏫",
         "description": "Técnicas de redação e dissertação argumentativa",
         "intro": "Olá, Sther (futura) Souza! Sou a Professora Carla de Redação. Vamos transformar suas ideias em textos nota 1000!"
     },
     "Língua Portuguesa": {
         "teacher": "Professora Letícia",
         "icon": "👩‍🏫",
+        "avatar": "👩‍🏫",
         "description": "Gramática, literatura e interpretação de texto",
         "intro": "Oi, Princesa Sther! Sou a Professora Letícia. Vamos desvendar os segredos da língua portuguesa e da literatura!"
     },
+    "Boas-vindas": {
+        "teacher": "Assistente IA",
+        "icon": "👋",
+        "avatar": "🤖",
+        "description": "Sua assistente para o ENEM",
+        "intro": "Olá, Sther! Bem-vinda ao ENEM AI Helper. Escolha uma matéria na barra lateral para começar a estudar!"
+    }
 }
 
 def get_api_key():
@@ -364,7 +380,7 @@ def get_api_key():
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = {subject: [] for subject in SUBJECTS.keys()}
 if 'current_subject' not in st.session_state:
-    st.session_state.current_subject = "Matemática"
+    st.session_state.current_subject = "Boas-vindas"
 if 'processing_message' not in st.session_state:
     st.session_state.processing_message = False
 if 'generated_exercises' not in st.session_state:
@@ -693,7 +709,15 @@ def main():
     if "current_subject" not in st.session_state:
         st.session_state.current_subject = "Boas-vindas"
     
-    # Inicializa o histórico de chat para todas as matérias
+    # Adiciona a chave de Boas-vindas se não existir
+    if "Boas-vindas" not in SUBJECTS:
+        SUBJECTS["Boas-vindas"] = {
+            "teacher": "Assistente IA", "icon": "👋", "avatar": "🤖", 
+            "description": "Sua assistente para o ENEM", 
+            "intro": "Olá, Sther! Bem-vinda ao ENEM AI Helper. Escolha uma matéria para começar."
+        }
+        
+    # Inicializa o histórico de chat para todas as matérias, incluindo Boas-vindas
     for subject in SUBJECTS.keys():
         if f"chat_history_{subject}" not in st.session_state:
             st.session_state[f"chat_history_{subject}"] = []
@@ -718,7 +742,9 @@ def main():
         else:
             lazy_import_professor(current_subject)
         
-        subject_info = SUBJECTS[current_subject]
+        # Garante que subject_info sempre tenha um valor padrão
+        subject_info = SUBJECTS.get(current_subject, SUBJECTS["Boas-vindas"])
+        
         st.markdown(f"""
         <div class="teacher-intro">
             <h3>{subject_info['icon']} {subject_info['teacher']}</h3>
@@ -731,7 +757,7 @@ def main():
             st.rerun()
 
     # Área de Chat Principal
-    st.header(f"Conversando com {subject_info['teacher']}")
+    st.header(f"Conversando com {subject_info.get('teacher', 'Assistente')}")
 
     # Adiciona introdução do professor se o chat estiver vazio
     if not st.session_state[f"chat_history_{current_subject}"]:
@@ -741,20 +767,18 @@ def main():
 
     # Exibe o histórico de chat
     for message in st.session_state[f"chat_history_{current_subject}"]:
-        # CORREÇÃO APLICADA AQUI
-        avatar = subject_info['avatar'] if isinstance(message, AIMessage) else "🧑‍🎓"
+        avatar = subject_info.get('avatar', '🤖') if isinstance(message, AIMessage) else "🧑‍🎓"
         with st.chat_message(name="assistant" if isinstance(message, AIMessage) else "user", avatar=avatar):
             st.markdown(message.content)
     
     # Input do usuário
-    if prompt := st.chat_input(f"Envie uma mensagem para {subject_info['teacher']}..."):
+    if prompt := st.chat_input(f"Envie uma mensagem para {subject_info.get('teacher', 'Assistente')}..."):
         st.session_state[f"chat_history_{current_subject}"].append(HumanMessage(content=prompt))
         
         with st.chat_message("user", avatar="🧑‍🎓"):
             st.markdown(prompt)
             
-        # CORREÇÃO APLICADA AQUI
-        with st.chat_message("assistant", avatar=subject_info["avatar"]):
+        with st.chat_message("assistant", avatar=subject_info.get("avatar", "🤖")):
             message_placeholder = st.empty()
             
             # Obtém a resposta do professor adequado
