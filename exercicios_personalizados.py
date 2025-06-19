@@ -237,7 +237,6 @@ class ExerciciosPersonalizados:
                     st.link_button(
                         "🔗 Abrir Prova (PDF)",
                         url=pdf_url,
-                        key=f"link_{i}",
                         use_container_width=True
                     )
 
