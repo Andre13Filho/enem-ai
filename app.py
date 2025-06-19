@@ -746,30 +746,38 @@ def cleanup_unused_modules(current_subject: str):
 
 def process_mathematical_formulas_new(text: str) -> str:
     """
-    Versão simplificada para processar fórmulas matemáticas LaTeX.
+    Versão conservadora para processar fórmulas matemáticas LaTeX.
+    Só processa casos muito específicos para evitar problemas.
     """
     if not text:
         return text
     
+    # Se já tem delimitadores LaTeX, não mexe
+    if '$$' in text or '$' in text:
+        # Mas corrige se tem delimitadores duplos problemáticos
+        text = re.sub(r'\$\$\$\$+', '$$', text)  # Corrige $$$$ ou mais
+        text = re.sub(r'\$\$([^$]+)\$\$\$\$+', r'$$\1$$', text)  # Corrige $$..$$$$
+        # Corrige delimitadores duplos dentro da fórmula
+        text = re.sub(r'\$\$([^$]*)\$\$([^$]*)\$\$', r'$$\1\2$$', text)  # $$...$$...$$
+        # Remove $ duplos dentro de $$...$$
+        text = re.sub(r'\$\$([^$]*\$\$[^$]*)\$\$', lambda m: '$$' + m.group(1).replace('$$', '') + '$$', text)
+        return text
+    
+    # Só processa casos muito específicos e evidentes
     processed_text = text
     
-    # Padrões específicos para detectar comandos LaTeX soltos
-    patterns = [
-        # Comando \text{det}(B) = ... 
-        (r'(?<!\$)(\\text\{det\}\([^)]+\)\s*=\s*[^$\n.!?]+)', r'$$\1$$'),
-        # Comando \det(B) = ...
-        (r'(?<!\$)(\\det\([^)]+\)\s*=\s*[^$\n.!?]+)', r'$$\1$$'),  
-        # Frações
-        (r'(?<!\$)(\\frac\{[^}]+\}\{[^}]+\})', r'$\1$'),
-        # Raízes
-        (r'(?<!\$)(\\sqrt\{[^}]+\})', r'$\1$'),
-        # Expressões com = 
-        (r'(?<!\$)([A-Za-z]\s*=\s*[^$\n.!?]{5,})', r'$$\1$$'),
+    # Apenas comandos LaTeX muito específicos sem delimitadores
+    specific_patterns = [
+        # \text{det}(A) = expressão_longa
+        (r'^\\text\{det\}\([^)]+\)\s*=\s*.{10,}$', r'$$\g<0>$$'),
+        # \det(A) = expressão_longa 
+        (r'^\\det\([^)]+\)\s*=\s*.{10,}$', r'$$\g<0>$$'),
     ]
     
-    # Aplica correções
-    for pattern, replacement in patterns:
-        processed_text = re.sub(pattern, replacement, processed_text)
+    for pattern, replacement in specific_patterns:
+        if re.match(pattern, processed_text.strip()):
+            processed_text = re.sub(pattern, replacement, processed_text)
+            break
     
     return processed_text
 
