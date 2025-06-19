@@ -367,65 +367,67 @@ SUBJECTS = {
     }
 }
 
-def get_api_key():
-    """Carrega a chave da API do Streamlit secrets ou variáveis de ambiente"""
-    try:
-        # Tenta primeiro carregar do Streamlit secrets (para deployment no Streamlit Cloud)
-        return st.secrets.get("GROQ_API_KEY")
-    except:
-        # Fallback para variáveis de ambiente (para desenvolvimento local)
-        return os.environ.get("GROQ_API_KEY")
+def handle_api_error(error_message: str):
+    """Detecta e resolve problemas com API key corrompida"""
+    error_str = str(error_message).lower()
+    
+    # Detecta se é um erro de API key inválida
+    if any(term in error_str for term in ['invalid api key', 'error code: 401', 'unauthorized', 'invalid_api_key']):
+        st.warning("🔧 **API Key invalidada detectada** - Limpando cache...")
+        
+        # Limpa cache da API key
+        if 'api_key_cache' in st.session_state:
+            st.session_state.api_key_cache = None
+        if 'last_api_key_check' in st.session_state:
+            st.session_state.last_api_key_check = 0
+            
+        # Força revalidação
+        st.info("🔄 **Cache limpo** - Por favor, atualize a página ou gere uma nova API key.")
+        return True
+    
+    return False
 
-def diagnose_api_key():
-    """Diagnóstico completo da API Key para identificar problemas"""
-    diagnostic_info = {
-        "key_found": False,
-        "source": None,
-        "key_preview": None,
-        "key_length": 0,
-        "key_format_valid": False,
-        "groq_test_result": None
-    }
+def get_api_key():
+    """Carrega a chave da API do Streamlit secrets ou variáveis de ambiente com validação robusta"""
+    import time
+    
+    # Verifica se já passou tempo suficiente para verificar novamente (evita checks excessivos)
+    current_time = time.time()
+    if (st.session_state.api_key_cache and 
+        current_time - st.session_state.last_api_key_check < 60):  # Cache por 1 minuto
+        return st.session_state.api_key_cache
     
     api_key = None
     
-    # Tenta carregar do Streamlit secrets
+    # Primeiro tenta Streamlit Secrets (para Cloud)
     try:
         if hasattr(st, 'secrets') and "GROQ_API_KEY" in st.secrets:
             api_key = st.secrets["GROQ_API_KEY"]
-            if api_key:
-                diagnostic_info["source"] = "Streamlit Secrets"
-    except Exception as e:
-        diagnostic_info["secrets_error"] = str(e)
+            if api_key and isinstance(api_key, str):
+                api_key = api_key.strip()
+                if api_key and len(api_key) > 10:  # Validação básica de comprimento
+                    st.session_state.api_key_cache = api_key
+                    st.session_state.last_api_key_check = current_time
+                    return api_key
+    except Exception:
+        pass
     
-    # Fallback para variáveis de ambiente
-    if not api_key:
+    # Fallback para variáveis de ambiente (para local)
+    try:
         api_key = os.environ.get("GROQ_API_KEY")
-        if api_key:
-            diagnostic_info["source"] = "Variável de Ambiente"
+        if api_key and isinstance(api_key, str):
+            api_key = api_key.strip()
+            if api_key and len(api_key) > 10:  # Validação básica de comprimento
+                st.session_state.api_key_cache = api_key
+                st.session_state.last_api_key_check = current_time
+                return api_key
+    except Exception:
+        pass
     
-    if api_key:
-        diagnostic_info["key_found"] = True
-        diagnostic_info["key_length"] = len(api_key)
-        # Mostra apenas os primeiros 7 e últimos 4 caracteres para segurança
-        diagnostic_info["key_preview"] = f"{api_key[:7]}...{api_key[-4:]}" if len(api_key) > 11 else "***"
-        # Verifica se tem o formato típico das chaves Groq (começam com 'gsk_')
-        diagnostic_info["key_format_valid"] = api_key.startswith('gsk_')
-        
-        # Testa a chave com uma requisição simples à Groq
-        try:
-            client = Groq(api_key=api_key)
-            # Faz uma requisição muito simples para testar a autenticação
-            response = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[{"role": "user", "content": "Hi"}],
-                max_tokens=5
-            )
-            diagnostic_info["groq_test_result"] = "✅ Chave válida - Groq respondeu com sucesso"
-        except Exception as e:
-            diagnostic_info["groq_test_result"] = f"❌ Erro da Groq: {str(e)}"
-    
-    return diagnostic_info
+    # Se chegou até aqui, não encontrou uma API key válida
+    st.session_state.api_key_cache = None
+    st.session_state.last_api_key_check = current_time
+    return None
 
 # Inicialização do session state
 if 'chat_history' not in st.session_state:
@@ -438,6 +440,10 @@ if 'generated_exercises' not in st.session_state:
     st.session_state.generated_exercises = {subject: [] for subject in SUBJECTS.keys()}
 if 'last_user_question' not in st.session_state:
     st.session_state.last_user_question = {subject: "" for subject in SUBJECTS.keys()}
+if 'api_key_cache' not in st.session_state:
+    st.session_state.api_key_cache = None
+if 'last_api_key_check' not in st.session_state:
+    st.session_state.last_api_key_check = 0
 
 # Adiciona diagnóstico de API key se necessário
 if 'show_api_diagnostic' not in st.session_state:
@@ -461,7 +467,8 @@ class GroqTeacher:
     def get_response(self, user_message: str, api_key: str) -> str:
         """Gera resposta usando DeepSeek R1 Distill via Groq"""
         
-        if not api_key:
+        # Validação robusta da API key
+        if not api_key or not isinstance(api_key, str) or not api_key.strip():
             return f"""
 🔑 **Configure sua API Key da Groq**
 
@@ -473,8 +480,12 @@ Para ativar {self.name}, você precisa:
 💡 {self.name} está pronto para te ajudar com {self.subject}!
 """
         
+        # Limpa a API key para garantir que não há espaços ou caracteres extras
+        clean_api_key = api_key.strip()
+        
         try:
-            client = Groq(api_key=api_key)
+            # Cria uma nova instância do cliente a cada chamada para evitar cache corrompido
+            client = Groq(api_key=clean_api_key)
             
             # Prompt estruturado e profissional para cada professor
             system_prompt = f"""# IDENTIDADE DO PROFESSOR
@@ -566,15 +577,15 @@ SEMPRE termine sua resposta com uma dessas frases específicas:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_message}
                 ],
-                temperature=0.1,  # ✅ Temperatura baixa para respostas consistentes
+                temperature=0.1,
                 max_tokens=1500
             )
             
             return response.choices[0].message.content
             
         except Exception as e:
-            from encoding_utils import safe_str
-            error_msg = safe_str(e)
+            # Log do erro sem expor a API key
+            error_msg = str(e)
             
             return f"""
 ❌ **Erro na comunicação**
@@ -586,6 +597,14 @@ Detalhes: {error_msg}
 
 def get_teacher_response(subject: str, user_message: str, api_key: str) -> str:
     """Retorna resposta do professor específico com melhor tratamento de erro"""
+    
+    # Validação inicial da API key
+    if not api_key or not isinstance(api_key, str) or not api_key.strip():
+        return """
+❌ **API Key inválida ou não fornecida**
+
+Por favor, configure sua API Key corretamente nas configurações do Streamlit Cloud.
+"""
     
     try:
         # Professor Carlos especializado (RAG Local)
@@ -836,6 +855,24 @@ def main():
         if st.button("🗑️ Limpar Histórico da Matéria"):
             st.session_state[f"chat_history_{current_subject}"] = []
             st.rerun()
+            
+        # Botão para limpar cache da API Key
+        st.markdown("---")
+        st.markdown("### 🔧 Diagnóstico")
+        
+        # Mostra status da API key
+        current_api_key = get_api_key()
+        if current_api_key:
+            api_preview = f"{current_api_key[:8]}...{current_api_key[-4:]}" if len(current_api_key) > 12 else "***"
+            st.success(f"✅ API Key carregada: `{api_preview}`")
+        else:
+            st.error("❌ API Key não encontrada")
+        
+        if st.button("🔄 Renovar API Key"):
+            st.session_state.api_key_cache = None
+            st.session_state.last_api_key_check = 0
+            st.info("✅ Cache da API Key limpo! A aplicação tentará recarregar a chave.")
+            st.rerun()
 
     # Área de Chat Principal
     st.header(f"Conversando com {subject_info.get('teacher', 'Assistente')}")
@@ -865,17 +902,29 @@ def main():
             # Obtém a resposta do professor adequado
             try:
                 full_response = get_teacher_response(current_subject, prompt, api_key)
+                
+                # Verifica se há erro de API key e tenta resolver
+                if handle_api_error(full_response):
+                    # Tenta novamente com uma nova API key
+                    new_api_key = get_api_key()
+                    if new_api_key and new_api_key != api_key:
+                        st.info("🔄 Tentando novamente com API key atualizada...")
+                        full_response = get_teacher_response(current_subject, prompt, new_api_key)
+                    else:
+                        full_response += "\n\n⚠️ **Por favor, gere uma nova API key no Groq Console e atualize as configurações.**"
+                        
             except Exception as e:
                 from encoding_utils import safe_api_error
                 full_response = safe_api_error(e)
+                handle_api_error(full_response)  # Tenta resolver automaticamente
             
             # Simula efeito de digitação
             message_placeholder.markdown(full_response + "▌")
             time.sleep(0.01)
             message_placeholder.markdown(full_response)
 
-        st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
-        st.rerun()
+            st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
+            st.rerun()
 
 if __name__ == "__main__":
     main() 
