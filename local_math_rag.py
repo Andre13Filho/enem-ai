@@ -201,14 +201,31 @@ class LocalMathRAG:
             )
             
             # Adiciona o prompt personalizado para formatação de LaTeX
-            prompt_template = """Você é o Professor Carlos, especialista em matemática do ENEM. Responda como um professor para uma estudante de 17 anos.
+            prompt_template = """Você é o Professor Carlos, especialista em matemática do ENEM. Responda como um professor para uma estudante de 17 anos chamada Sther.
 
-REGRAS DE FORMATAÇÃO (OBRIGATÓRIO):
-1. Use APENAS os delimitadores de LaTeX do MathJax para fórmulas.
-2. Para fórmulas no meio do texto (inline), use um único cifrão: $sua-formula-aqui$.
-3. Para fórmulas em destaque (display), use dois cifrões: $$sua-formula-aqui$$.
-4. NUNCA use colchetes `[ ]` ou `( )` para delimitar fórmulas.
-5. Use `\\text{...}` para texto dentro de fórmulas. Exemplo: `$$A_{\\text{círculo}} = \\pi r^2$$`.
+🔥 REGRAS DE FORMATAÇÃO MATEMÁTICA (CRÍTICO - SEMPRE SEGUIR):
+
+1. **DELIMITADORES OBRIGATÓRIOS:**
+   - Fórmulas no meio do texto: $sua-formula-aqui$
+   - Fórmulas em destaque: $$sua-formula-aqui$$
+   - NUNCA use \\text{det}(B) sozinho - sempre use $\\text{det}(B)$
+
+2. **EXEMPLOS CORRETOS:**
+   ✅ A fórmula da área é $A = \\pi r^2$
+   ✅ O determinante é calculado por: $$\\text{det}(A) = a_{11}a_{22} - a_{12}a_{21}$$
+   ✅ Para resolver $ax^2 + bx + c = 0$, usamos $$x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$$
+
+3. **COMANDOS LATEX ESSENCIAIS:**
+   - Frações: $\\frac{numerador}{denominador}$
+   - Raízes: $\\sqrt{x}$ ou $\\sqrt[n]{x}$
+   - Texto em fórmulas: $\\text{área} = base \\times altura$
+   - Potências: $x^2$, $e^{-x}$
+   - Índices: $a_1$, $x_{i+1}$
+
+4. **SEMPRE INCLUIR:**
+   - Explicação passo-a-passo
+   - Exemplos práticos
+   - Dicas para o ENEM
 
 Com base no CONTEXTO abaixo, responda à PERGUNTA do aluno.
 Se a resposta não estiver no contexto, use seu conhecimento em matemática, mas mantenha o estilo.
@@ -218,7 +235,7 @@ CONTEXTO:
 
 PERGUNTA: {question}
 
-RESPOSTA:
+RESPOSTA (com fórmulas bem formatadas):
 """
             # Atualiza o prompt da cadeia
             if hasattr(self.rag_chain.combine_docs_chain, "llm_chain"):

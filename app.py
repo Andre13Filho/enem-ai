@@ -188,24 +188,51 @@ def lazy_import_mindmap():
         except ImportError:
             pass
 
-# Configuração MathJax para renderização de fórmulas matemáticas
+# Configuração MathJax aprimorada para renderização de fórmulas matemáticas
 st.markdown("""
-<script>
-  window.MathJax = {
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']],
-      displayMath: [['$$', '$$'], ['\\[', '\\]']]
-    },
-    options: {
-      ignoreHtmlClass: 'nostem|nolatexmath',
-      processHtmlClass: 'stemblock|latexmath',
-      processEscapes: true,
-      processEnvironments: true,
-      processRefs: true
+<script type="text/javascript">
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    processRefs: true,
+    packages: {'[+]': ['base', 'ams', 'newcommand', 'configmacros', 'action']},
+    macros: {
+      det: '\\operatorname{det}',
+      text: ['\\text{#1}', 1],
+      frac: ['\\frac{#1}{#2}', 2],
+      sqrt: ['\\sqrt{#1}', 1],
+      sum: '\\sum',
+      int: '\\int',
+      lim: '\\lim',
+      sin: '\\sin',
+      cos: '\\cos',
+      tan: '\\tan',
+      log: '\\log',
+      ln: '\\ln'
     }
-  };
+  },
+  svg: {
+    fontCache: 'global'
+  },
+  options: {
+    ignoreHtmlClass: 'nostem|nolatexmath',
+    processHtmlClass: 'stemblock|latexmath|math',
+    renderActions: {
+      addMenu: [0, '', '']
+    }
+  },
+  startup: {
+    ready: function() {
+      MathJax.startup.defaultReady();
+      console.log('MathJax está pronto!');
+    }
+  }
+};
 </script>
-<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 """, unsafe_allow_html=True)
 
 # CSS customizado
@@ -749,6 +776,53 @@ def cleanup_unused_modules(current_subject: str):
     if "redacao" not in _imported_modules:
         REDACAO_AVAILABLE = False
 
+def process_mathematical_formulas_new(text: str) -> str:
+    """
+    Versão simplificada para processar fórmulas matemáticas LaTeX.
+    """
+    if not text:
+        return text
+    
+    processed_text = text
+    
+    # Padrões específicos para detectar comandos LaTeX soltos
+    patterns = [
+        # Comando \text{det}(B) = ... 
+        (r'(?<!\$)(\\text\{det\}\([^)]+\)\s*=\s*[^$\n.!?]+)', r'$$\1$$'),
+        # Comando \det(B) = ...
+        (r'(?<!\$)(\\det\([^)]+\)\s*=\s*[^$\n.!?]+)', r'$$\1$$'),  
+        # Frações
+        (r'(?<!\$)(\\frac\{[^}]+\}\{[^}]+\})', r'$\1$'),
+        # Raízes
+        (r'(?<!\$)(\\sqrt\{[^}]+\})', r'$\1$'),
+        # Expressões com = 
+        (r'(?<!\$)([A-Za-z]\s*=\s*[^$\n.!?]{5,})', r'$$\1$$'),
+    ]
+    
+    # Aplica correções
+    for pattern, replacement in patterns:
+        processed_text = re.sub(pattern, replacement, processed_text)
+    
+    return processed_text
+
+def render_math_content(content: str) -> None:
+    """
+    Renderiza conteúdo com fórmulas matemáticas usando MathJax.
+    """
+    processed_content = process_mathematical_formulas_new(content)
+    
+    # Usa st.markdown com unsafe_allow_html=True para permitir MathJax
+    st.markdown(processed_content, unsafe_allow_html=True)
+    
+    # Força re-renderização do MathJax
+    st.markdown("""
+    <script>
+    if (window.MathJax) {
+        MathJax.typesetPromise();
+    }
+    </script>
+    """, unsafe_allow_html=True)
+
 def main():
     # Header
     st.markdown("""
@@ -894,7 +968,11 @@ def main():
         for message in st.session_state[f"chat_history_{current_subject}"]:
             avatar = subject_info.get('avatar', '🤖') if isinstance(message, AIMessage) else "🧑‍🎓"
             with st.chat_message(name="assistant" if isinstance(message, AIMessage) else "user", avatar=avatar):
-                st.markdown(message.content)
+                # Para matérias que podem conter fórmulas matemáticas, usa renderização especial
+                if current_subject in ["Matemática", "Física", "Química"] and isinstance(message, AIMessage):
+                    render_math_content(message.content)
+                else:
+                    st.markdown(message.content)
         
         # Input do usuário
         if prompt := st.chat_input(f"Envie uma mensagem para {subject_info.get('teacher', 'Assistente')}..."):
@@ -931,10 +1009,20 @@ def main():
                     full_response = safe_api_error(e)
                     handle_api_error(full_response)  # Tenta resolver automaticamente
                 
-                # Simula efeito de digitação
-                message_placeholder.markdown(full_response + "▌")
-                time.sleep(0.01)
-                message_placeholder.markdown(full_response)
+                # Simula efeito de digitação e renderiza com fórmulas matemáticas
+                if current_subject in ["Matemática", "Física", "Química"]:
+                    # Para matérias com fórmulas, usa renderização especial
+                    with message_placeholder.container():
+                        render_math_content(full_response + "▌")
+                    time.sleep(0.01)
+                    message_placeholder.empty()
+                    with message_placeholder.container():
+                        render_math_content(full_response)
+                else:
+                    # Para outras matérias, usa markdown padrão
+                    message_placeholder.markdown(full_response + "▌")
+                    time.sleep(0.01)
+                    message_placeholder.markdown(full_response)
 
                 st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
                 st.rerun()
