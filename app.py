@@ -395,65 +395,37 @@ SUBJECTS = {
 }
 
 def handle_api_error(error_message: str):
-    """Detecta e resolve problemas com API key corrompida"""
+    """Detecta erros de API key sem usar cache"""
     error_str = str(error_message).lower()
     
     # Detecta se é um erro de API key inválida
     if any(term in error_str for term in ['invalid api key', 'error code: 401', 'unauthorized', 'invalid_api_key']):
-        st.warning("🔧 **API Key invalidada detectada** - Limpando cache...")
-        
-        # Limpa cache da API key
-        if 'api_key_cache' in st.session_state:
-            st.session_state.api_key_cache = None
-        if 'last_api_key_check' in st.session_state:
-            st.session_state.last_api_key_check = 0
-            
-        # Força revalidação
-        st.info("🔄 **Cache limpo** - Por favor, atualize a página ou gere uma nova API key.")
+        st.warning("🔧 **API Key invalidada detectada**")
+        st.info("🔄 **Por favor, gere uma nova API key no Groq Console e atualize as configurações.**")
         return True
     
     return False
 
 def get_api_key():
-    """Carrega a chave da API do Streamlit secrets ou variáveis de ambiente com validação robusta"""
-    import time
-    
-    # Verifica se já passou tempo suficiente para verificar novamente (evita checks excessivos)
-    current_time = time.time()
-    if (st.session_state.api_key_cache and 
-        current_time - st.session_state.last_api_key_check < 60):  # Cache por 1 minuto
-        return st.session_state.api_key_cache
-    
-    api_key = None
+    """Carrega a chave da API do Streamlit secrets ou variáveis de ambiente - VERSÃO LIMPA SEM CACHE"""
     
     # Primeiro tenta Streamlit Secrets (para Cloud)
     try:
         if hasattr(st, 'secrets') and "GROQ_API_KEY" in st.secrets:
             api_key = st.secrets["GROQ_API_KEY"]
-            if api_key and isinstance(api_key, str):
-                api_key = api_key.strip()
-                if api_key and len(api_key) > 10:  # Validação básica de comprimento
-                    st.session_state.api_key_cache = api_key
-                    st.session_state.last_api_key_check = current_time
-                    return api_key
-    except Exception:
+            if api_key and isinstance(api_key, str) and api_key.strip() and len(api_key.strip()) > 10:
+                return api_key.strip()
+    except:
         pass
     
     # Fallback para variáveis de ambiente (para local)
     try:
         api_key = os.environ.get("GROQ_API_KEY")
-        if api_key and isinstance(api_key, str):
-            api_key = api_key.strip()
-            if api_key and len(api_key) > 10:  # Validação básica de comprimento
-                st.session_state.api_key_cache = api_key
-                st.session_state.last_api_key_check = current_time
-                return api_key
-    except Exception:
+        if api_key and isinstance(api_key, str) and api_key.strip() and len(api_key.strip()) > 10:
+            return api_key.strip()
+    except:
         pass
     
-    # Se chegou até aqui, não encontrou uma API key válida
-    st.session_state.api_key_cache = None
-    st.session_state.last_api_key_check = current_time
     return None
 
 # Inicialização do session state
@@ -467,10 +439,6 @@ if 'generated_exercises' not in st.session_state:
     st.session_state.generated_exercises = {subject: [] for subject in SUBJECTS.keys()}
 if 'last_user_question' not in st.session_state:
     st.session_state.last_user_question = {subject: "" for subject in SUBJECTS.keys()}
-if 'api_key_cache' not in st.session_state:
-    st.session_state.api_key_cache = None
-if 'last_api_key_check' not in st.session_state:
-    st.session_state.last_api_key_check = 0
 
 # Adiciona diagnóstico de API key se necessário
 if 'show_api_diagnostic' not in st.session_state:
@@ -863,9 +831,6 @@ def main():
     if "current_subject" not in st.session_state:
         st.session_state.current_subject = "Boas-vindas"
     
-    # Salva API key no session state para funcionalidades extras
-    st.session_state.api_key = api_key
-    
     # Adiciona a chave de Boas-vindas se não existir
     if "Boas-vindas" not in SUBJECTS:
         SUBJECTS["Boas-vindas"] = {
@@ -933,9 +898,9 @@ def main():
             st.session_state[f"chat_history_{current_subject}"] = []
             st.rerun()
             
-        # Botão para limpar cache da API Key
+        # Status da API Key
         st.markdown("---")
-        st.markdown("### 🔧 Diagnóstico")
+        st.markdown("### 🔧 Status da API Key")
         
         # Mostra status da API key
         current_api_key = get_api_key()
@@ -944,12 +909,7 @@ def main():
             st.success(f"✅ API Key carregada: `{api_preview}`")
         else:
             st.error("❌ API Key não encontrada")
-        
-        if st.button("🔄 Renovar API Key"):
-            st.session_state.api_key_cache = None
-            st.session_state.last_api_key_check = 0
-            st.info("✅ Cache da API Key limpo! A aplicação tentará recarregar a chave.")
-            st.rerun()
+            st.info("Configure sua API Key no Streamlit Cloud ou arquivo .env")
 
     # Área Principal com Abas
     tab1, tab2, tab3 = st.tabs(["💬 Chat", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
