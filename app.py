@@ -183,8 +183,9 @@ def lazy_import_mindmap():
     """Importa mapa mental sob demanda"""
     if "mindmap" not in _imported_modules:
         try:
-            from mapa_mental_markmap import display_mapa_mental_wrapper
-            _imported_modules["mindmap"] = display_mapa_mental_wrapper
+            # Importa a nova função contextual
+            from mapa_mental_markmap import gerar_mapa_mental_contextual
+            _imported_modules["mindmap"] = gerar_mapa_mental_contextual
         except ImportError:
             pass
 
@@ -887,12 +888,6 @@ def main():
         
         # Input do usuário
         if prompt := st.chat_input(f"Envie uma mensagem para {subject_info.get('teacher', 'Assistente')}..."):
-            # Salva a última pergunta para os exercícios personalizados
-            st.session_state.last_user_question = {
-                'content': prompt,
-                'subject': current_subject
-            }
-            
             st.session_state[f"chat_history_{current_subject}"].append(HumanMessage(content=prompt))
             
             with st.chat_message("user", avatar="🧑‍🎓"):
@@ -901,21 +896,15 @@ def main():
             with st.chat_message("assistant", avatar=subject_info.get("avatar", "🤖")):
                 message_placeholder = st.empty()
                 
-                # Obtém a resposta do professor adequado
-                try:
-                    full_response = get_teacher_response(current_subject, prompt, api_key)
-                    
-                    # Verifica se há erro de API key e tenta resolver
-                    if handle_api_error(full_response):
-                        # Tenta novamente com uma nova API key
-                        new_api_key = get_api_key()
-                        if new_api_key and new_api_key != api_key:
-                            st.info("🔄 Tentando novamente com API key atualizada...")
-                            full_response = get_teacher_response(current_subject, prompt, new_api_key)
-                except Exception as e:
-                    from encoding_utils import safe_api_error
-                    full_response = safe_api_error(e)
-                    handle_api_error(full_response)  # Tenta resolver automaticamente
+                # Obtém a resposta do professor
+                full_response = get_teacher_response(current_subject, prompt, api_key)
+                
+                # Salva a ÚLTIMA interação (pergunta E resposta) para o mapa mental
+                st.session_state.last_interaction = {
+                    'question': prompt,
+                    'answer': full_response,
+                    'subject': current_subject
+                }
                 
                 # Simula efeito de digitação e renderiza com fórmulas matemáticas
                 if current_subject in ["Matemática", "Física", "Química"]:
@@ -936,21 +925,22 @@ def main():
                 st.rerun()
     
     with tab2:
-        # Mapa Mental
-        try:
-            lazy_import_mindmap()
-            if "mindmap" in _imported_modules:
-                _imported_modules["mindmap"]()
-            else:
-                st.error("❌ Sistema de Mapa Mental não disponível")
-                st.info("Verifique se o arquivo `mapa_mental_markmap.py` está presente e as dependências estão instaladas.")
-        except Exception as e:
-            st.error(f"❌ Erro ao carregar Mapa Mental: {e}")
-            st.info("""
-            **Para ativar o Mapa Mental:**
-            1. Instale: `pip install streamlit-markmap==1.0.1`
-            2. Verifique se o arquivo `mapa_mental_markmap.py` está presente
-            """)
+        # Mapa Mental Contextual
+        lazy_import_mindmap()
+        if "mindmap" in _imported_modules:
+            # Pega a última interação salva
+            last_interaction = st.session_state.get('last_interaction', {})
+            question = last_interaction.get('question', '')
+            answer = last_interaction.get('answer', '')
+            
+            # Chama a nova função com o contexto
+            _imported_modules["mindmap"](
+                pergunta_usuario=question,
+                resposta_assistente=answer,
+                api_key=api_key
+            )
+        else:
+            st.error("❌ Sistema de Mapa Mental não está funcionando.")
     
     with tab3:
         # Exercícios Personalizados

@@ -9,12 +9,12 @@ import re
 from typing import Dict, List, Any, Optional
 from groq import Groq
 
+# Tenta importar o `streamlit-markmap`
 try:
     from streamlit_markmap import markmap
     MARKMAP_AVAILABLE = True
 except ImportError:
     MARKMAP_AVAILABLE = False
-    st.error("❌ streamlit-markmap não instalado. Execute: pip install streamlit-markmap==1.0.1")
 
 def get_example_question(subject: str) -> str:
     """Retorna pergunta de exemplo para cada matéria"""
@@ -71,6 +71,83 @@ def get_subject_system_prompt(subject: str) -> str:
         'Redação': "Você é um especialista em educação de redação e mapas mentais, com foco em ENEM."
     }
     return prompts.get(subject, "Você é um especialista em educação e mapas mentais.")
+
+def gerar_mapa_mental_contextual(pergunta_usuario: str, resposta_assistente: str, api_key: str):
+    """
+    Gera e exibe um mapa mental contextual com base na conversa.
+    """
+    st.markdown("### 🧠 Mapa Mental sobre a Última Interação")
+
+    if not MARKMAP_AVAILABLE:
+        st.error("O componente `streamlit-markmap` não está instalado. Por favor, execute: `pip install streamlit-markmap==1.0.1`")
+        return
+
+    if not pergunta_usuario or not resposta_assistente:
+        st.info("Primeiro, converse com um professor na aba '💬 Chat' para que um mapa mental possa ser gerado aqui.")
+        return
+
+    if not api_key:
+        st.warning("A API Key da Groq não foi encontrada. Configure-a na aba 'Chat'.")
+        return
+
+    # Usar um cache para evitar gerar o mapa repetidamente
+    cache_key = f"mapa_mental_{hash(pergunta_usuario + resposta_assistente)}"
+    
+    if cache_key not in st.session_state:
+        try:
+            with st.spinner("Criando um mapa mental com base na sua conversa..."):
+                client = Groq(api_key=api_key)
+                
+                # Prompt otimizado para gerar o mapa mental
+                system_prompt = """
+                Você é um especialista em criar mapas mentais educacionais no formato Markmap.
+                Sua tarefa é converter uma pergunta de um aluno e a resposta de um professor em um mapa mental claro e estruturado.
+
+                REGRAS DE FORMATAÇÃO (OBRIGATÓRIO):
+                - Use a sintaxe Markmap (baseada em Markdown).
+                - O título principal deve ser o tópico da pergunta do aluno.
+                - Crie ramos para os conceitos chave da resposta do professor.
+                - Use sub-ramos para detalhar definições, exemplos, fórmulas e dicas.
+                - Fórmulas matemáticas DEVEM estar em formato LaTeX, dentro de `$`. Ex: `$E=mc^2$`.
+                - Seja conciso e direto.
+                """
+
+                user_prompt = f"""
+                CONVERSA PARA TRANSFORMAR EM MAPA MENTAL:
+
+                ALUNO(A) PERGUNTOU:
+                "{pergunta_usuario}"
+
+                PROFESSOR(A) RESPONDEU:
+                "{resposta_assistente}"
+
+                ---
+                GERAR MAPA MENTAL NO FORMATO MARKMAP:
+                """
+
+                chat_completion = client.chat.completions.create(
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    model="llama-3.1-70b-versatile",
+                    temperature=0.2,
+                )
+                mapa_content = chat_completion.choices[0].message.content
+                st.session_state[cache_key] = mapa_content
+
+        except Exception as e:
+            st.error(f"Ocorreu um erro ao gerar o mapa mental: {e}")
+            if cache_key in st.session_state:
+                del st.session_state[cache_key] # Limpa o cache em caso de erro
+            return
+    
+    # Exibe o mapa mental do cache
+    mapa_gerado = st.session_state.get(cache_key)
+    if mapa_gerado:
+        markmap(mapa_gerado, height=600)
+    else:
+        st.warning("Não foi possível gerar o mapa mental.")
 
 def display_mapa_mental_markmap():
     """Interface principal do mapa mental usando streamlit-markmap"""
