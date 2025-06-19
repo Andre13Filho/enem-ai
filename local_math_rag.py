@@ -142,7 +142,7 @@ class LocalMathRAG:
                 os.remove(index_file)
             if os.path.exists(pkl_file): 
                 os.remove(pkl_file)
-            return False
+                return False
             
     def initialize(self, api_key: str) -> bool:
         """
@@ -184,19 +184,19 @@ class LocalMathRAG:
             st.info("🔗 Criando a cadeia de conversação RAG...")
             print("🔗 Criando a cadeia de conversação RAG...")
             
-            self.memory = ConversationBufferMemory(
-                memory_key="chat_history",
-                return_messages=True,
-                output_key="answer"
-            )
-            
+        self.memory = ConversationBufferMemory(
+            memory_key="chat_history",
+            return_messages=True,
+            output_key="answer"
+        )
+        
             llm = GroqLLM(api_key=api_key)
 
-            self.rag_chain = ConversationalRetrievalChain.from_llm(
-                llm=llm,
-                retriever=self.retriever,
-                memory=self.memory,
-                return_source_documents=True,
+        self.rag_chain = ConversationalRetrievalChain.from_llm(
+            llm=llm,
+            retriever=self.retriever,
+            memory=self.memory,
+            return_source_documents=True,
                 output_key="answer",
             )
             
@@ -205,34 +205,27 @@ class LocalMathRAG:
 
 🔥 REGRAS DE FORMATAÇÃO MATEMÁTICA (CRÍTICO - SEMPRE SEGUIR):
 
-1. **DELIMITADORES OBRIGATÓRIOS - USE APENAS UM TIPO POR FÓRMULA:**
-   - Fórmulas simples no texto: $sua-formula-aqui$
-   - Fórmulas em destaque (complexas): $$sua-formula-completa$$
-   - NUNCA misture: ❌ $$algo$$ ou $$$algo$$$
+1. **DELIMITADORES OBRIGATÓRIOS:**
+   - Fórmulas no meio do texto: $sua-formula-aqui$
+   - Fórmulas em destaque: $$sua-formula-aqui$$
+   - NUNCA use \\text{det}(B) sozinho - sempre use $\\text{det}(B)$
 
 2. **EXEMPLOS CORRETOS:**
    ✅ A fórmula da área é $A = \\pi r^2$
-   ✅ O determinante é: $$\\det(A) = \\sum_{i=1}^{n} (-1)^{i+j} a_{ij} \\det(A_{ij})$$
-   ✅ Para resolver $ax^2 + bx + c = 0$, usamos: $$x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$$
+   ✅ O determinante é calculado por: $$\\text{det}(A) = a_{11}a_{22} - a_{12}a_{21}$$
+   ✅ Para resolver $ax^2 + bx + c = 0$, usamos $$x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$$
 
-3. **FÓRMULAS COMPLEXAS - SEMPRE USE $$...$$:**
-   - Determinantes: $$\\det(A) = a_{11}a_{22} - a_{12}a_{21}$$
-   - Somatórios: $$\\sum_{i=1}^{n} x_i$$
-   - Frações grandes: $$\\frac{numerador_longo}{denominador_longo}$$
+3. **COMANDOS LATEX ESSENCIAIS:**
+   - Frações: $\\frac{numerador}{denominador}$
+   - Raízes: $\\sqrt{x}$ ou $\\sqrt[n]{x}$
+   - Texto em fórmulas: $\\text{área} = base \\times altura$
+   - Potências: $x^2$, $e^{-x}$
+   - Índices: $a_1$, $x_{i+1}$
 
-4. **COMANDOS LATEX ESSENCIAIS:**
-   - Frações: \\frac{numerador}{denominador}
-   - Raízes: \\sqrt{x} ou \\sqrt[n]{x}
-   - Somatório: \\sum_{i=1}^{n}
-   - Determinante: \\det(A)
-   - Texto em fórmulas: \\text{palavra}
-   - Potências: x^2, e^{-x}
-   - Índices: a_1, x_{i+1}
-
-5. **REGRA DE OURO:**
-   - Uma fórmula = um par de delimitadores
-   - Se é simples: $...$
-   - Se é complexa: $$...$$
+4. **SEMPRE INCLUIR:**
+   - Explicação passo-a-passo
+   - Exemplos práticos
+   - Dicas para o ENEM
 
 Com base no CONTEXTO abaixo, responda à PERGUNTA do aluno.
 Se a resposta não estiver no contexto, use seu conhecimento em matemática, mas mantenha o estilo.

@@ -191,9 +191,9 @@ def lazy_import_mindmap():
 # Configuração MathJax aprimorada para renderização de fórmulas matemáticas
 st.markdown("""
 <script type="text/javascript">
-window.MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true,
     processEnvironments: true,
@@ -216,9 +216,9 @@ window.MathJax = {
   },
   svg: {
     fontCache: 'global'
-  },
-  options: {
-    ignoreHtmlClass: 'nostem|nolatexmath',
+    },
+    options: {
+      ignoreHtmlClass: 'nostem|nolatexmath',
     processHtmlClass: 'stemblock|latexmath|math',
     renderActions: {
       addMenu: [0, '', '']
@@ -229,8 +229,8 @@ window.MathJax = {
       MathJax.startup.defaultReady();
       console.log('MathJax está pronto!');
     }
-  }
-};
+    }
+  };
 </script>
 <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 """, unsafe_allow_html=True)
@@ -711,84 +711,27 @@ def cleanup_unused_modules(current_subject: str):
         "Redação": "redacao"
     }
     
-    current_module = subject_module_map.get(current_subject)
-    modules_to_remove = []
-    
-    for module_key in _imported_modules.keys():
-        if module_key != current_module and module_key not in ["mindmap", "exercicios"]:
-            modules_to_remove.append(module_key)
-    
-    for module_key in modules_to_remove:
-        del _imported_modules[module_key]
+    # Não remover o módulo do mapa mental ou dos exercícios
+    modules_to_keep = ["mindmap", "exercicios"]
+    if current_subject in subject_module_map:
+        modules_to_keep.append(subject_module_map[current_subject])
         
-    # Reset das variáveis globais para módulos removidos
-    global PROFESSOR_CARLOS_LOCAL_AVAILABLE, PROFESSOR_LUCIANA_LOCAL_AVAILABLE
-    global PROFESSOR_ROBERTO_LOCAL_AVAILABLE, PROFESSOR_EDUARDO_LOCAL_AVAILABLE  
-    global PROFESSOR_MARINA_LOCAL_AVAILABLE, PROFESSOR_FERNANDO_LOCAL_AVAILABLE
-    global PORTUGUESE_RAG_AVAILABLE, REDACAO_AVAILABLE
-    
-    if "carlos" not in _imported_modules:
-        PROFESSOR_CARLOS_LOCAL_AVAILABLE = False
-    if "luciana" not in _imported_modules:
-        PROFESSOR_LUCIANA_LOCAL_AVAILABLE = False
-    if "roberto" not in _imported_modules:
-        PROFESSOR_ROBERTO_LOCAL_AVAILABLE = False
-    if "eduardo" not in _imported_modules:
-        PROFESSOR_EDUARDO_LOCAL_AVAILABLE = False
-    if "marina" not in _imported_modules:
-        PROFESSOR_MARINA_LOCAL_AVAILABLE = False
-    if "fernando" not in _imported_modules:
-        PROFESSOR_FERNANDO_LOCAL_AVAILABLE = False
-    if "leticia" not in _imported_modules:
-        PORTUGUESE_RAG_AVAILABLE = False
-    if "redacao" not in _imported_modules:
-        REDACAO_AVAILABLE = False
-
-def process_mathematical_formulas_new(text: str) -> str:
-    """
-    Versão conservadora para processar fórmulas matemáticas LaTeX.
-    Só processa casos muito específicos para evitar problemas.
-    """
-    if not text:
-        return text
-    
-    # Se já tem delimitadores LaTeX, não mexe
-    if '$$' in text or '$' in text:
-        # Mas corrige se tem delimitadores duplos problemáticos
-        text = re.sub(r'\$\$\$\$+', '$$', text)  # Corrige $$$$ ou mais
-        text = re.sub(r'\$\$([^$]+)\$\$\$\$+', r'$$\1$$', text)  # Corrige $$..$$$$
-        # Corrige delimitadores duplos dentro da fórmula
-        text = re.sub(r'\$\$([^$]*)\$\$([^$]*)\$\$', r'$$\1\2$$', text)  # $$...$$...$$
-        # Remove $ duplos dentro de $$...$$
-        text = re.sub(r'\$\$([^$]*\$\$[^$]*)\$\$', lambda m: '$$' + m.group(1).replace('$$', '') + '$$', text)
-        return text
-    
-    # Só processa casos muito específicos e evidentes
-    processed_text = text
-    
-    # Apenas comandos LaTeX muito específicos sem delimitadores
-    specific_patterns = [
-        # \text{det}(A) = expressão_longa
-        (r'^\\text\{det\}\([^)]+\)\s*=\s*.{10,}$', r'$$\g<0>$$'),
-        # \det(A) = expressão_longa 
-        (r'^\\det\([^)]+\)\s*=\s*.{10,}$', r'$$\g<0>$$'),
-    ]
-    
-    for pattern, replacement in specific_patterns:
-        if re.match(pattern, processed_text.strip()):
-            processed_text = re.sub(pattern, replacement, processed_text)
-            break
-    
-    return processed_text
+    for module_key in list(_imported_modules.keys()):
+        if module_key not in modules_to_keep:
+            del _imported_modules[module_key]
+            # gc.collect() # Opcional: forçar coleta de lixo
 
 def render_math_content(content: str) -> None:
     """
     Renderiza conteúdo com fórmulas matemáticas usando MathJax.
+    O processamento agora é feito diretamente pelo LLM, que foi instruído
+    a gerar LaTeX corretamente.
     """
-    processed_content = process_mathematical_formulas_new(content)
+    # A função de processamento `process_mathematical_formulas_new` foi removida 
+    # pois estava causando erros de formatação.
     
     # Usa st.markdown com unsafe_allow_html=True para permitir MathJax
-    st.markdown(processed_content, unsafe_allow_html=True)
+    st.markdown(content, unsafe_allow_html=True)
     
     # Força re-renderização do MathJax
     st.markdown("""
@@ -905,7 +848,7 @@ def main():
         if st.button("🗑️ Limpar Histórico da Matéria"):
             st.session_state[f"chat_history_{current_subject}"] = []
             st.rerun()
-            
+
         # Status da API Key
         st.markdown("---")
         st.markdown("### 🔧 Status da API Key")
@@ -969,9 +912,6 @@ def main():
                         if new_api_key and new_api_key != api_key:
                             st.info("🔄 Tentando novamente com API key atualizada...")
                             full_response = get_teacher_response(current_subject, prompt, new_api_key)
-                        else:
-                            full_response += "\n\n⚠️ **Por favor, gere uma nova API key no Groq Console e atualize as configurações.**"
-                            
                 except Exception as e:
                     from encoding_utils import safe_api_error
                     full_response = safe_api_error(e)
