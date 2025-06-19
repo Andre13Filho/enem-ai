@@ -240,37 +240,6 @@ def improve_visual_structure(text: str) -> str:
     
     return text
 
-def fix_latex_formatting(text: str) -> str:
-    """
-    Corrige problemas específicos de formatação LaTeX
-    """
-    
-    # Remove colchetes em torno de fórmulas e converte para LaTeX
-    # Exemplo: [ D = \frac{n(n - 3)}{2} ] -> $$D = \frac{n(n - 3)}{2}$$
-    text = re.sub(r'\[\s*([^]]+)\s*\]', r'$$\1$$', text)
-    
-    # Corrige parênteses em fórmulas inline
-    # Exemplo: ( n ) -> $n$
-    text = re.sub(r'\(\s*([a-zA-Z])\s*\)', r'$\1$', text)
-    
-    # Corrige símbolos especiais
-    text = text.replace('( n )', '$n$')
-    text = text.replace('( S )', '$S$')
-    text = text.replace('( D )', '$D$')
-    text = text.replace('( Ã )', '$\\alpha$')
-    
-    # Converte graus adequadamente
-    text = text.replace('180°', '180^\\circ')
-    text = text.replace('360°', '360^\\circ')
-    text = text.replace('90°', '90^\\circ')
-    text = text.replace('108°', '108^\\circ')
-    
-    # Corrige multiplicação
-    text = text.replace(' x ', ' \\times ')
-    text = text.replace(' × ', ' \\times ')
-    
-    return text
-
 def remove_reasoning_text(text: str) -> str:
     """
     Remove texto de raciocínio/pensamento que não deveria aparecer
@@ -321,26 +290,16 @@ def remove_duplicates(text: str) -> str:
 # Função principal para uso no Professor Carlos
 def format_professor_response(response: str) -> str:
     """
-    Função principal para formatar respostas do Professor Carlos
-    Aplica todas as melhorias de formatação matemática
+    Formatação completa da resposta do Professor Carlos
     """
     
-    # 1. Remove duplicações
-    formatted = remove_duplicates(response)
+    # 1. Remove texto de raciocínio (se houver)
+    response = remove_reasoning_text(response)
     
-    # 2. Remove texto de raciocínio
-    formatted = remove_reasoning_text(formatted)
+    # 2. Formata conteúdo matemático
+    response = improve_math_readability(response)
     
-    # 3. Corrige formatação LaTeX específica
-    formatted = fix_latex_formatting(formatted)
+    # 3. Remove duplicações
+    response = remove_duplicates(response)
     
-    # 4. Aplica formatação matemática geral
-    formatted = format_mathematical_content(formatted)
-    
-    # 5. Melhora legibilidade
-    formatted = improve_math_readability(formatted)
-    
-    # 6. Melhora estrutura visual
-    formatted = improve_visual_structure(formatted)
-    
-    return formatted.strip() 
+    return response 

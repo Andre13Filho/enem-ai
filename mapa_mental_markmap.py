@@ -91,7 +91,8 @@ def display_mapa_mental_markmap():
     
     # Verificar se há histórico de chat da matéria atual
     current_subject = st.session_state.get('current_subject', 'Matemática')
-    chat_history = st.session_state.get('chat_history', {}).get(current_subject, [])
+    chat_history_key = f"chat_history_{current_subject}"
+    chat_history = st.session_state.get(chat_history_key, [])
     
     if not chat_history:
         # Obtém informações da matéria atual
