@@ -770,7 +770,7 @@ def main():
             message_placeholder.markdown(full_response)
 
         st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
-                st.rerun()
+        st.rerun()
 
 if __name__ == "__main__":
     main() 
