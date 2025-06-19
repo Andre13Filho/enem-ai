@@ -6,6 +6,7 @@ Gera mapas mentais interativos baseados nas dúvidas da Sther
 
 import streamlit as st
 import re
+import os  # Adicionado para acessar variáveis de ambiente
 from typing import Dict, List, Any, Optional
 from groq import Groq
 
@@ -71,6 +72,21 @@ def get_subject_system_prompt(subject: str) -> str:
         'Redação': "Você é um especialista em educação de redação e mapas mentais, com foco em ENEM."
     }
     return prompts.get(subject, "Você é um especialista em educação e mapas mentais.")
+
+def get_api_key_for_mindmap():
+    """Carrega a chave da API do Streamlit secrets ou variáveis de ambiente."""
+    # Tenta Streamlit Secrets (para Cloud)
+    if hasattr(st, 'secrets') and "GROQ_API_KEY" in st.secrets:
+        api_key = st.secrets["GROQ_API_KEY"]
+        if api_key and isinstance(api_key, str) and api_key.strip():
+            return api_key.strip()
+    
+    # Fallback para variáveis de ambiente (para local)
+    api_key = os.environ.get("GROQ_API_KEY")
+    if api_key and isinstance(api_key, str) and api_key.strip():
+        return api_key.strip()
+    
+    return None
 
 # Definições de classes para compatibilidade com o histórico de chat
 class HumanMessage:
@@ -138,13 +154,13 @@ def display_mapa_mental_markmap():
         st.warning("💬 Faça uma pergunta na aba Chat primeiro para gerar o mapa mental!")
         return
     
-    # Verificar API key
-    api_key = getattr(st.session_state, 'api_key', '')
+    # Verificar API key usando a nova função
+    api_key = get_api_key_for_mindmap()
     if not api_key:
         st.warning("""
         🔑 **Configure sua API Key primeiro!**
         
-        Vá para a aba "💬 Chat" e configure sua API Key da Groq na barra lateral.
+        Sua chave da Groq não foi encontrada. Por favor, configure-a nos Secrets do Streamlit Cloud com o nome `GROQ_API_KEY`.
         """)
         return
     
