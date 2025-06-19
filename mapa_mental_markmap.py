@@ -9,12 +9,12 @@ import re
 from typing import Dict, List, Any, Optional
 from groq import Groq
 
-# Tenta importar o `streamlit-markmap`
 try:
     from streamlit_markmap import markmap
     MARKMAP_AVAILABLE = True
 except ImportError:
     MARKMAP_AVAILABLE = False
+    st.error("❌ streamlit-markmap não instalado. Execute: pip install streamlit-markmap==1.0.1")
 
 def get_example_question(subject: str) -> str:
     """Retorna pergunta de exemplo para cada matéria"""
@@ -71,83 +71,6 @@ def get_subject_system_prompt(subject: str) -> str:
         'Redação': "Você é um especialista em educação de redação e mapas mentais, com foco em ENEM."
     }
     return prompts.get(subject, "Você é um especialista em educação e mapas mentais.")
-
-def gerar_mapa_mental_contextual(pergunta_usuario: str, resposta_assistente: str, api_key: str):
-    """
-    Gera e exibe um mapa mental contextual com base na conversa.
-    """
-    st.markdown("### 🧠 Mapa Mental sobre a Última Interação")
-
-    if not MARKMAP_AVAILABLE:
-        st.error("O componente `streamlit-markmap` não está instalado. Por favor, execute: `pip install streamlit-markmap==1.0.1`")
-        return
-
-    if not pergunta_usuario or not resposta_assistente:
-        st.info("Primeiro, converse com um professor na aba '💬 Chat' para que um mapa mental possa ser gerado aqui.")
-        return
-
-    if not api_key:
-        st.warning("A API Key da Groq não foi encontrada. Configure-a na aba 'Chat'.")
-        return
-
-    # Usar um cache para evitar gerar o mapa repetidamente
-    cache_key = f"mapa_mental_{hash(pergunta_usuario + resposta_assistente)}"
-    
-    if cache_key not in st.session_state:
-        try:
-            with st.spinner("Criando um mapa mental com base na sua conversa..."):
-                client = Groq(api_key=api_key)
-                
-                # Prompt otimizado para gerar o mapa mental
-                system_prompt = """
-                Você é um especialista em criar mapas mentais educacionais no formato Markmap.
-                Sua tarefa é converter uma pergunta de um aluno e a resposta de um professor em um mapa mental claro e estruturado.
-
-                REGRAS DE FORMATAÇÃO (OBRIGATÓRIO):
-                - Use a sintaxe Markmap (baseada em Markdown).
-                - O título principal deve ser o tópico da pergunta do aluno.
-                - Crie ramos para os conceitos chave da resposta do professor.
-                - Use sub-ramos para detalhar definições, exemplos, fórmulas e dicas.
-                - Fórmulas matemáticas DEVEM estar em formato LaTeX, dentro de `$`. Ex: `$E=mc^2$`.
-                - Seja conciso e direto.
-                """
-
-                user_prompt = f"""
-                CONVERSA PARA TRANSFORMAR EM MAPA MENTAL:
-
-                ALUNO(A) PERGUNTOU:
-                "{pergunta_usuario}"
-
-                PROFESSOR(A) RESPONDEU:
-                "{resposta_assistente}"
-
-                ---
-                GERAR MAPA MENTAL NO FORMATO MARKMAP:
-                """
-
-                chat_completion = client.chat.completions.create(
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt},
-                    ],
-                    model="llama-3.1-70b-versatile",
-                    temperature=0.2,
-                )
-                mapa_content = chat_completion.choices[0].message.content
-                st.session_state[cache_key] = mapa_content
-
-        except Exception as e:
-            st.error(f"Ocorreu um erro ao gerar o mapa mental: {e}")
-            if cache_key in st.session_state:
-                del st.session_state[cache_key] # Limpa o cache em caso de erro
-            return
-    
-    # Exibe o mapa mental do cache
-    mapa_gerado = st.session_state.get(cache_key)
-    if mapa_gerado:
-        markmap(mapa_gerado, height=600)
-    else:
-        st.warning("Não foi possível gerar o mapa mental.")
 
 def display_mapa_mental_markmap():
     """Interface principal do mapa mental usando streamlit-markmap"""
@@ -417,24 +340,29 @@ def gerar_markdown_mapa_mental(pergunta: str, api_key: str, nivel: str, current_
         
         config = nivel_config.get(nivel, nivel_config["Intermediário"])
         
+        # Prompt melhorado e mais específico para as dúvidas da Sther
         prompt = f"""
-Você é um especialista em mapas mentais educacionais. Crie um mapa mental em formato Markdown sobre a pergunta da aluna Sther na matéria {current_subject}:
+Você é um especialista em mapas mentais educacionais do ENEM. A aluna Sther (17 anos, cursando 3º ano) fez esta pergunta específica sobre {current_subject}:
 
-**Pergunta:** "{pergunta}"
+**Pergunta da Sther:** "{pergunta}"
 **Matéria:** {current_subject}
+**Nível:** {nivel}
 
-**Configuração:** {config['conceitos']}, {config['profundidade']}, {config['detalhes']}
+**OBJETIVO:** Criar um mapa mental ESPECÍFICO que responda diretamente à dúvida da Sther, não um mapa genérico da matéria.
 
-**INSTRUÇÕES IMPORTANTES:**
+**CONFIGURAÇÃO:** {config['conceitos']}, {config['profundidade']}, {config['detalhes']}
+
+**INSTRUÇÕES CRÍTICAS:**
 1. Responda APENAS com o código Markdown do mapa mental
-2. SEMPRE comece com as configurações YAML frontmatter conforme exemplo
-3. Use a estrutura hierárquica com # ## ### #### 
-4. Para fórmulas (matemática/física/química): $formula$ ou $$formula$$
-5. Use emojis relevantes para {current_subject}
-6. Mantenha foco no conteúdo do ENEM para {current_subject}
-7. Organize logicamente do geral para o específico
+2. SEMPRE comece com as configurações YAML frontmatter
+3. O título principal deve ser EXATAMENTE sobre a pergunta da Sther
+4. Cada seção deve contribuir para responder a pergunta específica
+5. Para fórmulas: use $formula$ (inline) ou $$formula$$ (display)
+6. Use emojis relevantes para {current_subject}
+7. Foque no que cai no ENEM para {current_subject}
+8. Organize do conceito central para subtópicos relacionados
 
-**ESTRUTURA OBRIGATÓRIA PARA {current_subject.upper()}:**
+**ESTRUTURA OBRIGATÓRIA:**
 ```markdown
 ---
 markmap:
@@ -448,37 +376,50 @@ markmap:
   spacingVertical: 5
 ---
 
-# 🎯 [CONCEITO PRINCIPAL de {current_subject}]
+# 🎯 [RESPOSTA DIRETA À PERGUNTA DA STHER]
 
-## 📚 Fundamentos
-### 🔢 Conceito 1
-- Definição básica
-{get_formula_example(current_subject)}
+## 📚 Conceito Central
+### 🔍 Definição
+- Resposta direta à pergunta
+- Por que é importante
 
-### 📐 Conceito 2  
-- Propriedades importantes
-{get_advanced_formula_example(current_subject)}
+### 📐 Como Funciona
+- Mecanismo/processo principal
+- {get_formula_example(current_subject)}
 
-## 🧮 Aplicações
-### 🎯 Resolução de Problemas
-- Método 1
-- Método 2
+## 🧮 Resolução Prática
+### ⚡ Passo a Passo
+- Método 1: [específico para a pergunta]
+- Método 2: [alternativo]
 
-### 📊 Exemplos ENEM
-- Tipo de questão
+### 🎯 Dicas ENEM
+- Como identificar no exame
+- Pegadinhas comuns
+- {get_advanced_formula_example(current_subject)}
+
+## 📊 Exemplos Relacionados
+### 🔢 Exemplo Básico
+- Situação similar
+- Resolução step-by-step
+
+### 🏆 Exemplo ENEM
+- Questão típica do exame
 - Estratégia de resolução
 ```
 
-GERE O MAPA MENTAL COMPLETO AGORA:"""
+IMPORTANTE: Adapte o conteúdo para responder ESPECIFICAMENTE à pergunta "{pergunta}" da Sther em {current_subject}.
+
+GERE O MAPA MENTAL AGORA:"""
         
+        # Modelo atualizado (llama-3.3-70b-versatile está obsoleto)
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="llama-3.2-90b-text-preview",  # Modelo estável da Groq
             messages=[
-                {"role": "system", "content": get_subject_system_prompt(current_subject)},
+                {"role": "system", "content": f"{get_subject_system_prompt(current_subject)} Você está ajudando Sther, uma estudante de 17 anos que vai prestar ENEM. Seja didático e específico."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=2000,
-            temperature=0.7
+            max_tokens=2500,  # Aumentado para mapas mais detalhados
+            temperature=0.3   # Reduzido para respostas mais consistentes
         )
         
         markdown_content = response.choices[0].message.content.strip()
@@ -486,16 +427,22 @@ GERE O MAPA MENTAL COMPLETO AGORA:"""
         # Limpar e validar o markdown
         markdown_content = limpar_markdown(markdown_content)
         
-        # Se não conseguiu gerar via IA, criar estrutura básica
+        # Se não conseguiu gerar via IA, criar estrutura básica específica
         if not markdown_content or len(markdown_content) < 100:
             markdown_content = criar_mapa_mental_basico(pergunta, nivel, current_subject)
         
         return markdown_content
         
     except Exception as e:
-        from encoding_utils import safe_str
-        error_msg = safe_str(e)
-        st.error(f"Erro na geração via IA: {error_msg}")
+        # Melhor tratamento de erro
+        error_msg = str(e)
+        
+        # Se for erro de modelo obsoleto, informar claramente
+        if "decommissioned" in error_msg or "model_decommissioned" in error_msg:
+            st.error("🔧 **Modelo de IA atualizado necessário** - usando mapa mental básico")
+        else:
+            st.warning(f"⚠️ Erro na geração via IA: {error_msg[:100]}... - usando mapa mental básico")
+        
         return criar_mapa_mental_basico(pergunta, nivel, current_subject)
 
 def limpar_markdown(texto: str) -> str:
@@ -520,7 +467,7 @@ def criar_mapa_mental_basico(pergunta: str, nivel: str, current_subject: str) ->
     """Cria um mapa mental básico quando a IA falha"""
     
     # Detectar tópico principal
-    topico = detectar_topico_matematico(pergunta)
+    topico = detectar_topico_principal(pergunta, current_subject)
     
     if nivel == "Básico":
         return f"""---
@@ -652,29 +599,88 @@ markmap:
 - Eliminação de alternativas
 """
 
-def detectar_topico_matematico(pergunta: str) -> str:
-    """Detecta o tópico matemático principal da pergunta"""
+def detectar_topico_principal(pergunta: str, current_subject: str) -> str:
+    """Detecta o tópico principal da pergunta baseado na matéria"""
     
     pergunta_lower = pergunta.lower()
     
-    topicos = {
-        'Equação': ['equacao', 'equaçao', 'resolver', 'raiz', 'solução'],
-        'Função': ['funcao', 'função', 'grafico', 'gráfico', 'domínio', 'imagem'],
-        'Geometria': ['geometria', 'área', 'volume', 'perímetro', 'triângulo', 'círculo'],
-        'Trigonometria': ['trigonometria', 'seno', 'cosseno', 'tangente', 'ângulo'],
-        'Probabilidade': ['probabilidade', 'estatística', 'média', 'chances'],
-        'Análise Combinatória': ['combinação', 'permutação', 'arranjo', 'fatorial'],
-        'Progressões': ['progressão', 'PA', 'PG', 'sequência', 'série'],
-        'Logaritmo': ['logaritmo', 'log', 'exponencial', 'potência'],
-        'Matriz': ['matriz', 'determinante', 'sistema linear'],
-        'Derivada': ['derivada', 'limite', 'taxa', 'variação']
+    # Tópicos por matéria
+    topicos_por_materia = {
+        'Matemática': {
+            'Equação': ['equacao', 'equaçao', 'resolver', 'raiz', 'solução'],
+            'Função': ['funcao', 'função', 'grafico', 'gráfico', 'domínio', 'imagem'],
+            'Geometria': ['geometria', 'área', 'volume', 'perímetro', 'triângulo', 'círculo'],
+            'Trigonometria': ['trigonometria', 'seno', 'cosseno', 'tangente', 'ângulo'],
+            'Probabilidade': ['probabilidade', 'estatística', 'média', 'chances'],
+            'Análise Combinatória': ['combinação', 'permutação', 'arranjo', 'fatorial'],
+            'Progressões': ['progressão', 'PA', 'PG', 'sequência', 'série'],
+            'Logaritmo': ['logaritmo', 'log', 'exponencial', 'potência'],
+            'Matriz': ['matriz', 'determinante', 'sistema linear'],
+            'Derivada': ['derivada', 'limite', 'taxa', 'variação']
+        },
+        'Física': {
+            'Mecânica': ['força', 'movimento', 'velocidade', 'aceleração', 'newton'],
+            'Termodinâmica': ['calor', 'temperatura', 'energia térmica', 'dilatação'],
+            'Eletricidade': ['corrente', 'tensão', 'resistência', 'circuito', 'elétrica'],
+            'Óptica': ['luz', 'espelho', 'lente', 'refração', 'reflexão'],
+            'Ondulatória': ['onda', 'som', 'frequência', 'amplitude', 'oscilação'],
+            'Relatividade': ['relatividade', 'einstein', 'velocidade da luz']
+        },
+        'Química': {
+            'Átomo': ['átomo', 'elétron', 'próton', 'núcleo', 'orbital'],
+            'Ligações': ['ligação', 'covalente', 'iônica', 'metálica'],
+            'Reações': ['reação', 'combustão', 'síntese', 'decomposição'],
+            'Termoquímica': ['energia', 'entalpia', 'calor', 'exotérmica', 'endotérmica'],
+            'Cinética': ['velocidade', 'catalisador', 'concentração'],
+            'Equilíbrio': ['equilíbrio', 'constante', 'le chatelier']
+        },
+        'Biologia': {
+            'Citologia': ['célula', 'membrana', 'núcleo', 'organela'],
+            'Genética': ['gene', 'DNA', 'hereditariedade', 'mutação'],
+            'Evolução': ['evolução', 'seleção natural', 'darwin', 'especiação'],
+            'Ecologia': ['ecossistema', 'cadeia alimentar', 'população'],
+            'Fisiologia': ['respiração', 'circulação', 'digestão', 'sistema']
+        },
+        'Geografia': {
+            'Geologia': ['relevo', 'rocha', 'solo', 'erosão', 'tectônica'],
+            'Climatologia': ['clima', 'chuva', 'temperatura', 'vento'],
+            'Hidrografia': ['rio', 'bacia', 'água', 'oceano'],
+            'Demografia': ['população', 'migração', 'densidade', 'crescimento'],
+            'Geopolítica': ['território', 'fronteira', 'conflito', 'globalização']
+        },
+        'História': {
+            'Brasil Colônia': ['colonial', 'escravidão', 'bandeirantes', 'jesuítas'],
+            'Brasil República': ['república', 'vargas', 'ditadura', 'redemocratização'],
+            'Idade Média': ['feudalismo', 'igreja', 'cruzadas', 'peste'],
+            'Idade Moderna': ['renascimento', 'reforma', 'descobrimentos'],
+            'Idade Contemporânea': ['revolução industrial', 'guerra mundial', 'imperialismo']
+        },
+        'Português': {
+            'Gramática': ['verbo', 'substantivo', 'sintaxe', 'concordância'],
+            'Literatura': ['romantismo', 'realismo', 'modernismo', 'poesia'],
+            'Redação': ['dissertação', 'argumentação', 'introdução', 'conclusão'],
+            'Interpretação': ['texto', 'significado', 'contexto', 'inferência']
+        },
+        'Redação': {
+            'Estrutura': ['introdução', 'desenvolvimento', 'conclusão', 'parágrafo'],
+            'Argumentação': ['argumento', 'tese', 'exemplo', 'dados'],
+            'Coesão': ['conectivo', 'coesão', 'coerência', 'articulação'],
+            'Proposta': ['intervenção', 'solução', 'problema', 'sociedade']
+        }
     }
+    
+    topicos = topicos_por_materia.get(current_subject, {})
     
     for topico, palavras_chave in topicos.items():
         if any(palavra in pergunta_lower for palavra in palavras_chave):
             return topico
     
-    return 'Matemática'
+    # Se não encontrou tópico específico, extrair da pergunta
+    palavras = pergunta.split()
+    if len(palavras) > 2:
+        return ' '.join(palavras[:3]).title()
+    
+    return current_subject
 
 def analisar_markdown_stats(markdown: str) -> Dict[str, int]:
     """Analisa estatísticas do markdown do mapa mental"""
