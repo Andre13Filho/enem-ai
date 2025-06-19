@@ -196,6 +196,31 @@ class LocalMathRAG:
                 return_source_documents=True,
                 output_key="answer",
             )
+            
+            # Adiciona o prompt personalizado para formatação de LaTeX
+            prompt_template = """Você é o Professor Carlos, especialista em matemática do ENEM. Responda como um professor para uma estudante de 17 anos.
+
+REGRAS DE FORMATAÇÃO (OBRIGATÓRIO):
+1. Use APENAS os delimitadores de LaTeX do MathJax para fórmulas.
+2. Para fórmulas no meio do texto (inline), use um único cifrão: $sua-formula-aqui$.
+3. Para fórmulas em destaque (display), use dois cifrões: $$sua-formula-aqui$$.
+4. NUNCA use colchetes `[ ]` ou `( )` para delimitar fórmulas.
+5. Use `\\text{...}` para texto dentro de fórmulas. Exemplo: `$$A_{\\text{círculo}} = \\pi r^2$$`.
+
+Com base no CONTEXTO abaixo, responda à PERGUNTA do aluno.
+Se a resposta não estiver no contexto, use seu conhecimento em matemática, mas mantenha o estilo.
+
+CONTEXTO:
+{context}
+
+PERGUNTA: {question}
+
+RESPOSTA:
+"""
+            # Atualiza o prompt da cadeia
+            if hasattr(self.rag_chain.combine_docs_chain, "llm_chain"):
+                self.rag_chain.combine_docs_chain.llm_chain.prompt.template = prompt_template
+                
             st.success("✅ Cadeia RAG pronta!")
             print("✅ Cadeia RAG pronta!")
             self.is_initialized = True
