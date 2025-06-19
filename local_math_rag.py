@@ -156,21 +156,21 @@ class LocalMathRAG:
         if self.is_initialized:
             return True
             
-        # Passo 0: Configurar embeddings (movido para cá)
-        self._setup_embeddings(model_name="sentence-transformers/distiluse-base-multilingual-cased-v1")
-        
-        if not self.embeddings:
-            st.error("Embeddings não foram inicializadas. Abortando.")
-            return False
-    
         # 1. Garantir que o índice FAISS está disponível
         if not self._ensure_faiss_index_is_ready():
             return False
             
-        # 2. Carregar o Vectorstore FAISS
+        # 2. Carregar o Vectorstore FAISS (e configurar embeddings aqui)
         try:
             st.info("📚 Carregando base de conhecimento de matemática (FAISS)...")
             print("📚 Carregando base de conhecimento de matemática (FAISS)...")
+            
+            # Passo 2.1: Configurar embeddings ANTES de carregar o FAISS
+            self._setup_embeddings(model_name="sentence-transformers/distiluse-base-multilingual-cased-v1")
+            if not self.embeddings:
+                st.error("Embeddings não foram inicializadas. Abortando.")
+                return False
+
             self.vectorstore = FAISS.load_local(
                 FAISS_INDEX_DIR, 
                 self.embeddings,
@@ -192,19 +192,19 @@ class LocalMathRAG:
             st.info("🔗 Criando a cadeia de conversação RAG...")
             print("🔗 Criando a cadeia de conversação RAG...")
             
-        self.memory = ConversationBufferMemory(
-            memory_key="chat_history",
-            return_messages=True,
-            output_key="answer"
-        )
+            self.memory = ConversationBufferMemory(
+                memory_key="chat_history",
+                return_messages=True,
+                output_key="answer"
+            )
         
             llm = GroqLLM(api_key=api_key)
 
-        self.rag_chain = ConversationalRetrievalChain.from_llm(
-            llm=llm,
-            retriever=self.retriever,
-            memory=self.memory,
-            return_source_documents=True,
+            self.rag_chain = ConversationalRetrievalChain.from_llm(
+                llm=llm,
+                retriever=self.retriever,
+                memory=self.memory,
+                return_source_documents=True,
                 output_key="answer",
             )
             
