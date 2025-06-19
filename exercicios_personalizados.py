@@ -4,6 +4,13 @@ from pathlib import Path
 import re
 from typing import Dict, List, Tuple
 
+# --- CONFIGURAÇÃO HUGGING FACE ---
+# Substitua com seu usuário e nome do repositório onde os PDFs estão.
+HF_USER = "Andre13Filho"
+HF_REPO = "enem_tests_editions"
+HF_PDF_BASE_URL = f"https://huggingface.co/datasets/{HF_USER}/{HF_REPO}/resolve/main"
+# ---------------------------------
+
 @st.cache_data
 def load_data():
     """Carrega dados das questões do ENEM."""
@@ -203,32 +210,36 @@ class ExerciciosPersonalizados:
         st.success(f"🎯 Encontrei **{len(recommendations)}** exercícios recomendados:")
 
         for i, (question_id, score, question_data) in enumerate(recommendations):
-            pdf_info = get_pdf_info(question_id)
-            
             with st.container(border=True):
                 col1, col2 = st.columns([3, 1])
                 
                 with col1:
-                    year, number = question_id.split('_')
+                    year, number_str = question_id.split('_')
+                    number = int(number_str)
                     st.markdown(f"**📝 Resolva a Questão {number} do ENEM {year}**")
-                    st.caption(f"**📚 {question_data.get('disciplina', 'N/A')}** • {question_data.get('tema', 'N/A')}")
+                    
+                    tema_completo = f"**📚 {question_data.get('disciplina', 'N/A')}**"
+                    if question_data.get('tema'):
+                        tema_completo += f" • {question_data.get('tema')}"
+                    if question_data.get('conteudo'):
+                        tema_completo += f" ({question_data.get('conteudo')})"
+                    st.caption(tema_completo)
                 
                 with col2:
-                    if pdf_info:
-                        try:
-                            with open(pdf_info["path"], "rb") as pdf_file:
-                                st.download_button(
-                                    label="📥 Baixar Prova",
-                                    data=pdf_file,
-                                    file_name=pdf_info["name"],
-                                    mime="application/pdf",
-                                    key=f"download_{i}",
-                                    use_container_width=True
-                                )
-                        except FileNotFoundError:
-                            st.error("PDF não encontrado")
-        else:
-                        st.warning("PDF indisponível")
+                    # Determina o dia e o nome do arquivo com base no número da questão
+                    if 1 <= number <= 90:
+                        pdf_filename = f"dia01_{year}.pdf"
+                    else:
+                        pdf_filename = f"dia02_{year}.pdf"
+                    
+                    pdf_url = f"{HF_PDF_BASE_URL}/{pdf_filename}"
+                    
+                    st.link_button(
+                        "🔗 Abrir Prova (PDF)",
+                        url=pdf_url,
+                        key=f"link_{i}",
+                        use_container_width=True
+                    )
 
 # Instância global
 exercicios_personalizados = ExerciciosPersonalizados() 
