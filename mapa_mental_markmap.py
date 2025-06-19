@@ -72,6 +72,15 @@ def get_subject_system_prompt(subject: str) -> str:
     }
     return prompts.get(subject, "Você é um especialista em educação e mapas mentais.")
 
+# Definições de classes para compatibilidade com o histórico de chat
+class HumanMessage:
+    def __init__(self, content):
+        self.content = content
+
+class AIMessage:
+    def __init__(self, content):
+        self.content = content
+
 def display_mapa_mental_markmap():
     """Interface principal do mapa mental usando streamlit-markmap"""
     
@@ -203,13 +212,15 @@ def display_mapa_mental_markmap():
     
     exibir_mapa_mental_markmap(ultima_pergunta, api_key, nivel_detalhamento, debug_options, current_subject)
 
-def obter_ultima_pergunta(chat_history: List[Dict]) -> Optional[str]:
-    """Obtém a última pergunta feita pelo usuário"""
+def obter_ultima_pergunta(chat_history: List[Any]) -> Optional[str]:
+    """Obtém a última pergunta feita pelo usuário a partir de uma lista de objetos."""
     
+    # Itera sobre o histórico de trás para frente
     for mensagem in reversed(chat_history):
-        if mensagem.get('role') == 'user':
-            return mensagem.get('content', '')
-    
+        # Verifica se a mensagem é uma instância de HumanMessage
+        if hasattr(mensagem, '__class__') and mensagem.__class__.__name__ == 'HumanMessage':
+            return getattr(mensagem, 'content', '')
+            
     return None
 
 def exibir_mapa_mental_markmap(pergunta: str, api_key: str, nivel: str, debug_options: dict = None, current_subject: str = 'Matemática'):

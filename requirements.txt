@@ -7,6 +7,7 @@ langchain>=0.1.0
 langchain-openai
 langchain-community
 chromadb>=0.4.0
+faiss-cpu>=1.7.4  # Necessário para o RAG de Matemática (Professor Carlos)
 
 # Embeddings e Processamento de Texto
 sentence-transformers>=2.2.0
@@ -39,13 +40,7 @@ streamlit-markmap==1.0.1  # Para mapas mentais interativos
 # geography_formatter.py - Formatação de coordenadas e termos geográficos
 # portuguese_formatter.py - Formatação de termos literários
 
-# Remover dependências problemáticas para cloud:
-# pytesseract (requer instalação de sistema)
-# markmap-python (pode causar conflitos)
-# faiss-cpu (muito pesado, usar chromadb)
-# seaborn (não essencial)
-# scikit-learn (não essencial para o core)
-# PyPDF2 (redundante com pypdf)
-# openpyxl (não essencial)
-
-faiss-cpu 
+# Comentários sobre dependências removidas ou problemáticas:
+# - pytesseract: Requer instalação de sistema operacional.
+# - markmap-python: Substituído por streamlit-markmap para evitar conflitos.
+# - seaborn, scikit-learn, openpyxl: Removidos por não serem essenciais para o core do app. 
