@@ -44,4 +44,6 @@ requests>=2.31.0
 # seaborn (não essencial)
 # scikit-learn (não essencial para o core)
 # PyPDF2 (redundante com pypdf)
-# openpyxl (não essencial) 
+# openpyxl (não essencial)
+
+faiss-cpu 

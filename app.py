@@ -745,7 +745,7 @@ def main():
         avatar = subject_info['avatar'] if isinstance(message, AIMessage) else "🧑‍🎓"
         with st.chat_message(name="assistant" if isinstance(message, AIMessage) else "user", avatar=avatar):
             st.markdown(message.content)
-
+    
     # Input do usuário
     if prompt := st.chat_input(f"Envie uma mensagem para {subject_info['teacher']}..."):
         st.session_state[f"chat_history_{current_subject}"].append(HumanMessage(content=prompt))
@@ -770,7 +770,7 @@ def main():
             message_placeholder.markdown(full_response)
 
         st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
-        st.rerun()
+                st.rerun()
 
 if __name__ == "__main__":
     main() 
