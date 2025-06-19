@@ -140,7 +140,7 @@ class LocalMathRAG:
             # Limpa arquivos parciais em caso de falha
             if os.path.exists(index_file): os.remove(index_file)
             if os.path.exists(pkl_file): os.remove(pkl_file)
-                return False
+            return False
             
     def initialize(self, api_key: str) -> bool:
         """
@@ -181,19 +181,19 @@ class LocalMathRAG:
         try:
             st.info("🔗 Criando a cadeia de conversação RAG...")
             print("🔗 Criando a cadeia de conversação RAG...")
-        self.memory = ConversationBufferMemory(
-            memory_key="chat_history",
-            return_messages=True,
-            output_key="answer"
-        )
+            self.memory = ConversationBufferMemory(
+                memory_key="chat_history",
+                return_messages=True,
+                output_key="answer"
+            )
         
             llm = GroqLLM(api_key=api_key)
 
-        self.rag_chain = ConversationalRetrievalChain.from_llm(
-            llm=llm,
-            retriever=self.retriever,
-            memory=self.memory,
-            return_source_documents=True,
+            self.rag_chain = ConversationalRetrievalChain.from_llm(
+                llm=llm,
+                retriever=self.retriever,
+                memory=self.memory,
+                return_source_documents=True,
                 output_key="answer",
             )
             st.success("✅ Cadeia RAG pronta!")
