@@ -12,9 +12,12 @@ import os
 try:
     from local_math_rag import get_local_math_rag_instance
     from enem_exercises_rag import ENEMExercisesRAG
+    from math_formatter import format_professor_response
     LOCAL_RAG_AVAILABLE = True
+    MATH_FORMATTER_AVAILABLE = True
 except ImportError:
     LOCAL_RAG_AVAILABLE = False
+    MATH_FORMATTER_AVAILABLE = False
 
 # Importa sistema de analogias da Sther V2
 try:
@@ -246,7 +249,11 @@ Pode me fazer uma pergunta mais específica sobre algum desses tópicos que eu p
 🔧 **Nota técnica:** Sistema RAG temporariamente indisponível, mas estou aqui para ajudar!
 """
             
-            # Monta a resposta final sem usar o formatador
+            # Aplica formatação matemática melhorada
+            if MATH_FORMATTER_AVAILABLE:
+                answer = format_professor_response(answer)
+            
+            # Monta resposta formatada
             response = f"""
 {answer}
 
@@ -257,27 +264,59 @@ Pode me fazer uma pergunta mais específica sobre algum desses tópicos que eu p
             
             # Adiciona informações das fontes
             sources_added = set()
-            for doc in source_docs[:3]:
+            for doc in source_docs[:3]:  # Máximo 3 fontes
                 source_name = doc.metadata.get("source", "Documento desconhecido")
                 topic = doc.metadata.get("topic", "Tópico geral")
+                
                 if source_name not in sources_added:
-                    response += f"\\n• {topic} - {source_name}"
+                    response += f"\n• {topic} - {source_name}"
                     sources_added.add(source_name)
             
             if not sources_added:
-                response += "\\n• Base de conhecimento geral de matemática"
+                response += "\n• Base de conhecimento geral de matemática"
             
-            # Adiciona analogias e exercícios
+            # SEMPRE adiciona exercícios recomendados
+            response += self._add_recommended_exercises(user_message)
+            
+            # SISTEMA DE ANALOGIAS V2 - SÉRIES PERSONALIZADAS
+            # SEMPRE tenta adicionar analogias, mesmo se houve erro na API
             if ANALOGIES_AVAILABLE:
-                response = add_analogy_if_confused(user_message, response)
-
-            final_response = self._add_recommended_exercises(user_message, response)
+                try:
+                    enhanced_response = add_analogy_if_confused(user_message, response)
+                    if enhanced_response != response:  # Se analogia foi adicionada
+                        response = enhanced_response
+                        response += "\n\n🎬 *Sistema de analogias com suas séries favoritas ativo! Friends, Grey's Anatomy, Stranger Things e mais...*"
+                except Exception as analogy_error:
+                    print(f"⚠️ Erro no sistema de analogias: {analogy_error}")
             
-            return final_response
+            return response
             
         except Exception as e:
-            st.error(f"Ocorreu um erro ao gerar a resposta final: {str(e)}")
-            return "Desculpe, ocorreu um erro inesperado. Tente novamente."
+            error_response = f"""
+❌ **Erro no Sistema RAG Local**
+
+Detalhes: {str(e)}
+
+💡 **Soluções:**
+1. Verifique se a pasta 'matemática' existe
+2. Confirme se há documentos válidos (.docx, .pdf)
+3. Verifique sua conexão com a internet (para DeepSeek)
+4. Confirme se a API Key está correta
+
+🔧 Se o problema persistir, tente reprocessar os documentos.
+"""
+            
+            # MESMO COM ERRO, tenta aplicar analogias se usuário está confuso
+            if ANALOGIES_AVAILABLE:
+                try:
+                    enhanced_error_response = add_analogy_if_confused(user_message, error_response)
+                    if enhanced_error_response != error_response:
+                        error_response = enhanced_error_response
+                        error_response += "\n\n🎬 *Pelo menos as analogias funcionam! 😊*"
+                except Exception as analogy_error:
+                    print(f"⚠️ Erro no sistema de analogias: {analogy_error}")
+            
+            return error_response
     
     def get_relevant_content_preview(self, query: str) -> str:
         """Mostra prévia do conteúdo que seria recuperado"""
@@ -302,7 +341,7 @@ Pode me fazer uma pergunta mais específica sobre algum desses tópicos que eu p
         except Exception as e:
             return f"Erro ao buscar conteúdo: {str(e)}"
     
-    def _add_recommended_exercises(self, user_message: str, formatted_answer: str) -> str:
+    def _add_recommended_exercises(self, user_message: str) -> str:
         """Adiciona exercícios recomendados baseados na mensagem do usuário"""
         try:
             user_lower = user_message.lower()

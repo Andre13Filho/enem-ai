@@ -192,19 +192,19 @@ class LocalMathRAG:
             st.info("🔗 Criando a cadeia de conversação RAG...")
             print("🔗 Criando a cadeia de conversação RAG...")
             
-            self.memory = ConversationBufferMemory(
-                memory_key="chat_history",
-                return_messages=True,
-                output_key="answer"
-            )
+        self.memory = ConversationBufferMemory(
+            memory_key="chat_history",
+            return_messages=True,
+            output_key="answer"
+        )
         
             llm = GroqLLM(api_key=api_key)
 
-            self.rag_chain = ConversationalRetrievalChain.from_llm(
-                llm=llm,
-                retriever=self.retriever,
-                memory=self.memory,
-                return_source_documents=True,
+        self.rag_chain = ConversationalRetrievalChain.from_llm(
+            llm=llm,
+            retriever=self.retriever,
+            memory=self.memory,
+            return_source_documents=True,
                 output_key="answer",
             )
             
