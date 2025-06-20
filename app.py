@@ -420,7 +420,7 @@ def get_api_key():
     
     # Fallback para variáveis de ambiente (para local)
     try:
-api_key = os.environ.get("GROQ_API_KEY")
+        api_key = os.environ.get("GROQ_API_KEY")
         if api_key and isinstance(api_key, str) and api_key.strip() and len(api_key.strip()) > 10:
             return api_key.strip()
     except:
@@ -718,7 +718,7 @@ def cleanup_unused_modules(current_subject: str):
         
     for module_key in list(_imported_modules.keys()):
         if module_key not in modules_to_keep:
-        del _imported_modules[module_key]
+            del _imported_modules[module_key]
             # gc.collect() # Opcional: forçar coleta de lixo
 
 def render_math_content(content: str) -> None:
@@ -926,7 +926,7 @@ def main():
                     message_placeholder.empty()
                     with message_placeholder.container():
                         render_math_content(full_response)
-    else:
+                else:
                     # Para outras matérias, usa markdown padrão
                     message_placeholder.markdown(full_response + "▌")
                     time.sleep(0.01)
