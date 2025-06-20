@@ -287,7 +287,33 @@ def remove_duplicates(text: str) -> str:
     
     return '\n\n'.join(unique_paragraphs)
 
-# Função principal para uso no Professor Carlos
+def ensure_latex_delimiters(text: str) -> str:
+    """
+    Tenta envolver expressões matemáticas simples que não estão em delimitadores.
+    Funciona como uma última camada de correção.
+    """
+    # Regex para capturar expressões que parecem fórmulas, mas não estão em $...$
+    # Procura por padrões como: "x = ...", "A = ...", "det(A) = ...", etc.
+    # com pelo menos um operador matemático.
+    pattern = r'(?<!\$)\b([a-zA-Z]\s*=\s*.*[+\-*/^√])|([a-zA-Z]\s*=\s*[a-zA-Z0-9\s()]+)\b(?!\$)'
+
+    def replacer(match):
+        expr = match.group(0).strip()
+        # Evita envolver novamente se já for LaTeX
+        if expr.startswith('$') or expr.startswith('$$') or '\\' in expr:
+            return expr
+        return f'${expr}$'
+
+    # Usamos uma abordagem mais simples para não capturar texto comum.
+    # Vamos focar em expressões com " = "
+    parts = text.split('\n')
+    for i, part in enumerate(parts):
+        if ' = ' in part and not part.strip().startswith('$'):
+            # Envolve apenas a expressão, não a linha inteira
+            parts[i] = re.sub(r'([a-zA-Z0-9\s\.\(\)]+\s*=\s*[\s\S]+)', r'$ \1 $', part)
+
+    return '\n'.join(parts)
+
 def format_professor_response(response: str) -> str:
     """
     Formatação completa da resposta do Professor Carlos
@@ -299,7 +325,10 @@ def format_professor_response(response: str) -> str:
     # 2. Formata conteúdo matemático
     response = improve_math_readability(response)
     
-    # 3. Remove duplicações
+    # 3. Garante delimitadores como uma última etapa
+    response = ensure_latex_delimiters(response)
+    
+    # 4. Remove duplicações
     response = remove_duplicates(response)
     
     return response 
