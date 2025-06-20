@@ -192,19 +192,19 @@ class LocalMathRAG:
             st.info("🔗 Criando a cadeia de conversação RAG...")
             print("🔗 Criando a cadeia de conversação RAG...")
             
-        self.memory = ConversationBufferMemory(
-            memory_key="chat_history",
-            return_messages=True,
-            output_key="answer"
-        )
-        
+            self.memory = ConversationBufferMemory(
+                memory_key="chat_history",
+                return_messages=True,
+                output_key="answer"
+            )
+            
             llm = GroqLLM(api_key=api_key)
 
-        self.rag_chain = ConversationalRetrievalChain.from_llm(
-            llm=llm,
-            retriever=self.retriever,
-            memory=self.memory,
-            return_source_documents=True,
+            self.rag_chain = ConversationalRetrievalChain.from_llm(
+                llm=llm,
+                retriever=self.retriever,
+                memory=self.memory,
+                return_source_documents=True,
                 output_key="answer",
             )
             
@@ -248,11 +248,12 @@ RESPOSTA (com fórmulas bem formatadas):
             # Atualiza o prompt da cadeia
             if hasattr(self.rag_chain.combine_docs_chain, "llm_chain"):
                 self.rag_chain.combine_docs_chain.llm_chain.prompt.template = prompt_template
-                
-            st.success("✅ Cadeia RAG pronta!")
-            print("✅ Cadeia RAG pronta!")
+            
             self.is_initialized = True
+            st.success("✅ Cadeia RAG criada e pronta para uso!")
+            print("✅ Cadeia RAG criada e pronta para uso!")
             return True
+
         except Exception as e:
             st.error(f"Erro ao criar a cadeia RAG: {e}")
             print(f"❌ Erro ao criar a cadeia RAG: {e}")
