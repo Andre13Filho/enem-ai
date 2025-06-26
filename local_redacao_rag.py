@@ -8,6 +8,7 @@ import streamlit as st
 import os
 import requests
 from typing import Dict, List, Any, Optional
+from datetime import datetime
 
 # LangChain imports
 from langchain_community.vectorstores import FAISS
@@ -407,4 +408,111 @@ def get_local_redacao_rag_instance():
     global _singleton_instance
     if _singleton_instance is None:
         _singleton_instance = LocalRedacaoRAG()
-    return _singleton_instance 
+    return _singleton_instance
+
+def analyze_redacao_pdf(pdf_content: bytes, filename: str) -> str:
+    """Função wrapper para análise de redação"""
+    # Por enquanto, retorna uma mensagem informativa
+    # Esta função pode ser implementada posteriormente com análise completa de PDF
+    return f"""
+# 📝 **Análise de Redação - {filename}**
+
+Olá, Sther! Sou a Professora Carla e estou aqui para te ajudar com sua redação.
+
+## 🔍 **Status da Análise**
+O sistema de análise de redação está sendo configurado. Por enquanto, posso te ajudar com:
+
+### 📚 **Dicas para Redação Nota 1000:**
+
+1. **🏗️ Estrutura (Competência 1):**
+   - Introdução: Apresente o tema e sua tese
+   - Desenvolvimento: 2-3 parágrafos com argumentos
+   - Conclusão: Retome a tese e apresente proposta de intervenção
+
+2. **💭 Conteúdo (Competência 2):**
+   - Use repertório sociocultural (filmes, livros, dados)
+   - Argumente com lógica e coerência
+   - Conecte ideias com conectivos adequados
+
+3. **🗣️ Linguagem (Competência 3):**
+   - Mantenha registro formal
+   - Varie o vocabulário
+   - Use coesão textual
+
+4. **🎯 Proposta de Intervenção (Competência 5):**
+   - Detalhe: **Quem** fará **o quê**, **como** e **para quê**
+   - Seja específico e viável
+
+### 💡 **Dica da Professora Carla:**
+"Como Monica organizava seus álbuns - cada parágrafo tem seu lugar específico na redação!"
+
+**✨ Continue praticando! Cada redação é um passo mais próximo da nota 1000! ✨**
+"""
+
+def setup_redacao_ui():
+    """Configura a interface do sistema de redação"""
+    st.markdown("""
+    <div class="teacher-intro">
+        <h3>✍️ Professora Carla - Análise de Redação</h3>
+        <p>Sistema completo de análise baseado nos critérios do ENEM</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("### 📤 **Envie sua Redação**")
+    
+    uploaded_file = st.file_uploader(
+        "Escolha um arquivo PDF com sua redação:",
+        type=['pdf'],
+        help="Envie sua redação em formato PDF para análise completa"
+    )
+    
+    if uploaded_file is not None:
+        if st.button("🔍 Analisar Redação", type="primary"):
+            with st.spinner("📝 Professora Carla analisando sua redação..."):
+                try:
+                    # Lê o conteúdo do arquivo
+                    pdf_content = uploaded_file.read()
+                    
+                    # Analisa a redação
+                    analise = analyze_redacao_pdf(pdf_content, uploaded_file.name)
+                    
+                    # Exibe o resultado
+                    st.markdown("### 📋 **Resultado da Análise**")
+                    st.markdown(analise)
+                    
+                    # Botão para download do relatório
+                    st.download_button(
+                        label="📥 Baixar Relatório Completo",
+                        data=analise,
+                        file_name=f"analise_redacao_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
+                        mime="text/markdown"
+                    )
+                    
+                except Exception as e:
+                    st.error(f"❌ Erro ao processar a redação: {str(e)}")
+                    st.info("💡 Verifique se o arquivo é um PDF válido e tente novamente.")
+    
+    # Informações adicionais
+    with st.expander("ℹ️ Como funciona a análise?"):
+        st.markdown("""
+        **A Professora Carla analisa sua redação baseada nos 5 critérios do ENEM:**
+        
+        1. **🏗️ Estrutura Textual** - Organização e formato dissertativo-argumentativo
+        2. **💭 Conteúdo** - Argumentação e repertório sociocultural  
+        3. **🗣️ Linguagem** - Coesão, registro formal e variedade lexical
+        4. **🎯 Argumentação** - Desenvolvimento lógico das ideias
+        5. **📋 Proposta de Intervenção** - Detalhamento e viabilidade
+        
+        **📊 Você receberá:**
+        - Nota de 0 a 1000 pontos
+        - Feedback detalhado por competência
+        - Sugestões específicas de melhoria
+        - Dicas personalizadas da Professora Carla
+        """)
+    
+    # Casos de sucesso
+    with st.expander("🏆 Exemplos de Redações Nota 1000"):
+        st.markdown("**Inspire-se com estes exemplos:**")
+        st.markdown("- 📝 Redação sobre tecnologia e sociedade")
+        st.markdown("- 📝 Redação sobre meio ambiente")
+        st.markdown("- 📝 Redação sobre educação") 

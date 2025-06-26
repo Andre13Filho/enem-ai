@@ -345,4 +345,7 @@ def get_local_portuguese_rag_instance():
     global _singleton_instance
     if _singleton_instance is None:
         _singleton_instance = LocalPortugueseRAG()
-    return _singleton_instance 
+    return _singleton_instance
+
+# Alias para compatibilidade com imports existentes
+local_portuguese_rag = get_local_portuguese_rag_instance 
