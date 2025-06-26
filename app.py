@@ -748,7 +748,7 @@ def main():
     st.markdown("""
     <div style="text-align: center; padding: 2rem 0;">
         <h1 style="color: #09278d; font-size: 3rem; margin-bottom: 0;">🎓 A.T.E.N.A.</h1>
-        <h2 style="color: #1e3a8a; margin-top: 0;">Professores Particulares para Sther</h2>
+        <h2 style="color: #1e3a8a; margin-top: 0;">Aqui Tudo Encontra Novo Aprendizado</h2>
         <p style="color: #64748b; font-size: 1.2rem;">Sistema inteligente com especialistas em cada matéria do ENEM</p>
     </div>
     """, unsafe_allow_html=True)
@@ -864,7 +864,12 @@ def main():
             st.info("Configure sua API Key no Streamlit Cloud ou arquivo .env")
 
     # Área Principal com Abas
-    tab1, tab2, tab3 = st.tabs(["💬 Chat", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
+    if current_subject == "Redação":
+        # Para Redação, mostra a funcionalidade de correção
+        tab1, tab2, tab3, tab4 = st.tabs(["💬 Chat", "✍️ Correção de Redação", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
+    else:
+        # Para outras matérias, mostra as abas normais
+        tab1, tab2, tab3 = st.tabs(["💬 Chat", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
     
     with tab1:
         # Área de Chat Principal
@@ -936,39 +941,92 @@ def main():
                 st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
                 st.rerun()
     
-    with tab2:
-        # Mapa Mental
-        try:
-            lazy_import_mindmap()
-            if "mindmap" in _imported_modules:
-                _imported_modules["mindmap"]()
-            else:
-                st.error("❌ Sistema de Mapa Mental não disponível")
-                st.info("Verifique se o arquivo `mapa_mental_markmap.py` está presente e as dependências estão instaladas.")
-        except Exception as e:
-            st.error(f"❌ Erro ao carregar Mapa Mental: {e}")
-            st.info("""
-            **Para ativar o Mapa Mental:**
-            1. Instale: `pip install streamlit-markmap==1.0.1`
-            2. Verifique se o arquivo `mapa_mental_markmap.py` está presente
-            """)
-    
-    with tab3:
-        # Exercícios Personalizados
-        try:
-            lazy_import_exercises()
-            if "exercicios" in _imported_modules:
-                _imported_modules["exercicios"].setup_ui()
-            else:
-                st.error("❌ Sistema de Exercícios Personalizados não disponível")
-                st.info("Verifique se o arquivo `exercicios_personalizados.py` está presente e os arquivos JSON de questões estão disponíveis.")
-        except Exception as e:
-            st.error(f"❌ Erro ao carregar Exercícios Personalizados: {e}")
-            st.info("""
-            **Para ativar os Exercícios Personalizados:**
-            1. Verifique se o arquivo `exercicios_personalizados.py` está presente
-            2. Certifique-se de que os arquivos `questions_primeiro_dia.json` e `questions_segundo_enem.json` existem
-            """)
+    # Aba de Correção de Redação (apenas para Redação)
+    if current_subject == "Redação":
+        with tab2:
+            # Correção de Redação
+            try:
+                if "redacao" in _imported_modules:
+                    _imported_modules["redacao"]["setup"]()
+                else:
+                    st.error("❌ Sistema de Correção de Redação não disponível")
+                    st.info("Verifique se o arquivo `local_redacao_rag.py` está presente.")
+            except Exception as e:
+                st.error(f"❌ Erro ao carregar Correção de Redação: {e}")
+                st.info("""
+                **Para ativar a Correção de Redação:**
+                1. Verifique se o arquivo `local_redacao_rag.py` está presente
+                2. Certifique-se de que as dependências PyPDF2 e PyMuPDF estão instaladas
+                """)
+        
+        with tab3:
+            # Mapa Mental
+            try:
+                lazy_import_mindmap()
+                if "mindmap" in _imported_modules:
+                    _imported_modules["mindmap"]()
+                else:
+                    st.error("❌ Sistema de Mapa Mental não disponível")
+                    st.info("Verifique se o arquivo `mapa_mental_markmap.py` está presente e as dependências estão instaladas.")
+            except Exception as e:
+                st.error(f"❌ Erro ao carregar Mapa Mental: {e}")
+                st.info("""
+                **Para ativar o Mapa Mental:**
+                1. Instale: `pip install streamlit-markmap==1.0.1`
+                2. Verifique se o arquivo `mapa_mental_markmap.py` está presente
+                """)
+        
+        with tab4:
+            # Exercícios Personalizados
+            try:
+                lazy_import_exercises()
+                if "exercicios" in _imported_modules:
+                    _imported_modules["exercicios"].setup_ui()
+                else:
+                    st.error("❌ Sistema de Exercícios Personalizados não disponível")
+                    st.info("Verifique se o arquivo `exercicios_personalizados.py` está presente e os arquivos JSON de questões estão disponíveis.")
+            except Exception as e:
+                st.error(f"❌ Erro ao carregar Exercícios Personalizados: {e}")
+                st.info("""
+                **Para ativar os Exercícios Personalizados:**
+                1. Verifique se o arquivo `exercicios_personalizados.py` está presente
+                2. Certifique-se de que os arquivos `questions_primeiro_dia.json` e `questions_segundo_enem.json` existem
+                """)
+    else:
+        # Para outras matérias, mostra as abas normais
+        with tab2:
+            # Mapa Mental
+            try:
+                lazy_import_mindmap()
+                if "mindmap" in _imported_modules:
+                    _imported_modules["mindmap"]()
+                else:
+                    st.error("❌ Sistema de Mapa Mental não disponível")
+                    st.info("Verifique se o arquivo `mapa_mental_markmap.py` está presente e as dependências estão instaladas.")
+            except Exception as e:
+                st.error(f"❌ Erro ao carregar Mapa Mental: {e}")
+                st.info("""
+                **Para ativar o Mapa Mental:**
+                1. Instale: `pip install streamlit-markmap==1.0.1`
+                2. Verifique se o arquivo `mapa_mental_markmap.py` está presente
+                """)
+        
+        with tab3:
+            # Exercícios Personalizados
+            try:
+                lazy_import_exercises()
+                if "exercicios" in _imported_modules:
+                    _imported_modules["exercicios"].setup_ui()
+                else:
+                    st.error("❌ Sistema de Exercícios Personalizados não disponível")
+                    st.info("Verifique se o arquivo `exercicios_personalizados.py` está presente e os arquivos JSON de questões estão disponíveis.")
+            except Exception as e:
+                st.error(f"❌ Erro ao carregar Exercícios Personalizados: {e}")
+                st.info("""
+                **Para ativar os Exercícios Personalizados:**
+                1. Verifique se o arquivo `exercicios_personalizados.py` está presente
+                2. Certifique-se de que os arquivos `questions_primeiro_dia.json` e `questions_segundo_enem.json` existem
+                """)
 
 if __name__ == "__main__":
     main() 

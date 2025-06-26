@@ -1,4 +1,4 @@
-# 🎓 A.T.E.N.A. - Professores Particulares para Sther
+# 🎓 A.T.E.N.A. - Aqui Tudo Encontra Novo Aprendizado
 
 ## 🌟 **Visão Geral**
 
