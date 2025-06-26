@@ -1,4 +1,4 @@
-# 🚀 Guia de Deploy - ENEM AI Helper no Streamlit Cloud
+# 🚀 Guia de Deploy - A.T.E.N.A. no Streamlit Cloud
 
 ## 📋 Pré-requisitos
 
@@ -238,7 +238,7 @@ git push origin main
 
 ## 🎉 Conclusão
 
-O ENEM AI Helper está agora otimizado para funcionar perfeitamente no Streamlit Cloud, mantendo todas as funcionalidades principais enquanto se adapta às limitações do ambiente cloud.
+O A.T.E.N.A. está agora otimizado para funcionar perfeitamente no Streamlit Cloud, mantendo todas as funcionalidades principais enquanto se adapta às limitações do ambiente cloud.
 
 **URL da Aplicação**: https://enem-ai-helper.streamlit.app/
 

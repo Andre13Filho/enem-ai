@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Formatador específico para Química - ENEM AI Helper
+Formatador específico para Química - A.T.E.N.A.
 Formata fórmulas químicas, equações e conceitos para melhor visualização
 """
 

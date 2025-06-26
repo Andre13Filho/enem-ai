@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Configuração adaptativa para ENEM AI Helper
+Configuração adaptativa para A.T.E.N.A.
 Funciona tanto localmente quanto no Streamlit Cloud
 """
 

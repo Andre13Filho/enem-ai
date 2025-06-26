@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Formatador específico para História - ENEM AI Helper
+Formatador específico para História - A.T.E.N.A.
 """
 
 import re

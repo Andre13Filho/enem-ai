@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Professora Luciana - Sistema RAG Local para Química
-ENEM AI Helper - Interface integrada com Streamlit
+A.T.E.N.A. - Interface integrada com Streamlit
 """
 
 import streamlit as st

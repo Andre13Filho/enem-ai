@@ -1,4 +1,4 @@
-# 🎓 ENEM AI Helper - Professores Particulares para Sther
+# 🎓 A.T.E.N.A. - Professores Particulares para Sther
 
 ## 🌟 **Visão Geral**
 

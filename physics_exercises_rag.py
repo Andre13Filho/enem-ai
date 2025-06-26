@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Sistema RAG para Exercícios de Física do ENEM
-Professor Fernando - ENEM AI Helper
+Professor Fernando - A.T.E.N.A.
 
 Baseado no sistema de exercícios de matemática, adaptado para física
 """

@@ -1,538 +1,410 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 """
-Sistema de Análise de Redação - Professora Carla
-Análise completa baseada nos critérios do ENEM
+Sistema RAG Local para Professora Carla - Redação
+Utiliza índices FAISS pré-construídos e baixados do Hugging Face.
 """
 
 import streamlit as st
 import os
-import re
-from pathlib import Path
-from datetime import datetime
-from typing import List, Dict
-import tempfile
+import requests
+from typing import Dict, List, Any, Optional
 
-# Importações para processamento de PDF
+# LangChain imports
+from langchain_community.vectorstores import FAISS
 try:
-    import PyPDF2
-    import fitz  # PyMuPDF
-    PDF_AVAILABLE = True
+    from langchain_huggingface import HuggingFaceEmbeddings
 except ImportError:
-    PDF_AVAILABLE = False
-
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain.schema import Document
+from langchain.chains import ConversationalRetrievalChain
 try:
-    from docx import Document
-    DOCX_AVAILABLE = True
+    from langchain_community.memory import ConversationBufferMemory
 except ImportError:
-    DOCX_AVAILABLE = False
+    from langchain.memory import ConversationBufferMemory
+from langchain.llms.base import LLM
+from langchain.callbacks.manager import CallbackManagerForLLMRun
 
-class ProfessorRedacao:
-    def __init__(self, base_path: str = "redação/", success_cases_path: str = "cases_sucesso_redacao/"):
-        self.base_path = Path(base_path)
-        self.success_cases_path = Path(success_cases_path)
-        self.criterios_enem = {}
-        self.redacoes_nota_1000 = []
+# Groq para LLM
+from groq import Groq
+
+# Diretórios para armazenar os índices FAISS
+FAISS_INDEX_DIR = "faiss_index_redacao"
+FAISS_SUCCESS_INDEX_DIR = "faiss_index_success_redacao"
+
+class GroqLLM(LLM):
+    """LLM personalizado para DeepSeek R1 Distill via Groq"""
+    
+    api_key: str
+    model_name: str = "deepseek-r1-distill-llama-70b"
+    
+    class Config:
+        arbitrary_types_allowed = True
+    
+    def __init__(self, api_key: str, **kwargs):
+        super().__init__(api_key=api_key, model_name="deepseek-r1-distill-llama-70b", **kwargs)
+    
+    @property
+    def _llm_type(self) -> str:
+        return "groq"
+    
+    def _call(
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[CallbackManagerForLLMRun] = None,
+        **kwargs: Any,
+    ) -> str:
+        try:
+            # Cria uma nova instância do cliente a cada chamada para evitar cache corrompido
+            client = Groq(api_key=self.api_key)
+            response = client.chat.completions.create(
+                model=self.model_name,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7,
+                max_tokens=2048
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            return f"Erro na API: {str(e)}"
+
+class LocalRedacaoRAG:
+    """Sistema RAG que carrega índices FAISS remotos para Redação."""
+    
+    def __init__(self):
+        self.vectorstore = None
+        self.success_vectorstore = None
+        self.retriever = None
+        self.success_retriever = None
+        self.memory = None
+        self.rag_chain = None
+        self.embeddings = None
+        self.is_initialized = False
+        self.redacao_folder_path = FAISS_INDEX_DIR
+        self.success_folder_path = FAISS_SUCCESS_INDEX_DIR
         
-        # Carrega os dados na inicialização
-        self._load_criterios_enem()
-        self._load_redacoes_nota_1000()
+        # O setup de embeddings foi movido para o método initialize()
+        # para evitar carregamento pesado durante a importação.
 
-    def _load_criterios_enem(self):
-        """Carrega os critérios de avaliação do ENEM dos arquivos .docx"""
-        if not DOCX_AVAILABLE:
+    def _setup_embeddings(self, model_name: str):
+        """Configura o modelo de embeddings do Hugging Face."""
+        # Se os embeddings já estiverem carregados, não faz nada
+        if self.embeddings:
             return
+        
+        try:
+            self.embeddings = HuggingFaceEmbeddings(
+                model_name=model_name,
+                model_kwargs={'device': 'cpu'},
+                encode_kwargs={'normalize_embeddings': True}
+            )
+        except Exception as e:
+            if 'st' in globals() and hasattr(st, 'error'):
+                st.error(f"Falha ao carregar o modelo de embeddings: {e}")
+            self.embeddings = None
+
+    def _download_file(self, url: str, local_path: str):
+        """Baixa um arquivo de uma URL para um caminho local."""
+        try:
+            with requests.get(url, stream=True) as r:
+                r.raise_for_status()
+                with open(local_path, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        f.write(chunk)
+            print(f"✅ Arquivo baixado: {local_path}")
+            return True
+        except requests.exceptions.RequestException as e:
+            st.error(f"Erro de rede ao baixar {url}: {e}")
+            print(f"❌ Erro de rede ao baixar {url}: {e}")
+            return False
+        
+    def _ensure_faiss_index_is_ready(self) -> bool:
+        """
+        Garante que os índices FAISS estejam disponíveis, baixando-os se necessário.
+        """
+        os.makedirs(FAISS_INDEX_DIR, exist_ok=True)
+        os.makedirs(FAISS_SUCCESS_INDEX_DIR, exist_ok=True)
+        
+        # Arquivos principais de redação
+        index_file = os.path.join(FAISS_INDEX_DIR, "index_redacao.faiss")
+        pkl_file = os.path.join(FAISS_INDEX_DIR, "index_redacao.pkl")
+        
+        # Arquivos de casos de sucesso
+        success_index_file = os.path.join(FAISS_SUCCESS_INDEX_DIR, "index_success_red.faiss")
+        success_pkl_file = os.path.join(FAISS_SUCCESS_INDEX_DIR, "index_success_red.pkl")
+
+        # Verifica se todos os arquivos já existem
+        if (os.path.exists(index_file) and os.path.exists(pkl_file) and 
+            os.path.exists(success_index_file) and os.path.exists(success_pkl_file)):
+            print("✅ Índices FAISS de redação já existem localmente.")
+            return True
+
+        st.info("📥 Baixando índices de redação do Hugging Face...")
+        print("📥 Baixando índices de redação do Hugging Face...")
+
+        # URLs dos arquivos principais no Hugging Face
+        faiss_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index_redacao.faiss"
+        pkl_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index_redacao.pkl"
+        
+        # URLs dos arquivos de casos de sucesso
+        success_faiss_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index_success_red.faiss"
+        success_pkl_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index_success_red.pkl"
+
+        # Baixa os arquivos principais
+        faiss_success = self._download_file(faiss_url, index_file)
+        pkl_success = self._download_file(pkl_url, pkl_file)
+        
+        # Baixa os arquivos de casos de sucesso
+        success_faiss_success = self._download_file(success_faiss_url, success_index_file)
+        success_pkl_success = self._download_file(success_pkl_url, success_pkl_file)
+
+        if (faiss_success and pkl_success and success_faiss_success and success_pkl_success):
+            st.success("✅ Índices de redação baixados com sucesso!")
+            return True
+        else:
+            st.error("❌ Falha ao baixar os arquivos dos índices de redação.")
+            # Limpa arquivos parciais em caso de falha
+            for file_path in [index_file, pkl_file, success_index_file, success_pkl_file]:
+                if os.path.exists(file_path): 
+                    os.remove(file_path)
+            return False
             
-        criterios_files = {
-            "coesao": "Coesão.docx",
-            "coerencia": "Coerência.docx", 
-            "argumentacao": "Argumentação.docx",
-            "gramatica": "Gramática.docx",
-            "proposta_intervencao": "Elementos da Proposta de intervenção.docx"
-        }
-        
-        for criterio, filename in criterios_files.items():
-            file_path = self.base_path / filename
-            if file_path.exists():
-                try:
-                    doc = Document(file_path)
-                    content = "\n".join([paragraph.text for paragraph in doc.paragraphs])
-                    self.criterios_enem[criterio] = content
-                except Exception as e:
-                    print(f"Erro ao carregar {filename}: {e}")
-
-    def _load_redacoes_nota_1000(self):
-        """Carrega exemplos de redações nota 1000"""
-        if not DOCX_AVAILABLE:
-            return
+    def initialize(self, api_key: str) -> bool:
+        """
+        Inicializa o sistema: baixa os índices, carrega os vectorstores e cria a cadeia RAG.
+        """
+        if self.is_initialized:
+            return True
             
-        for file_path in self.success_cases_path.glob("*.docx"):
-            try:
-                doc = Document(file_path)
-                content = "\n".join([paragraph.text for paragraph in doc.paragraphs])
-                self.redacoes_nota_1000.append({
-                    "nome": file_path.stem,
-                    "conteudo": content
-                })
-            except Exception as e:
-                print(f"Erro ao carregar {file_path.name}: {e}")
+        # 1. Garantir que os índices FAISS estão disponíveis
+        if not self._ensure_faiss_index_is_ready():
+            return False
+            
+        # 2. Carregar os Vectorstores FAISS (e configurar embeddings aqui)
+        try:
+            st.info("📚 Carregando base de conhecimento de redação (FAISS)...")
+            print("📚 Carregando base de conhecimento de redação (FAISS)...")
+            
+            # Passo 2.1: Configurar embeddings ANTES de carregar o FAISS
+            self._setup_embeddings(model_name="sentence-transformers/distiluse-base-multilingual-cased-v1")
+            if not self.embeddings:
+                st.error("Embeddings não foram inicializadas. Abortando.")
+                return False
 
-    def extract_text_from_pdf(self, pdf_content: bytes) -> str:
-        """Extrai texto do PDF usando múltiplas estratégias"""
-        text = ""
-        
-        # Estratégia 1: PyPDF2 para PDFs com texto
-        if PDF_AVAILABLE:
-            try:
-                with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
-                    tmp_file.write(pdf_content)
-                    tmp_file.flush()
-                    
-                    with open(tmp_file.name, 'rb') as file:
-                        pdf_reader = PyPDF2.PdfReader(file)
-                        for page in pdf_reader.pages:
-                            page_text = page.extract_text()
-                            if page_text.strip():
-                                text += page_text + "\n"
-                    
-                    os.unlink(tmp_file.name)
-                    
-                if text.strip():
-                    return text
-            except Exception:
-                pass
-
-        # Estratégia 2: PyMuPDF para PDFs mais complexos
-        if PDF_AVAILABLE:
-            try:
-                pdf_document = fitz.open(stream=pdf_content, filetype="pdf")
-                for page_num in range(pdf_document.page_count):
-                    page = pdf_document[page_num]
-                    page_text = page.get_text()
-                    if page_text.strip():
-                        text += page_text + "\n"
-                pdf_document.close()
-                
-                if text.strip():
-                    return text
-            except Exception:
-                pass
-
-        return text if text.strip() else "Não foi possível extrair texto do PDF."
-
-    def analyze_redacao_pdf(self, pdf_content: bytes, filename: str) -> str:
-        """Analisa a redação do PDF e retorna feedback detalhado"""
-        
-        # Extrai o texto do PDF
-        texto_redacao = self.extract_text_from_pdf(pdf_content)
-        
-        if not texto_redacao or texto_redacao == "Não foi possível extrair texto do PDF.":
-            return self._generate_error_analysis()
-        
-        # Realiza a análise completa
-        analise = self._analyze_text(texto_redacao, filename)
-        
-        return analise
-
-    def _analyze_text(self, texto: str, filename: str) -> str:
-        """Realiza análise detalhada do texto da redação"""
-        
-        # Análises básicas
-        palavras = len(texto.split())
-        paragrafos = len([p for p in texto.split('\n\n') if p.strip()])
-        linhas = len([l for l in texto.split('\n') if l.strip()])
-        
-        # Análise estrutural
-        estrutura_score = self._analyze_structure(texto)
-        
-        # Análise de conteúdo
-        conteudo_score = self._analyze_content(texto)
-        
-        # Análise de linguagem
-        linguagem_score = self._analyze_language(texto)
-        
-        # Análise de proposta de intervenção
-        intervencao_score = self._analyze_intervention(texto)
-        
-        # Cálculo da nota final
-        nota_final = self._calculate_final_score(estrutura_score, conteudo_score, linguagem_score, intervencao_score)
-        
-        # Gera o relatório completo
-        relatorio = self._generate_detailed_report(
-            filename, texto, palavras, paragrafos, linhas,
-            estrutura_score, conteudo_score, linguagem_score, intervencao_score, nota_final
-        )
-        
-        return relatorio
-
-    def _analyze_structure(self, texto: str) -> Dict:
-        """Analisa a estrutura da redação"""
-        paragrafos = [p.strip() for p in texto.split('\n\n') if p.strip()]
-        
-        score = {
-            "introducao": 0,
-            "desenvolvimento": 0,
-            "conclusao": 0,
-            "total": 0,
-            "feedback": []
-        }
-        
-        if len(paragrafos) >= 4:
-            score["introducao"] = 50
-            score["desenvolvimento"] = 40
-            score["conclusao"] = 30
-            score["feedback"].append("✅ Estrutura adequada com introdução, desenvolvimento e conclusão")
-        elif len(paragrafos) == 3:
-            score["introducao"] = 40
-            score["desenvolvimento"] = 30
-            score["conclusao"] = 20
-            score["feedback"].append("⚠️ Estrutura básica presente, mas poderia ter mais parágrafos de desenvolvimento")
-        else:
-            score["introducao"] = 20
-            score["desenvolvimento"] = 10
-            score["conclusao"] = 10
-            score["feedback"].append("❌ Estrutura inadequada - redação muito curta")
-        
-        # Verifica elementos específicos
-        if any(palavra in texto.lower() for palavra in ["portanto", "assim", "dessa forma", "logo"]):
-            score["conclusao"] += 20
-            score["feedback"].append("✅ Conectivos de conclusão identificados")
-        
-        score["total"] = score["introducao"] + score["desenvolvimento"] + score["conclusao"]
-        return score
-
-    def _analyze_content(self, texto: str) -> Dict:
-        """Analisa o conteúdo e argumentação"""
-        score = {
-            "argumentacao": 0,
-            "repertorio": 0,
-            "coerencia": 0,
-            "total": 0,
-            "feedback": []
-        }
-        
-        # Verifica argumentação
-        argumentos = len(re.findall(r'\b(porque|pois|uma vez que|visto que|já que|dado que)\b', texto.lower()))
-        if argumentos >= 3:
-            score["argumentacao"] = 60
-            score["feedback"].append("✅ Boa quantidade de conectivos argumentativos")
-        elif argumentos >= 1:
-            score["argumentacao"] = 40
-            score["feedback"].append("⚠️ Argumentação presente, mas pode ser melhorada")
-        else:
-            score["argumentacao"] = 20
-            score["feedback"].append("❌ Argumentação insuficiente")
-        
-        # Verifica repertório sociocultural
-        indicadores_repertorio = ["segundo", "de acordo com", "conforme", "dados", "pesquisa", "estudo"]
-        repertorio_count = sum(1 for ind in indicadores_repertorio if ind in texto.lower())
-        
-        if repertorio_count >= 2:
-            score["repertorio"] = 40
-            score["feedback"].append("✅ Bom uso de repertório sociocultural")
-        elif repertorio_count >= 1:
-            score["repertorio"] = 25
-            score["feedback"].append("⚠️ Repertório presente, mas pode ser ampliado")
-        else:
-            score["repertorio"] = 10
-            score["feedback"].append("❌ Repertório sociocultural insuficiente")
-        
-        # Coerência básica
-        score["coerencia"] = 40 if len(texto.split()) > 150 else 20
-        
-        score["total"] = score["argumentacao"] + score["repertorio"] + score["coerencia"]
-        return score
-
-    def _analyze_language(self, texto: str) -> Dict:
-        """Analisa aspectos linguísticos"""
-        score = {
-            "coesao": 0,
-            "registro": 0,
-            "variedade": 0,
-            "total": 0,
-            "feedback": []
-        }
-        
-        # Conectivos de coesão
-        conectivos = len(re.findall(r'\b(além disso|por outro lado|entretanto|contudo|todavia|portanto|assim|dessa forma)\b', texto.lower()))
-        if conectivos >= 3:
-            score["coesao"] = 40
-            score["feedback"].append("✅ Bom uso de conectivos coesivos")
-        elif conectivos >= 1:
-            score["coesao"] = 25
-            score["feedback"].append("⚠️ Uso básico de conectivos")
-        else:
-            score["coesao"] = 10
-            score["feedback"].append("❌ Poucos conectivos coesivos")
-        
-        # Registro formal
-        if not re.search(r'\b(né|tipo|meio que|daí|aí)\b', texto.lower()):
-            score["registro"] = 30
-            score["feedback"].append("✅ Registro formal adequado")
-        else:
-            score["registro"] = 15
-            score["feedback"].append("⚠️ Presença de marcas de oralidade")
-        
-        # Variedade lexical
-        palavras_unicas = len(set(texto.lower().split()))
-        total_palavras = len(texto.split())
-        if total_palavras > 0 and (palavras_unicas / total_palavras) > 0.6:
-            score["variedade"] = 30
-            score["feedback"].append("✅ Boa variedade lexical")
-        else:
-            score["variedade"] = 15
-            score["feedback"].append("⚠️ Variedade lexical pode ser melhorada")
-        
-        score["total"] = score["coesao"] + score["registro"] + score["variedade"]
-        return score
-
-    def _analyze_intervention(self, texto: str) -> Dict:
-        """Analisa a proposta de intervenção"""
-        score = {
-            "agente": 0,
-            "acao": 0,
-            "meio": 0,
-            "finalidade": 0,
-            "detalhamento": 0,
-            "total": 0,
-            "feedback": []
-        }
-        
-        # Verifica presença de agente
-        agentes = ["governo", "estado", "ministério", "secretaria", "escola", "família", "sociedade", "mídia"]
-        if any(agente in texto.lower() for agente in agentes):
-            score["agente"] = 40
-            score["feedback"].append("✅ Agente da intervenção identificado")
-        else:
-            score["agente"] = 10
-            score["feedback"].append("❌ Agente da intervenção não identificado")
-        
-        # Verifica ação
-        acoes = ["deve", "precisa", "necessário", "implementar", "criar", "desenvolver", "promover"]
-        if any(acao in texto.lower() for acao in acoes):
-            score["acao"] = 40
-            score["feedback"].append("✅ Ação proposta identificada")
-        else:
-            score["acao"] = 10
-            score["feedback"].append("❌ Ação não claramente proposta")
-        
-        # Verifica meio/modo
-        meios = ["através", "por meio", "mediante", "via", "utilizando", "campanhas", "programas"]
-        if any(meio in texto.lower() for meio in meios):
-            score["meio"] = 20
-            score["feedback"].append("✅ Meio/modo da intervenção presente")
-        else:
-            score["meio"] = 5
-            score["feedback"].append("⚠️ Meio/modo da intervenção pouco detalhado")
-        
-        score["total"] = score["agente"] + score["acao"] + score["meio"] + score["finalidade"] + score["detalhamento"]
-        return score
-
-    def _calculate_final_score(self, estrutura: Dict, conteudo: Dict, linguagem: Dict, intervencao: Dict) -> int:
-        """Calcula a nota final baseada nos critérios do ENEM"""
-        
-        # Competência 1: Estrutura (0-200)
-        comp1 = min(estrutura["total"] * 2, 200)
-        
-        # Competência 2: Conteúdo (0-200)
-        comp2 = min(conteudo["total"] * 1.5, 200)
-        
-        # Competência 3: Linguagem (0-200)
-        comp3 = min(linguagem["total"] * 2, 200)
-        
-        # Competência 4: Argumentação (já incluída no conteúdo)
-        comp4 = min(conteudo["argumentacao"] * 3, 200)
-        
-        # Competência 5: Intervenção (0-200)
-        comp5 = min(intervencao["total"] * 2, 200)
-        
-        # Nota final (média das competências)
-        nota_final = (comp1 + comp2 + comp3 + comp4 + comp5) / 5
-        
-        return int(nota_final)
-
-    def _generate_detailed_report(self, filename: str, texto: str, palavras: int, paragrafos: int, linhas: int,
-                                estrutura: Dict, conteudo: Dict, linguagem: Dict, intervencao: Dict, nota_final: int) -> str:
-        """Gera relatório detalhado da análise"""
-        
-        relatorio = f"""
-# 📝 **Análise Detalhada da Redação**
-**Arquivo:** {filename}
-**Data da Análise:** {datetime.now().strftime("%d/%m/%Y às %H:%M")}
-
----
-
-## 📊 **Estatísticas Gerais**
-- **Palavras:** {palavras}
-- **Parágrafos:** {paragrafos}
-- **Linhas:** {linhas}
-
----
-
-## 🎯 **NOTA FINAL: {nota_final}/1000**
-
----
-
-## 📋 **Análise por Competências**
-
-### 🏗️ **Competência 1 - Estrutura Textual**
-**Pontuação:** {estrutura['total']}/120
-
-**Feedback:**
-"""
-        
-        for feedback in estrutura['feedback']:
-            relatorio += f"\n- {feedback}"
-        
-        relatorio += f"""
-
-### 💭 **Competência 2 - Conteúdo e Argumentação**
-**Pontuação:** {conteudo['total']}/140
-
-**Feedback:**
-"""
-        
-        for feedback in conteudo['feedback']:
-            relatorio += f"\n- {feedback}"
-        
-        relatorio += f"""
-
-### 🗣️ **Competência 3 - Aspectos Linguísticos**
-**Pontuação:** {linguagem['total']}/100
-
-**Feedback:**
-"""
-        
-        for feedback in linguagem['feedback']:
-            relatorio += f"\n- {feedback}"
-        
-        relatorio += f"""
-
-### 🎯 **Competência 5 - Proposta de Intervenção**
-**Pontuação:** {intervencao['total']}/100
-
-**Feedback:**
-"""
-        
-        for feedback in intervencao['feedback']:
-            relatorio += f"\n- {feedback}"
-        
-        relatorio += """
-
----
-
-## 💡 **Sugestões de Melhoria**
-
-### 📚 **Para a próxima redação:**
-1. **Estrutura:** Mantenha sempre 4-5 parágrafos bem definidos
-2. **Argumentação:** Use mais dados, estatísticas e referências
-3. **Coesão:** Varie os conectivos para melhor fluidez
-4. **Intervenção:** Detalhe mais os elementos da proposta
-
-### 🎓 **Dicas da Professora Carla:**
-- Leia redações nota 1000 para se inspirar
-- Pratique a escrita de propostas de intervenção detalhadas
-- Amplie seu repertório sociocultural com leituras diversas
-- Revise sempre a gramática e a coesão textual
-
----
-
-**✨ Continue praticando! Cada redação é um passo mais próximo da nota 1000! ✨**
-"""
-        
-        return relatorio
-
-    def _generate_error_analysis(self) -> str:
-        """Gera análise para casos de erro na extração"""
-        return """
-# ❌ **Erro na Análise da Redação**
-
-Não foi possível extrair o texto do PDF enviado.
-
-## 🔧 **Possíveis Soluções:**
-1. Verifique se o arquivo é um PDF válido
-2. Certifique-se de que o PDF não está protegido por senha
-3. Tente converter o arquivo para um formato mais simples
-4. Se o PDF contém apenas imagens, use um OCR antes de enviar
-
-## 📞 **Precisa de Ajuda?**
-Entre em contato com a Professora Carla para assistência técnica.
-"""
-
-    def get_success_cases(self) -> List[str]:
-        """Retorna lista de casos de sucesso disponíveis"""
-        return [redacao["nome"] for redacao in self.redacoes_nota_1000]
-
-# Instância global
-professor_redacao = ProfessorRedacao()
-
-def analyze_redacao_pdf(pdf_content: bytes, filename: str) -> str:
-    """Função wrapper para análise de redação"""
-    return professor_redacao.analyze_redacao_pdf(pdf_content, filename)
-
-def setup_redacao_ui():
-    """Configura a interface do sistema de redação"""
-    st.markdown("""
-    <div class="teacher-intro">
-        <h3>✍️ Professora Carla - Análise de Redação</h3>
-        <p>Sistema completo de análise baseado nos critérios do ENEM</p>
-    </div>
-    """, unsafe_allow_html=True)
+            # Carrega o vectorstore principal de redação
+            self.vectorstore = FAISS.load_local(
+                FAISS_INDEX_DIR, 
+                self.embeddings,
+                allow_dangerous_deserialization=True # Necessário para pkl
+            )
+            
+            # Carrega o vectorstore de casos de sucesso
+            self.success_vectorstore = FAISS.load_local(
+                FAISS_SUCCESS_INDEX_DIR, 
+                self.embeddings,
+                allow_dangerous_deserialization=True # Necessário para pkl
+            )
+            
+            # Configura retrievers
+            self.retriever = self.vectorstore.as_retriever(
+                search_type="similarity",
+                search_kwargs={"k": 5}
+            )
+            
+            self.success_retriever = self.success_vectorstore.as_retriever(
+                search_type="similarity",
+                search_kwargs={"k": 3}
+            )
+            
+            st.success("✅ Base de conhecimento carregada.")
+            print("✅ Base de conhecimento carregada.")
+        except Exception as e:
+            st.error(f"Erro ao carregar os índices FAISS: {e}")
+            print(f"❌ Erro ao carregar os índices FAISS: {e}")
+            return False
     
-    st.markdown("### 📤 **Envie sua Redação**")
+        # 3. Criar a cadeia RAG
+        try:
+            st.info("🔗 Criando a cadeia de conversação RAG...")
+            print("🔗 Criando a cadeia de conversação RAG...")
+            
+            self.memory = ConversationBufferMemory(
+                memory_key="chat_history",
+                return_messages=True,
+                output_key="answer"
+            )
+            
+            llm = GroqLLM(api_key=api_key)
+
+            self.rag_chain = ConversationalRetrievalChain.from_llm(
+                llm=llm,
+                retriever=self.retriever,
+                memory=self.memory,
+                return_source_documents=True,
+                output_key="answer",
+            )
+            
+            # Adiciona o prompt personalizado para Redação
+            prompt_template = """Você é a Professora Carla, especialista em redação do ENEM. Responda como uma professora para uma estudante de 17 anos chamada Sther.
+
+🔥 REGRAS DE FORMATAÇÃO DE REDAÇÃO (CRÍTICO - SEMPRE SEGUIR):
+
+1. **DELIMITADORES OBRIGATÓRIOS:**
+   - Conceitos no meio do texto: $seu-conceito-aqui$
+   - Estruturas em destaque: $$sua-estrutura-aqui$$
+   - NUNCA use \\text{Argumentação} sozinho - sempre use $\\text{Argumentação}$
+
+2. **EXEMPLOS CORRETOS:**
+   ✅ A argumentação é essencial: $\\text{desenvolvimento lógico}$
+   ✅ Estrutura da redação: $$introdução + desenvolvimento + conclusão$$
+   ✅ Para conectivos: $$coesão textual = fluidez$$
+
+3. **COMANDOS LATEX ESSENCIAIS:**
+   - Frações: $\\frac{numerador}{denominador}$
+   - Raízes: $\\sqrt{x}$ ou $\\sqrt[n]{x}$
+   - Texto em fórmulas: $\\text{Redação} = \\text{dissertação}$
+   - Potências: $nota^{1000}$, $pontos^5$
+   - Índices: $comp_1$, $comp_2$
+
+4. **SEMPRE INCLUIR:**
+   - Explicação passo-a-passo
+   - Exemplos práticos de redação
+   - Dicas para o ENEM
+   - Analogias do cotidiano
+
+5. **ESTILO DA PROFESSORA CARLA:**
+   - Use analogias das séries que a Sther gosta (FRIENDS, Big Bang Theory, etc.)
+   - Seja didática e paciente
+   - Conecte conceitos de redação com exemplos práticos
+   - Explique como Monica organizaria uma redação perfeita
+
+6. **ANALOGIAS DAS SÉRIES POR TÓPICO:**
+   - **Estrutura**: "Como Monica organizava seus álbuns - cada parágrafo tem seu lugar específico!"
+   - **Argumentação**: "Como Sheldon explicava: 'Bazinga! A argumentação segue uma lógica perfeita!'"
+   - **Coesão**: "Pense na coesão como quando o grupo se reunia no Central Perk - tudo conectado!"
+   - **Proposta de Intervenção**: "Lembra quando Chandler fazia planos? 'Could this BE more estruturado?'"
+
+7. **CRITÉRIOS DO ENEM (SEMPRE MENCIONAR):**
+   - **Competência 1**: Estrutura dissertativo-argumentativa
+   - **Competência 2**: Desenvolvimento do tema e argumentação
+   - **Competência 3**: Coesão e coerência
+   - **Competência 4**: Repertório sociocultural
+   - **Competência 5**: Proposta de intervenção
+
+Com base no CONTEXTO abaixo, responda à PERGUNTA do aluno.
+Se a resposta não estiver no contexto, use seu conhecimento em redação, mas mantenha o estilo.
+
+CONTEXTO:
+{context}
+
+PERGUNTA: {question}
+
+RESPOSTA (com conceitos bem formatados e estilo da Professora Carla):
+"""
+            # Atualiza o prompt da cadeia
+            if hasattr(self.rag_chain.combine_docs_chain, "llm_chain"):
+                self.rag_chain.combine_docs_chain.llm_chain.prompt.template = prompt_template
+            
+            self.is_initialized = True
+            st.success("✅ Cadeia RAG criada e pronta para uso!")
+            print("✅ Cadeia RAG criada e pronta para uso!")
+            return True
+
+        except Exception as e:
+            st.error(f"Erro ao criar a cadeia RAG: {e}")
+            print(f"❌ Erro ao criar a cadeia RAG: {e}")
+            return False
     
-    uploaded_file = st.file_uploader(
-        "Escolha um arquivo PDF com sua redação:",
-        type=['pdf'],
-        help="Envie sua redação em formato PDF para análise completa"
-    )
-    
-    if uploaded_file is not None:
-        if st.button("🔍 Analisar Redação", type="primary"):
-            with st.spinner("📝 Professora Carla analisando sua redação..."):
-                try:
-                    # Lê o conteúdo do arquivo
-                    pdf_content = uploaded_file.read()
-                    
-                    # Analisa a redação
-                    analise = analyze_redacao_pdf(pdf_content, uploaded_file.name)
-                    
-                    # Exibe o resultado
-                    st.markdown("### 📋 **Resultado da Análise**")
-                    st.markdown(analise)
-                    
-                    # Botão para download do relatório
-                    st.download_button(
-                        label="📥 Baixar Relatório Completo",
-                        data=analise,
-                        file_name=f"analise_redacao_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
-                        mime="text/markdown"
-                    )
-                    
-                except Exception as e:
-                    st.error(f"❌ Erro ao processar a redação: {str(e)}")
-                    st.info("💡 Verifique se o arquivo é um PDF válido e tente novamente.")
-    
-    # Informações adicionais
-    with st.expander("ℹ️ Como funciona a análise?"):
-        st.markdown("""
-        **A Professora Carla analisa sua redação baseada nos 5 critérios do ENEM:**
+    def get_response(self, question: str) -> Dict[str, Any]:
+        """Obtém uma resposta do sistema RAG."""
+        if not self.rag_chain:
+            return {"answer": "O sistema RAG não foi inicializado corretamente."}
         
-        1. **🏗️ Estrutura Textual** - Organização e formato dissertativo-argumentativo
-        2. **💭 Conteúdo** - Argumentação e repertório sociocultural  
-        3. **🗣️ Linguagem** - Coesão, registro formal e variedade lexical
-        4. **🎯 Argumentação** - Desenvolvimento lógico das ideias
-        5. **📋 Proposta de Intervenção** - Detalhamento e viabilidade
-        
-        **📊 Você receberá:**
-        - Nota de 0 a 1000 pontos
-        - Feedback detalhado por competência
-        - Sugestões específicas de melhoria
-        - Dicas personalizadas da Professora Carla
-        """)
+        try:
+            return self.rag_chain({"question": question})
+        except Exception as e:
+            return {"answer": f"Erro ao processar a pergunta: {str(e)}"}
     
-    # Casos de sucesso
-    if professor_redacao.redacoes_nota_1000:
-        with st.expander("🏆 Exemplos de Redações Nota 1000"):
-            st.markdown("**Inspire-se com estes exemplos:**")
-            for redacao in professor_redacao.redacoes_nota_1000[:3]:  # Mostra apenas os 3 primeiros
-                st.markdown(f"- 📝 {redacao['nome']}") 
+    def search_relevant_content(self, query: str, k: int = 3) -> List[Document]:
+        """Busca por conteúdo relevante no vectorstore principal."""
+        if not self.vectorstore:
+            return []
+        
+        try:
+            return self.vectorstore.similarity_search(query, k=k)
+        except Exception as e:
+            print(f"Erro na busca de similaridade: {str(e)}")
+            return []
+    
+    def search_success_cases(self, query: str, k: int = 2) -> List[Document]:
+        """Busca por casos de sucesso relevantes."""
+        if not self.success_vectorstore:
+            return []
+        
+        try:
+            return self.success_vectorstore.similarity_search(query, k=k)
+        except Exception as e:
+            print(f"Erro na busca de casos de sucesso: {str(e)}")
+            return []
+    
+    def get_stats(self) -> Dict[str, Any]:
+        """
+        Retorna estatísticas detalhadas do sistema RAG, incluindo uma amostra de documentos.
+        """
+        if not self.is_initialized or not self.vectorstore:
+            return {
+                "status": "Não Carregado",
+                "total_documents": 0,
+                "success_cases": 0,
+                "sample_documents": []
+            }
+
+        try:
+            total_documents = self.vectorstore.index.ntotal
+            success_cases = self.success_vectorstore.index.ntotal if self.success_vectorstore else 0
+            
+            # Pega uma amostra de metadados dos primeiros 5 documentos
+            sample_docs_metadata = []
+            docstore = self.vectorstore.docstore
+            doc_ids = list(docstore._dict.keys())
+            
+            for i in range(min(5, len(doc_ids))):
+                doc = docstore._dict[doc_ids[i]]
+                if doc.metadata:
+                    sample_docs_metadata.append(doc.metadata)
+
+            # Extrai nomes de arquivos únicos da amostra
+            sample_files = sorted(list(set(
+                meta.get("source", "Fonte Desconhecida") for meta in sample_docs_metadata
+            )))
+
+            return {
+                "status": "Carregado",
+                "total_documents": total_documents,
+                "success_cases": success_cases,
+                "sample_documents": sample_files
+            }
+        except Exception as e:
+            print(f"Erro ao obter estatísticas do RAG: {e}")
+            return {
+                "status": "Erro na Leitura",
+                "total_documents": 0,
+                "success_cases": 0,
+                "sample_documents": [str(e)]
+            }
+    
+    def clear_memory(self):
+        """Limpa a memória da conversa."""
+        if self.memory:
+            self.memory.clear()
+
+_singleton_instance = None
+
+def get_local_redacao_rag_instance():
+    """
+    Retorna uma instância única (singleton) do LocalRedacaoRAG.
+    Isso evita a inicialização no momento da importação.
+    """
+    global _singleton_instance
+    if _singleton_instance is None:
+        _singleton_instance = LocalRedacaoRAG()
+    return _singleton_instance 

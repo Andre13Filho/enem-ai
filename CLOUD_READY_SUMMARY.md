@@ -1,4 +1,4 @@
-# ✅ ENEM AI Helper - Pronto para Streamlit Cloud
+# ✅ A.T.E.N.A. - Pronto para Streamlit Cloud
 
 ## 🎯 Status: **PRONTO PARA DEPLOY**
 
@@ -126,7 +126,7 @@ TEMPERATURE = 0.7
 
 ## 🎉 **Resultado Final**
 
-O **ENEM AI Helper** está **100% pronto** para deploy no Streamlit Cloud, mantendo todas as funcionalidades principais:
+O **A.T.E.N.A.** está **100% pronto** para deploy no Streamlit Cloud, mantendo todas as funcionalidades principais:
 
 ### 🎓 **Professores Disponíveis**
 

@@ -51,7 +51,7 @@ except ImportError:
 
 # Configuração da página - DEVE SER A PRIMEIRA CHAMADA STREAMLIT
 st.set_page_config(
-    page_title="ENEM AI Helper - Professores Particulares para Sther",
+    page_title="A.T.E.N.A. - Aqui Tudo Encontra Novo Aprendizado",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -390,7 +390,7 @@ SUBJECTS = {
         "icon": "👋",
         "avatar": "🤖",
         "description": "Sua assistente para o ENEM",
-        "intro": "Olá, Sther! Bem-vinda ao ENEM AI Helper. Escolha uma matéria na barra lateral para começar a estudar!"
+        "intro": "Olá, Sther! Bem-vinda a A.T.E.N.A.. Escolha uma matéria na barra lateral para começar a estudar!"
     }
 }
 
@@ -747,7 +747,7 @@ def main():
     # Header
     st.markdown("""
     <div style="text-align: center; padding: 2rem 0;">
-        <h1 style="color: #09278d; font-size: 3rem; margin-bottom: 0;">🎓 ENEM AI Helper</h1>
+        <h1 style="color: #09278d; font-size: 3rem; margin-bottom: 0;">🎓 A.T.E.N.A.</h1>
         <h2 style="color: #1e3a8a; margin-top: 0;">Professores Particulares para Sther</h2>
         <p style="color: #64748b; font-size: 1.2rem;">Sistema inteligente com especialistas em cada matéria do ENEM</p>
     </div>
@@ -759,7 +759,7 @@ def main():
     if not api_key:
         st.warning("🔑 **API Key não configurada!**")
         st.info("""
-            Para usar o ENEM AI Helper, você precisa configurar sua API Key da Groq.
+            Para usar o A.T.E.N.A., você precisa configurar sua API Key da Groq.
             
             **Se você estiver executando no Streamlit Cloud:**
             1. Crie um arquivo `secrets.toml` na pasta `.streamlit`.
@@ -788,7 +788,7 @@ def main():
         SUBJECTS["Boas-vindas"] = {
             "teacher": "Assistente IA", "icon": "👋", "avatar": "🤖", 
             "description": "Sua assistente para o ENEM", 
-            "intro": "Olá, Sther! Bem-vinda ao ENEM AI Helper. Escolha uma matéria para começar."
+            "intro": "Olá, Sther! Bem-vinda a A.T.E.N.A. Escolha uma matéria para começar."
         }
         
     # Inicializa o histórico de chat para todas as matérias, incluindo Boas-vindas

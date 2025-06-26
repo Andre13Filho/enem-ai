@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Formatador específico para Biologia - ENEM AI Helper
+Formatador específico para Biologia - A.T.E.N.A.
 """
 
 import re

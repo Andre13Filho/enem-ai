@@ -1,4 +1,4 @@
-# Dependências Essenciais - ENEM AI Helper para Streamlit Cloud
+# Dependências Essenciais - A.T.E.N.A. para Streamlit Cloud
 streamlit>=1.28.0
 groq>=0.4.0
 

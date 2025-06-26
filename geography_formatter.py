@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Formatador específico para Geografia - ENEM AI Helper
+Formatador específico para Geografia - A.T.E.N.A.
 """
 
 import re

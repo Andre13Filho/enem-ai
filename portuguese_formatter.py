@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Formatador específico para Língua Portuguesa - ENEM AI Helper
+Formatador específico para Língua Portuguesa - A.T.E.N.A.
 """
 
 import re

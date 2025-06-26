@@ -1,4 +1,4 @@
-# 🚀 OTIMAÇÃO COMPLETA - ENEM AI HELPER
+# 🚀 OTIMAÇÃO COMPLETA - A.T.E.N.A.
 
 ## ✅ TUDO FOI OTIMIZADO!
 
@@ -126,4 +126,4 @@ O sistema está **COMPLETAMENTE OTIMIZADO** e pronto para:
 - ✅ App principal adaptativo
 - ✅ Documentação completa
 
-O **ENEM AI Helper** está agora **100% otimizado** para cloud e local! 🚀
+O **A.T.E.N.A.** está agora **100% otimizado** para cloud e local! 🚀

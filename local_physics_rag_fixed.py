@@ -1,412 +1,347 @@
 #!/usr/bin/env python3
 """
-Sistema RAG Local para Física
-Processa documentos locais da pasta física
+Sistema RAG Local para Professor Fernando - Física
+Utiliza um índice FAISS pré-construído e baixado do Hugging Face.
 """
 
-import os
-import glob
-from typing import Dict, Any, List, Optional
-from datetime import datetime
-from pathlib import Path
-
 import streamlit as st
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import Chroma
+import os
+import requests
+from typing import Dict, List, Any, Optional
+
+# LangChain imports
+from langchain_community.vectorstores import FAISS
+try:
+    from langchain_huggingface import HuggingFaceEmbeddings
+except ImportError:
+    from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.schema import Document
-from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
-from langchain.docstore.document import Document
+try:
+    from langchain_community.memory import ConversationBufferMemory
+except ImportError:
+    from langchain.memory import ConversationBufferMemory
 from langchain.llms.base import LLM
 from langchain.callbacks.manager import CallbackManagerForLLMRun
 
-import PyPDF2
-from docx import Document as DocxDocument
+# Groq para LLM
+from groq import Groq
 
-# Importa utilitários
-from groq_llm import GroqLLM
+# Diretório para armazenar o índice FAISS
+FAISS_INDEX_DIR = "faiss_index_physics"
+
+class GroqLLM(LLM):
+    """LLM personalizado para DeepSeek R1 Distill via Groq"""
+    
+    api_key: str
+    model_name: str = "deepseek-r1-distill-llama-70b"
+    
+    class Config:
+        arbitrary_types_allowed = True
+    
+    def __init__(self, api_key: str, **kwargs):
+        super().__init__(api_key=api_key, model_name="deepseek-r1-distill-llama-70b", **kwargs)
+    
+    @property
+    def _llm_type(self) -> str:
+        return "groq"
+    
+    def _call(
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[CallbackManagerForLLMRun] = None,
+        **kwargs: Any,
+    ) -> str:
+        try:
+            # Cria uma nova instância do cliente a cada chamada para evitar cache corrompido
+            client = Groq(api_key=self.api_key)
+            response = client.chat.completions.create(
+                model=self.model_name,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7,
+                max_tokens=2048
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            return f"Erro na API: {str(e)}"
 
 class LocalPhysicsRAG:
-    """Sistema RAG Local para Física"""
+    """Sistema RAG que carrega um índice FAISS remoto para Física."""
     
-    def __init__(self, physics_folder_path: str = "./física"):
-        self.physics_folder_path = physics_folder_path
-        self.persist_directory = "vectorstores/física"
-        
-        # Componentes do sistema
-        self.documents: List[Document] = []
-        self.embeddings = None
+    def __init__(self):
         self.vectorstore = None
         self.retriever = None
         self.memory = None
         self.rag_chain = None
+        self.embeddings = None
+        self.is_initialized = False
+        self.physics_folder_path = FAISS_INDEX_DIR
         
-        # Inicializa embeddings
-        self._setup_embeddings()
-    
-    def _setup_embeddings(self):
-        """Configura modelo de embeddings"""
+        # O setup de embeddings foi movido para o método initialize()
+        # para evitar carregamento pesado durante a importação.
+
+    def _setup_embeddings(self, model_name: str):
+        """Configura o modelo de embeddings do Hugging Face."""
+        # Se os embeddings já estiverem carregados, não faz nada
+        if self.embeddings:
+            return
+        
         try:
             self.embeddings = HuggingFaceEmbeddings(
-                model_name="sentence-transformers/all-MiniLM-L6-v2",
-                model_kwargs={'device': 'cpu'}
+                model_name=model_name,
+                model_kwargs={'device': 'cpu'},
+                encode_kwargs={'normalize_embeddings': True}
             )
-            print("✅ Embeddings inicializados")
         except Exception as e:
-            print(f"❌ Erro ao inicializar embeddings: {e}")
-    
-    def process_physics_documents(self) -> bool:
-        """Processa documentos da pasta física"""
+            if 'st' in globals() and hasattr(st, 'error'):
+                st.error(f"Falha ao carregar o modelo de embeddings: {e}")
+            self.embeddings = None
+
+    def _download_file(self, url: str, local_path: str):
+        """Baixa um arquivo de uma URL para um caminho local."""
         try:
-            # Verifica pasta
-            if not os.path.exists(self.physics_folder_path):
-                st.error(f"❌ Pasta {self.physics_folder_path} não encontrada")
+            with requests.get(url, stream=True) as r:
+                r.raise_for_status()
+                with open(local_path, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        f.write(chunk)
+            print(f"✅ Arquivo baixado: {local_path}")
+            return True
+        except requests.exceptions.RequestException as e:
+            st.error(f"Erro de rede ao baixar {url}: {e}")
+            print(f"❌ Erro de rede ao baixar {url}: {e}")
+            return False
+        
+    def _ensure_faiss_index_is_ready(self) -> bool:
+        """
+        Garante que o índice FAISS esteja disponível, baixando-o se necessário.
+        """
+        os.makedirs(FAISS_INDEX_DIR, exist_ok=True)
+        
+        index_file = os.path.join(FAISS_INDEX_DIR, "index_physics.faiss")
+        pkl_file = os.path.join(FAISS_INDEX_DIR, "index_physics.pkl")
+
+        # Verifica se os dois arquivos já existem
+        if os.path.exists(index_file) and os.path.exists(pkl_file):
+            print("✅ Índice FAISS de física já existe localmente.")
+            return True
+
+        st.info("📥 Baixando índice de física do Hugging Face...")
+        print("📥 Baixando índice de física do Hugging Face...")
+
+        # URLs dos arquivos no Hugging Face
+        faiss_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index_physics.faiss"
+        pkl_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index_physics.pkl"
+
+        # Baixa os dois arquivos
+        faiss_success = self._download_file(faiss_url, index_file)
+        pkl_success = self._download_file(pkl_url, pkl_file)
+
+        if faiss_success and pkl_success:
+            st.success("✅ Índice de física baixado com sucesso!")
+            return True
+        else:
+            st.error("❌ Falha ao baixar os arquivos do índice de física.")
+            # Limpa arquivos parciais em caso de falha
+            if os.path.exists(index_file): 
+                os.remove(index_file)
+            if os.path.exists(pkl_file): 
+                os.remove(pkl_file)
                 return False
             
-            # Lista documentos
-            docx_files = glob.glob(os.path.join(self.physics_folder_path, "*.docx"))
-            pdf_files = glob.glob(os.path.join(self.physics_folder_path, "*.pdf"))
-            
-            if not docx_files and not pdf_files:
-                st.error("❌ Nenhum documento DOCX ou PDF encontrado")
-                return False
-            
-            # Processa cada arquivo
-            all_documents = []
-            for file_path in docx_files + pdf_files:
-                docs = self._process_single_file(file_path)
-                if docs:
-                    all_documents.extend(docs)
-            
-            if not all_documents:
-                st.error("❌ Nenhum documento foi processado com sucesso")
-                return False
-            
-            # Divide em chunks
-            text_splitter = RecursiveCharacterTextSplitter(
-                chunk_size=1000,
-                chunk_overlap=200,
-                separators=["\n\n", "\n", ". ", " ", ""],
-                length_function=len
-            )
-            
-            self.documents = text_splitter.split_documents(all_documents)
-            
-            # Cria vectorstore
-            self._create_vectorstore()
-            
+    def initialize(self, api_key: str) -> bool:
+        """
+        Inicializa o sistema: baixa o índice, carrega o vectorstore e cria a cadeia RAG.
+        """
+        if self.is_initialized:
             return True
             
-        except Exception as e:
-            st.error(f"❌ Erro ao processar documentos: {e}")
+        # 1. Garantir que o índice FAISS está disponível
+        if not self._ensure_faiss_index_is_ready():
             return False
-    
-    def _process_single_file(self, file_path: str) -> List[Document]:
-        """Processa um único arquivo"""
+            
+        # 2. Carregar o Vectorstore FAISS (e configurar embeddings aqui)
         try:
-            # Extrai conteúdo baseado na extensão
-            if file_path.endswith('.docx'):
-                content = self._extract_docx_content(file_path)
-            elif file_path.endswith('.pdf'):
-                content = self._extract_pdf_content(file_path)
-            else:
-                st.warning(f"Formato não suportado: {file_path}")
-                return []
+            st.info("📚 Carregando base de conhecimento de física (FAISS)...")
+            print("📚 Carregando base de conhecimento de física (FAISS)...")
             
-            if not content:
-                return []
-            
-            # Extrai tópico do nome do arquivo
-            topic = self._extract_topic_from_filename(file_path)
-            
-            # Cria documento
-            doc = Document(
-                page_content=content,
-                metadata={
-                    "source": file_path,
-                    "topic": topic,
-                    "filename": Path(file_path).name
-                }
-            )
-            
-            return [doc]
-            
-        except Exception as e:
-            st.warning(f"Erro ao processar {file_path}: {str(e)}")
-            return []
-    
-    def _extract_docx_content(self, file_path: str) -> str:
-        """Extrai conteúdo de arquivo .docx"""
-        try:
-            doc = DocxDocument(file_path)
-            content_parts = []
-            
-            for para in doc.paragraphs:
-                if para.text.strip():
-                    content_parts.append(para.text)
-            
-            return "\n\n".join(content_parts)
-        except Exception as e:
-            st.warning(f"Erro ao processar DOCX {file_path}: {str(e)}")
-            return ""
-    
-    def _extract_pdf_content(self, file_path: str) -> str:
-        """Extrai conteúdo de arquivo .pdf"""
-        try:
-            content_parts = []
-            
-            with open(file_path, 'rb') as file:
-                pdf_reader = PyPDF2.PdfReader(file)
-                
-                # Verifica se o PDF está criptografado
-                if pdf_reader.is_encrypted:
-                    # Tenta descriptografar com senha vazia
-                    try:
-                        pdf_reader.decrypt("")
-                    except:
-                        st.warning(f"PDF {Path(file_path).name} está protegido por senha - pulando...")
-                        return ""
-                
-                # Extrai texto das páginas
-                for i, page in enumerate(pdf_reader.pages):
-                    try:
-                        text = page.extract_text()
-                        if isinstance(text, str):
-                            text = text.encode('utf-8', errors='replace').decode('utf-8')
-                            if text.strip():
-                                content_parts.append(text)
-                    except Exception as page_error:
-                        st.warning(f"Erro na página {i+1} do PDF {Path(file_path).name}: {str(page_error)}")
-                        continue
-            
-            if content_parts:
-                return "\n\n".join(content_parts)
-            else:
-                st.info(f"PDF {Path(file_path).name} processado mas sem texto extraído")
-                return ""
-                
-        except Exception as e:
-            error_msg = str(e)
-            if "PyCryptodome" in error_msg:
-                st.error(f"PDF {Path(file_path).name} requer descriptografia avançada - instale: pip install PyCryptodome")
-            else:
-                st.warning(f"Erro ao processar PDF {Path(file_path).name}: {error_msg}")
-            return ""
-    
-    def _extract_topic_from_filename(self, filename: str) -> str:
-        """Extrai tópico do nome do arquivo"""
-        # Remove extensão
-        topic = Path(filename).stem
-        
-        # Limpa caracteres especiais
-        topic = topic.replace("_", " ").replace("-", " ")
-        
-        # Capitaliza primeira letra
-        return topic.title()
-    
-    def _create_vectorstore(self):
-        """Cria ou atualiza o vectorstore"""
-        try:
+            # Passo 2.1: Configurar embeddings ANTES de carregar o FAISS
+            self._setup_embeddings(model_name="sentence-transformers/distiluse-base-multilingual-cased-v1")
             if not self.embeddings:
-                raise Exception("Embeddings não configurados")
-            
-            # Cria vectorstore ChromaDB
-            self.vectorstore = Chroma.from_documents(
-                documents=self.documents,
-                embedding=self.embeddings,
-                persist_directory=self.persist_directory
+                st.error("Embeddings não foram inicializadas. Abortando.")
+                return False
+
+            self.vectorstore = FAISS.load_local(
+                FAISS_INDEX_DIR, 
+                self.embeddings,
+                allow_dangerous_deserialization=True # Necessário para pkl
             )
-            
-            # Configura retriever
             self.retriever = self.vectorstore.as_retriever(
                 search_type="similarity",
                 search_kwargs={"k": 5}
             )
-            
+            st.success("✅ Base de conhecimento carregada.")
+            print("✅ Base de conhecimento carregada.")
         except Exception as e:
-            st.error(f"Erro ao criar vectorstore de física: {str(e)}")
-            raise
+            st.error(f"Erro ao carregar o índice FAISS: {e}")
+            print(f"❌ Erro ao carregar o índice FAISS: {e}")
+            return False
     
-    def load_existing_vectorstore(self) -> bool:
-        """Carrega vectorstore existente se disponível"""
+        # 3. Criar a cadeia RAG
         try:
-            if os.path.exists(self.persist_directory) and self.embeddings:
-                self.vectorstore = Chroma(
-                    persist_directory=self.persist_directory,
-                    embedding_function=self.embeddings
-                )
-                
-                self.retriever = self.vectorstore.as_retriever(
-                    search_type="similarity",
-                    search_kwargs={"k": 5}
-                )
-                
-                # Testa se a vectorstore tem conteúdo
-                try:
-                    test_docs = self.retriever.invoke("física")
-                    print(f"✅ VectorStore de Física carregada com {len(test_docs)} documentos de teste")
-                    
-                    # Simula documents para estatísticas
-                    sample_docs = self.vectorstore.similarity_search("física", k=100)
-                    self.documents = sample_docs
-                    print(f"📊 Amostra de física carregada: {len(sample_docs)} chunks")
-                    
-                except Exception as e:
-                    print(f"⚠️ Erro no teste da VectorStore de Física: {e}")
-                
-                return True
-        except Exception as e:
-            if 'st' in globals():
-                st.warning(f"Não foi possível carregar vectorstore de física existente: {str(e)}")
-            else:
-                print(f"Não foi possível carregar vectorstore de física existente: {str(e)}")
-        
-        return False
-    
-    def create_rag_chain(self, api_key: str):
-        """Cria chain RAG conversacional para Física"""
-        if not self.retriever:
-            raise Exception("Retriever não configurado")
-        
-        # Configura LLM
-        llm = GroqLLM(api_key=api_key)
-        
-        # Configura memória
-        self.memory = ConversationBufferMemory(
-            memory_key="chat_history",
-            return_messages=True,
-            output_key="answer"
-        )
-        
-        # Cria chain conversacional
-        self.rag_chain = ConversationalRetrievalChain.from_llm(
-            llm=llm,
-            retriever=self.retriever,
-            memory=self.memory,
-            return_source_documents=True,
-            verbose=False
-        )
-        
-        # Personaliza o prompt para Física
-        self.rag_chain.combine_docs_chain.llm_chain.prompt.template = """
-Você é o Professor Fernando, especialista em física do ENEM.
+            st.info("🔗 Criando a cadeia de conversação RAG...")
+            print("🔗 Criando a cadeia de conversação RAG...")
+            
+            self.memory = ConversationBufferMemory(
+                memory_key="chat_history",
+                return_messages=True,
+                output_key="answer"
+            )
+            
+            llm = GroqLLM(api_key=api_key)
 
-CONTEXTO: {context}
+            self.rag_chain = ConversationalRetrievalChain.from_llm(
+                llm=llm,
+                retriever=self.retriever,
+                memory=self.memory,
+                return_source_documents=True,
+                output_key="answer",
+            )
+            
+            # Adiciona o prompt personalizado para Física
+            prompt_template = """Você é o Professor Fernando, especialista em física do ENEM. Responda como um professor para uma estudante de 17 anos chamada Sther.
+
+🔥 REGRAS DE FORMATAÇÃO FÍSICA (CRÍTICO - SEMPRE SEGUIR):
+
+1. **DELIMITADORES OBRIGATÓRIOS:**
+   - Fórmulas no meio do texto: $sua-formula-aqui$
+   - Fórmulas em destaque: $$sua-formula-aqui$$
+   - NUNCA use \\text{força} sozinho - sempre use $\\text{força}$
+
+2. **EXEMPLOS CORRETOS:**
+   ✅ A velocidade é calculada por $v = \\frac{\\Delta s}{\\Delta t}$
+   ✅ A Segunda Lei de Newton: $$F = ma$$
+   ✅ Para energia cinética: $$E_c = \\frac{mv^2}{2}$$
+
+3. **COMANDOS LATEX ESSENCIAIS:**
+   - Frações: $\\frac{numerador}{denominador}$
+   - Raízes: $\\sqrt{x}$ ou $\\sqrt[n]{x}$
+   - Texto em fórmulas: $\\text{força} = massa \\times aceleração$
+   - Potências: $v^2$, $e^{-x}$
+   - Índices: $v_0$, $a_{max}$
+
+4. **SEMPRE INCLUIR:**
+   - Explicação passo-a-passo
+   - Exemplos práticos
+   - Dicas para o ENEM
+   - Analogias do cotidiano
+
+5. **ESTILO DO PROFESSOR FERNANDO:**
+   - Use analogias das séries que a Sther gosta (FRIENDS, Big Bang Theory, etc.)
+   - Seja didático e paciente
+   - Conecte conceitos com exemplos práticos
+
+Com base no CONTEXTO abaixo, responda à PERGUNTA do aluno.
+Se a resposta não estiver no contexto, use seu conhecimento em física, mas mantenha o estilo.
+
+CONTEXTO:
+{context}
+
 PERGUNTA: {question}
 
-INSTRUÇÕES CRÍTICAS:
-🚫 NUNCA mostre seu raciocínio interno
-🚫 NUNCA use pensamentos como "Vou analisar...", "Preciso calcular...", etc.
-🚫 NUNCA duplique informações
-✅ Responda DIRETAMENTE a pergunta
-✅ Use fórmulas em LaTeX: $ ou $$
-✅ Seja didático para jovem de 17 anos
+RESPOSTA (com fórmulas bem formatadas e estilo do Professor Fernando):
+"""
+            # Atualiza o prompt da cadeia
+            if hasattr(self.rag_chain.combine_docs_chain, "llm_chain"):
+                self.rag_chain.combine_docs_chain.llm_chain.prompt.template = prompt_template
+            
+            self.is_initialized = True
+            st.success("✅ Cadeia RAG criada e pronta para uso!")
+            print("✅ Cadeia RAG criada e pronta para uso!")
+            return True
 
-FORMATO DA RESPOSTA:
-1. 🎬 INICIE com analogia das séries da Sther (FRIENDS, Big Bang Theory, Stranger Things, Grey's Anatomy, WandaVision)
-2. 👋 Cumprimento: "Olá Sther!"
-3. 📚 Explicação DIRETA da física
-4. 📝 Exemplo prático quando relevante
-5. 🎯 Conecte de volta com a analogia
-6. ❓ Termine perguntando sobre exercícios
-
-EXEMPLO DE FÓRMULAS:
-- Velocidade: $v = \\frac{{\\Delta s}}{{\\Delta t}}$
-- Segunda Lei de Newton: $$F = ma$$
-- Energia cinética: $$E_c = \\frac{{mv^2}}{{2}}$$
-
-EXEMPLO DE RESPOSTA CORRETA:
-"🎬 Como Sheldon diria: 'Bazinga! A física é simples!'
-
-Olá Sther! Para movimento uniformemente variado, usamos:
-
-$$v = v_0 + at$$
-
-onde $v_0$ é a velocidade inicial e $a$ é a aceleração.
-
-**Exemplo:** Um carro acelera de $10\\,m/s$ para $30\\,m/s$ em $4\\,s$:
-$$a = \\frac{{30-10}}{{4}} = 5\\,m/s^2$$
-
-Como Leonard explicaria para Penny - cada peça tem seu lugar na equação!
-
-Que tal praticar com alguns exercícios do ENEM sobre este tópico, Sther?"
-
-RESPONDA AGORA SEGUINDO EXATAMENTE ESTE FORMATO:"""
+        except Exception as e:
+            st.error(f"Erro ao criar a cadeia RAG: {e}")
+            print(f"❌ Erro ao criar a cadeia RAG: {e}")
+            return False
     
     def get_response(self, question: str) -> Dict[str, Any]:
-        """Gera resposta usando RAG"""
+        """Obtém uma resposta do sistema RAG."""
         if not self.rag_chain:
-            return {
-                "answer": "Sistema RAG de Física não inicializado. Configure sua API key.",
-                "source_documents": []
-            }
+            return {"answer": "O sistema RAG não foi inicializado corretamente."}
         
         try:
-            result = self.rag_chain({
-                "question": question,
-                "chat_history": []
-            })
-            
-            # Remove raciocínio interno da resposta
-            if "answer" in result:
-                answer = result["answer"]
-                answer = self._remove_reasoning_from_response(answer)
-                
-                # Aplica formatação melhorada na resposta
-                from math_formatter import format_professor_response
-                result["answer"] = format_professor_response(answer)
-            
-            return result
-            
+            return self.rag_chain({"question": question})
         except Exception as e:
-            return {
-                "answer": f"Erro ao gerar resposta: {str(e)}",
-                "source_documents": []
-            }
-    
-    def _remove_reasoning_from_response(self, response: str) -> str:
-        """Remove marcadores de raciocínio interno"""
-        lines = response.split('\n')
-        filtered_lines = []
-        skip_line = False
-        
-        for line in lines:
-            if any(marker in line.lower() for marker in ["pensando:", "raciocínio:", "análise:", "vamos analisar"]):
-                skip_line = True
-                continue
-            if skip_line and line.strip() == "":
-                skip_line = False
-                continue
-            if not skip_line:
-                filtered_lines.append(line)
-        
-        return '\n'.join(filtered_lines)
+            return {"answer": f"Erro ao processar a pergunta: {str(e)}"}
     
     def search_relevant_content(self, query: str, k: int = 3) -> List[Document]:
-        """Busca conteúdo relevante"""
-        if not self.retriever:
+        """Busca por conteúdo relevante no vectorstore."""
+        if not self.vectorstore:
             return []
         
         try:
-            docs = self.retriever.get_relevant_documents(query)
-            return docs[:k]
+            return self.vectorstore.similarity_search(query, k=k)
         except Exception as e:
-            st.error(f"Erro na busca: {str(e)}")
+            print(f"Erro na busca de similaridade: {str(e)}")
             return []
     
     def get_stats(self) -> Dict[str, Any]:
-        """Retorna estatísticas do sistema"""
-        return {
-            "total_documentos": len(self.documents) if self.documents else 0,
-            "vectorstore_inicializado": self.vectorstore is not None,
-            "rag_chain_configurada": self.rag_chain is not None
-        }
+        """
+        Retorna estatísticas detalhadas do sistema RAG, incluindo uma amostra de documentos.
+        """
+        if not self.is_initialized or not self.vectorstore:
+            return {
+                "status": "Não Carregado",
+                "total_documents": 0,
+                "sample_documents": []
+            }
+
+        try:
+            total_documents = self.vectorstore.index.ntotal
+            
+            # Pega uma amostra de metadados dos primeiros 5 documentos
+            sample_docs_metadata = []
+            docstore = self.vectorstore.docstore
+            doc_ids = list(docstore._dict.keys())
+            
+            for i in range(min(5, len(doc_ids))):
+                doc = docstore._dict[doc_ids[i]]
+                if doc.metadata:
+                    sample_docs_metadata.append(doc.metadata)
+
+            # Extrai nomes de arquivos únicos da amostra
+            sample_files = sorted(list(set(
+                meta.get("source", "Fonte Desconhecida") for meta in sample_docs_metadata
+            )))
+
+            return {
+                "status": "Carregado",
+                "total_documents": total_documents,
+                "sample_documents": sample_files
+            }
+        except Exception as e:
+            print(f"Erro ao obter estatísticas do RAG: {e}")
+            return {
+                "status": "Erro na Leitura",
+                "total_documents": 0,
+                "sample_documents": [str(e)]
+            }
     
     def clear_memory(self):
-        """Limpa memória da conversa"""
+        """Limpa a memória da conversa."""
         if self.memory:
             self.memory.clear()
 
-# Instância global
-local_physics_rag = LocalPhysicsRAG() 
+_singleton_instance = None
+
+def get_local_physics_rag_instance():
+    """
+    Retorna uma instância única (singleton) do LocalPhysicsRAG.
+    Isso evita a inicialização no momento da importação.
+    """
+    global _singleton_instance
+    if _singleton_instance is None:
+        _singleton_instance = LocalPhysicsRAG()
+    return _singleton_instance 
