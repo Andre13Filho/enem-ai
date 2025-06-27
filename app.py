@@ -608,7 +608,7 @@ Detalhes: {error_msg}
 """
 
 def get_teacher_response(subject: str, user_message: str, api_key: str) -> str:
-    """Retorna resposta do professor específico com melhor tratamento de erro e analogias integradas"""
+    """Retorna resposta do professor específico com melhor tratamento de erro e analogias integradas automaticamente"""
     
     # Validação inicial da API key
     if not api_key or not isinstance(api_key, str) or not api_key.strip():
@@ -656,22 +656,23 @@ Por favor, configure sua API Key corretamente nas configurações do Streamlit C
             teacher.subject = subject
             base_response = teacher.get_response(user_message, api_key)
         
-        # Integrar analogia se o sistema estiver disponível
+        # Integrar analogia automaticamente se o sistema estiver disponível
         try:
             lazy_import_analogias()
             if "analogias" in _imported_modules and ANALOGIAS_AVAILABLE:
-                # Extrair conceito principal da pergunta (simplificado)
-                conceito = extract_conceito_principal(user_message, subject)
+                # Extrair conceito principal da pergunta de forma mais inteligente
+                conceito = extract_conceito_principal_melhorado(user_message, subject)
                 
-                if conceito:
-                    # Gerar analogia
+                if conceito and len(conceito) > 2:  # Só gera analogia se o conceito for significativo
+                    # Gerar analogia contextualizada
                     analogia = _imported_modules["analogias"]["get_analogia"](conceito, subject, api_key)
                     
-                    # Adicionar analogia à resposta se não for erro
-                    if not analogia.startswith("❌"):
-                        base_response += f"\n\n---\n\n🎬 **Analogia da Série para {conceito}:**\n{analogia}"
+                    # Adicionar analogia à resposta se não for erro e se for relevante
+                    if not analogia.startswith("❌") and len(analogia) > 50:
+                        # Integrar analogia de forma mais natural
+                        base_response += f"\n\n🎬 **Analogia da Série para {conceito}:**\n{analogia}"
         except Exception as analogia_error:
-            # Se falhar ao gerar analogia, continua com a resposta normal
+            # Se falhar ao gerar analogia, continua com a resposta normal (silenciosamente)
             print(f"Erro ao gerar analogia: {analogia_error}")
         
         return base_response
@@ -703,43 +704,51 @@ Pode reformular sua pergunta? Vou fazer o meu melhor para responder sobre o tóp
 """
         return error_response
 
-def extract_conceito_principal(user_message: str, subject: str) -> str:
+def extract_conceito_principal_melhorado(user_message: str, subject: str) -> str:
     """
-    Extrai o conceito principal da pergunta do usuário para gerar analogias.
+    Extrai o conceito principal da pergunta do usuário de forma mais inteligente para gerar analogias.
     """
-    # Palavras-chave por matéria para identificar conceitos
+    # Palavras-chave mais específicas e contextualizadas por matéria
     keywords_por_materia = {
         "Matemática": [
             "equação", "função", "geometria", "trigonometria", "álgebra", "cálculo",
-            "probabilidade", "estatística", "progressão", "logaritmo", "matriz"
+            "probabilidade", "estatística", "progressão", "logaritmo", "matriz",
+            "polinômio", "derivada", "integral", "limite", "conjunto", "vetor"
         ],
         "Física": [
             "força", "movimento", "velocidade", "aceleração", "energia", "calor",
-            "eletricidade", "luz", "onda", "som", "relatividade"
+            "eletricidade", "luz", "onda", "som", "relatividade", "gravidade",
+            "magnetismo", "pressão", "temperatura", "potência", "trabalho"
         ],
         "Química": [
             "átomo", "molécula", "reação", "combustão", "ácido", "base", "energia",
-            "velocidade", "equilíbrio", "ligação", "termoquímica"
+            "velocidade", "equilíbrio", "ligação", "termoquímica", "eletroquímica",
+            "solução", "concentração", "pH", "catalisador", "radioatividade"
         ],
         "Biologia": [
             "célula", "gene", "evolução", "ecossistema", "respiração", "fotossíntese",
-            "sistema", "organela", "DNA", "mutação", "população"
+            "sistema", "organela", "DNA", "mutação", "população", "metabolismo",
+            "enzima", "hormônio", "imunidade", "reprodução", "genética"
         ],
         "Geografia": [
             "relevo", "clima", "rio", "população", "território", "globalização",
-            "erosão", "temperatura", "bacia", "migração"
+            "erosão", "temperatura", "bacia", "migração", "urbanização", "industrialização",
+            "agricultura", "meio ambiente", "desenvolvimento", "região"
         ],
         "História": [
             "revolução", "guerra", "independência", "república", "colonial",
-            "imperialismo", "feudalismo", "renascimento", "ditadura"
+            "imperialismo", "feudalismo", "renascimento", "ditadura", "democracia",
+            "capitalismo", "socialismo", "nacionalismo", "liberalismo", "absolutismo"
         ],
         "Português": [
             "verbo", "substantivo", "sintaxe", "literatura", "redação", "texto",
-            "gramática", "interpretação", "figura", "concordância"
+            "gramática", "interpretação", "figura", "concordância", "regência",
+            "pontuação", "acentuação", "morfologia", "semântica", "estilística"
         ],
         "Redação": [
             "introdução", "desenvolvimento", "conclusão", "argumentação", "tese",
-            "coesão", "coerência", "proposta", "intervenção"
+            "coesão", "coerência", "proposta", "intervenção", "dissertação",
+            "narração", "descrição", "tipologia", "gênero", "estrutura"
         ]
     }
     
@@ -747,18 +756,36 @@ def extract_conceito_principal(user_message: str, subject: str) -> str:
     message_lower = user_message.lower()
     keywords = keywords_por_materia.get(subject, [])
     
-    # Procurar por palavras-chave na mensagem
+    # Procurar por palavras-chave específicas na mensagem
     for keyword in keywords:
         if keyword in message_lower:
             return keyword.title()
     
-    # Se não encontrar palavra-chave específica, tentar extrair conceito geral
-    # Dividir a mensagem em palavras e pegar as primeiras palavras significativas
+    # Se não encontrar palavra-chave específica, tentar extrair conceito mais inteligente
+    # Remover palavras comuns e focar em substantivos importantes
+    palavras_comuns = ["como", "o que", "qual", "quando", "onde", "por que", "explique", "defina", "resolva", "calcule", "analise", "compare", "diferencie", "relacione"]
+    
+    # Dividir a mensagem em palavras
     words = user_message.split()
+    
+    # Filtrar palavras significativas (não muito comuns e com pelo menos 3 letras)
+    palavras_significativas = []
+    for word in words:
+        word_clean = word.lower().strip(".,!?;:")
+        if (word_clean not in palavras_comuns and 
+            len(word_clean) >= 3 and 
+            not word_clean.isdigit()):
+            palavras_significativas.append(word_clean)
+    
+    # Se encontrou palavras significativas, usar as primeiras
+    if palavras_significativas:
+        conceito = " ".join(palavras_significativas[:2])  # Máximo 2 palavras
+        return conceito.title()
+    
+    # Fallback: usar as primeiras palavras da pergunta
     if len(words) >= 2:
-        # Pegar as primeiras 2-3 palavras como conceito
-        conceito = " ".join(words[:min(3, len(words))])
-        return conceito
+        conceito = " ".join(words[:2])
+        return conceito.title()
     
     return ""
 
@@ -979,8 +1006,8 @@ def main():
         # Para Redação, mostra a funcionalidade de correção
         tab1, tab2, tab3, tab4 = st.tabs(["💬 Chat", "✍️ Correção de Redação", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
     else:
-        # Para outras matérias, mostra as abas normais + analogias
-        tab1, tab2, tab3, tab4 = st.tabs(["💬 Chat", "🎬 Analogias", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
+        # Para outras matérias, mostra as abas normais
+        tab1, tab2, tab3 = st.tabs(["💬 Chat", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
     
     with tab1:
         # Área de Chat Principal
@@ -1052,22 +1079,6 @@ def main():
                 st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
                 st.rerun()
     
-    # Aba de Analogias (apenas para matérias que não são Redação)
-    if current_subject != "Redação":
-        with tab2:
-            # Sistema de Analogias
-            try:
-                from analogias_rag import setup_analogias_ui
-                setup_analogias_ui()
-            except Exception as e:
-                st.error(f"❌ Erro ao carregar Sistema de Analogias: {e}")
-                st.info("""
-                **Para ativar o Sistema de Analogias:**
-                1. Verifique se o arquivo `analogias_rag.py` está presente
-                2. Certifique-se de que as dependências estão instaladas
-                3. Verifique se os índices FAISS estão disponíveis no Hugging Face
-                """)
-    
     # Aba de Correção de Redação (apenas para Redação)
     if current_subject == "Redação":
         with tab2:
@@ -1121,7 +1132,7 @@ def main():
                 """)
     else:
         # Para outras matérias, mostra as abas normais
-        with tab3:
+        with tab2:
             # Mapa Mental
             try:
                 lazy_import_mindmap()
@@ -1138,7 +1149,7 @@ def main():
                 2. Verifique se o arquivo `mapa_mental_markmap.py` está presente
                 """)
         
-        with tab4:
+        with tab3:
             # Exercícios Personalizados
             try:
                 lazy_import_exercises()
