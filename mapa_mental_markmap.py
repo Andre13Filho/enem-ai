@@ -9,6 +9,7 @@ import re
 import os  # Adicionado para acessar variáveis de ambiente
 from typing import Dict, List, Any, Optional
 from groq import Groq
+import time
 
 try:
     from streamlit_markmap import markmap
@@ -184,8 +185,22 @@ def display_mapa_mental_markmap():
     with col3:
         if st.button("🔄 Regenerar", help="Gerar nova versão do mapa mental"):
             cache_key = f"markmap_{hash(ultima_pergunta)}_{nivel_detalhamento}_{current_subject}"
+            first_render_key = f"first_render_{cache_key}"
+            
+            # Limpar cache do mapa mental
             if cache_key in st.session_state:
                 del st.session_state[cache_key]
+            
+            # Limpar cache de primeira renderização
+            if first_render_key in st.session_state:
+                del st.session_state[first_render_key]
+            
+            # Limpar qualquer container de renderização anterior
+            container_keys = [k for k in st.session_state.keys() if k.startswith("mindmap_container_")]
+            for key in container_keys:
+                del st.session_state[key]
+            
+            st.success("🔄 Mapa mental será regenerado!")
             st.rerun()
     
     # Controles de debug (em expander para não poluir a interface)
@@ -239,6 +254,70 @@ def obter_ultima_pergunta(chat_history: List[Any]) -> Optional[str]:
             
     return None
 
+def garantir_configuracoes_interatividade(markdown_content: str) -> str:
+    """Garante que o markdown tenha todas as configurações de interatividade necessárias"""
+    
+    # Configurações padrão de interatividade
+    config_padrao = """---
+markmap:
+  pan: true
+  zoom: true
+  initialExpandLevel: 2
+  maxWidth: 300
+  colorFreezeLevel: 2
+  duration: 500
+  spacingHorizontal: 80
+  spacingVertical: 5
+  autoFit: true
+  zoomInButton: true
+  zoomOutButton: true
+  resetButton: true
+---"""
+    
+    # Se não tem frontmatter, adicionar
+    if not markdown_content.startswith('---'):
+        return config_padrao + "\n\n" + markdown_content
+    
+    # Se tem frontmatter, verificar e adicionar configurações faltantes
+    lines = markdown_content.split('\n')
+    yaml_end = -1
+    
+    # Encontrar o final do YAML
+    for i, line in enumerate(lines):
+        if i > 0 and line.strip() == '---':
+            yaml_end = i
+            break
+    
+    if yaml_end > 0:
+        # Extrair YAML existente
+        yaml_content = '\n'.join(lines[1:yaml_end])
+        remaining_content = '\n'.join(lines[yaml_end+1:])
+        
+        # Verificar e adicionar configurações essenciais
+        configuracoes_essenciais = [
+            'pan: true',
+            'zoom: true',
+            'autoFit: true',
+            'zoomInButton: true',
+            'zoomOutButton: true',
+            'resetButton: true'
+        ]
+        
+        for config in configuracoes_essenciais:
+            if config not in yaml_content:
+                yaml_content += f'\n  {config}'
+        
+        # Reconstruir markdown
+        return f"""---
+markmap:
+{yaml_content}
+---
+
+{remaining_content}"""
+    
+    # Fallback: adicionar configurações padrão
+    return config_padrao + "\n\n" + markdown_content
+
 def exibir_mapa_mental_markmap(pergunta: str, api_key: str, nivel: str, debug_options: dict = None, current_subject: str = 'Matemática'):
     """Gera e exibe o mapa mental usando streamlit-markmap"""
     
@@ -248,11 +327,17 @@ def exibir_mapa_mental_markmap(pergunta: str, api_key: str, nivel: str, debug_op
     # Cache baseado na pergunta, nível e matéria
     cache_key = f"markmap_{hash(pergunta)}_{nivel}_{current_subject}"
     
+    # Verificar se é a primeira renderização para esta pergunta
+    first_render_key = f"first_render_{cache_key}"
+    is_first_render = first_render_key not in st.session_state
+    
     # Verificar cache
     if cache_key not in st.session_state:
         with st.spinner("🧠 Gerando mapa mental interativo..."):
             markdown_content = gerar_markdown_mapa_mental(pergunta, api_key, nivel, current_subject)
             st.session_state[cache_key] = markdown_content
+            # Marcar que não é mais a primeira renderização
+            st.session_state[first_render_key] = False
     else:
         markdown_content = st.session_state[cache_key]
     
@@ -283,61 +368,17 @@ def exibir_mapa_mental_markmap(pergunta: str, api_key: str, nivel: str, debug_op
                 
                 st.write(f"✅ Contém 'pan:': {has_pan}")
                 st.write(f"✅ Contém 'zoom:': {has_zoom}")
+                st.write(f"🔄 Primeira renderização: {is_first_render}")
                 
                 if not has_pan or not has_zoom:
                     st.warning("⚠️ Configurações de pan/zoom podem estar faltando!")
         
-        # Renderizar mapa mental
-        try:
-            # Garantir que o markdown sempre tenha as configurações de interatividade
-            if not markdown_content.startswith('---'):
-                # Adicionar configurações de markmap no início
-                markdown_content = """---
-markmap:
-  pan: true
-  zoom: true
-  initialExpandLevel: 2
-  maxWidth: 300
-  colorFreezeLevel: 2
-  duration: 500
-  spacingHorizontal: 80
-  spacingVertical: 5
----
-
-""" + markdown_content
-            else:
-                # Se já tem frontmatter, verificar se tem as configurações essenciais
-                lines = markdown_content.split('\n')
-                yaml_end = -1
-                for i, line in enumerate(lines):
-                    if i > 0 and line.strip() == '---':
-                        yaml_end = i
-                        break
-                
-                if yaml_end > 0:
-                    # Extrair configurações YAML existentes
-                    yaml_content = '\n'.join(lines[1:yaml_end])
-                    remaining_content = '\n'.join(lines[yaml_end+1:])
-                    
-                    # Verificar se pan/zoom estão nas configurações
-                    if 'pan:' not in yaml_content:
-                        yaml_content += '\n  pan: true'
-                    if 'zoom:' not in yaml_content:
-                        yaml_content += '\n  zoom: true'
-                    
-                    # Reconstruir markdown
-                    markdown_content = f"""---
-markmap:
-{yaml_content}
----
-
-{remaining_content}"""
-            
-            markmap(markdown_content, height=600)
-            
-        except Exception as e:
-            st.error(f"❌ Erro ao renderizar mapa mental: {str(e)}")
-            st.code(markdown_content, language="markdown")
+        # Garantir que as configurações de interatividade estejam presentes
+        markdown_content = garantir_configuracoes_interatividade(markdown_content)
+        
+        # Renderizar mapa mental com key única para garantir interatividade
+        container_key = f"mindmap_container_{hash(pergunta)}_{nivel}_{current_subject}"
+        markmap(markdown_content, height=600, key=container_key)
     else:
         st.error("❌ Erro ao gerar mapa mental. Tente novamente.")
 

@@ -68,6 +68,7 @@ PORTUGUESE_RAG_AVAILABLE = False
 ENEM_EXERCISES_AVAILABLE = False
 EXERCICIOS_PERSONALIZADOS_AVAILABLE = False
 REDACAO_AVAILABLE = False
+ANALOGIAS_AVAILABLE = False
 
 # Cache para módulos importados
 _imported_modules = {}
@@ -185,6 +186,21 @@ def lazy_import_mindmap():
         try:
             from mapa_mental_markmap import display_mapa_mental_wrapper
             _imported_modules["mindmap"] = display_mapa_mental_wrapper
+        except ImportError:
+            pass
+
+def lazy_import_analogias():
+    """Importa sistema de analogias sob demanda"""
+    global ANALOGIAS_AVAILABLE
+    
+    if "analogias" not in _imported_modules:
+        try:
+            from analogias_rag import get_analogia_para_conceito, get_analogias_rag_instance
+            _imported_modules["analogias"] = {
+                "get_analogia": get_analogia_para_conceito,
+                "get_instance": get_analogias_rag_instance
+            }
+            ANALOGIAS_AVAILABLE = True
         except ImportError:
             pass
 
@@ -592,7 +608,7 @@ Detalhes: {error_msg}
 """
 
 def get_teacher_response(subject: str, user_message: str, api_key: str) -> str:
-    """Retorna resposta do professor específico com melhor tratamento de erro"""
+    """Retorna resposta do professor específico com melhor tratamento de erro e analogias integradas"""
     
     # Validação inicial da API key
     if not api_key or not isinstance(api_key, str) or not api_key.strip():
@@ -603,39 +619,62 @@ Por favor, configure sua API Key corretamente nas configurações do Streamlit C
 """
     
     try:
+        # Obter resposta base do professor
+        base_response = ""
+        
         # Professor Carlos especializado (RAG Local)
         if subject == "Matemática" and "carlos" in _imported_modules:
-            return _imported_modules["carlos"]["response"](user_message, api_key)
+            base_response = _imported_modules["carlos"]["response"](user_message, api_key)
         
         # Professora Luciana especializada (RAG Local de Química)
         elif subject == "Química" and "luciana" in _imported_modules:
-            return _imported_modules["luciana"]["response"](user_message, api_key)
+            base_response = _imported_modules["luciana"]["response"](user_message, api_key)
         
         # Professor Roberto especializado (RAG Local de Biologia)
         elif subject == "Biologia" and "roberto" in _imported_modules:
-            return _imported_modules["roberto"]["response"](user_message, api_key)
+            base_response = _imported_modules["roberto"]["response"](user_message, api_key)
         
         # Professor Eduardo especializado (RAG Local de História)
         elif subject == "História" and "eduardo" in _imported_modules:
-            return _imported_modules["eduardo"]["response"](user_message, api_key)
+            base_response = _imported_modules["eduardo"]["response"](user_message, api_key)
         
         # Professora Marina especializada (RAG Local de Geografia)
         elif subject == "Geografia" and "marina" in _imported_modules:
-            return _imported_modules["marina"]["response"](user_message, api_key)
+            base_response = _imported_modules["marina"]["response"](user_message, api_key)
         
         # Professora Letícia (RAG Local de Português)
         elif subject == "Língua Portuguesa" and "leticia" in _imported_modules:
-            return _imported_modules["leticia"]["response"](user_message, api_key)
+            base_response = _imported_modules["leticia"]["response"](user_message, api_key)
         
         # Professor Fernando especializado (RAG Local de Física)
         elif subject == "Física" and "fernando" in _imported_modules:
-            return _imported_modules["fernando"]["response"](user_message, api_key)
+            base_response = _imported_modules["fernando"]["response"](user_message, api_key)
         
         # Outros professores (Groq genérico)
         else:
             teacher = GroqTeacher(SUBJECTS[subject])
             teacher.subject = subject
-            return teacher.get_response(user_message, api_key)
+            base_response = teacher.get_response(user_message, api_key)
+        
+        # Integrar analogia se o sistema estiver disponível
+        try:
+            lazy_import_analogias()
+            if "analogias" in _imported_modules and ANALOGIAS_AVAILABLE:
+                # Extrair conceito principal da pergunta (simplificado)
+                conceito = extract_conceito_principal(user_message, subject)
+                
+                if conceito:
+                    # Gerar analogia
+                    analogia = _imported_modules["analogias"]["get_analogia"](conceito, subject, api_key)
+                    
+                    # Adicionar analogia à resposta se não for erro
+                    if not analogia.startswith("❌"):
+                        base_response += f"\n\n---\n\n🎬 **Analogia da Série para {conceito}:**\n{analogia}"
+        except Exception as analogia_error:
+            # Se falhar ao gerar analogia, continua com a resposta normal
+            print(f"Erro ao gerar analogia: {analogia_error}")
+        
+        return base_response
             
     except Exception as e:
         # Resposta de fallback em caso de erro
@@ -663,6 +702,65 @@ Pode reformular sua pergunta? Vou fazer o meu melhor para responder sobre o tóp
 💪 Não desista! Estamos aqui para te ajudar a conquistar o ENEM!
 """
         return error_response
+
+def extract_conceito_principal(user_message: str, subject: str) -> str:
+    """
+    Extrai o conceito principal da pergunta do usuário para gerar analogias.
+    """
+    # Palavras-chave por matéria para identificar conceitos
+    keywords_por_materia = {
+        "Matemática": [
+            "equação", "função", "geometria", "trigonometria", "álgebra", "cálculo",
+            "probabilidade", "estatística", "progressão", "logaritmo", "matriz"
+        ],
+        "Física": [
+            "força", "movimento", "velocidade", "aceleração", "energia", "calor",
+            "eletricidade", "luz", "onda", "som", "relatividade"
+        ],
+        "Química": [
+            "átomo", "molécula", "reação", "combustão", "ácido", "base", "energia",
+            "velocidade", "equilíbrio", "ligação", "termoquímica"
+        ],
+        "Biologia": [
+            "célula", "gene", "evolução", "ecossistema", "respiração", "fotossíntese",
+            "sistema", "organela", "DNA", "mutação", "população"
+        ],
+        "Geografia": [
+            "relevo", "clima", "rio", "população", "território", "globalização",
+            "erosão", "temperatura", "bacia", "migração"
+        ],
+        "História": [
+            "revolução", "guerra", "independência", "república", "colonial",
+            "imperialismo", "feudalismo", "renascimento", "ditadura"
+        ],
+        "Português": [
+            "verbo", "substantivo", "sintaxe", "literatura", "redação", "texto",
+            "gramática", "interpretação", "figura", "concordância"
+        ],
+        "Redação": [
+            "introdução", "desenvolvimento", "conclusão", "argumentação", "tese",
+            "coesão", "coerência", "proposta", "intervenção"
+        ]
+    }
+    
+    # Converter para minúsculas para comparação
+    message_lower = user_message.lower()
+    keywords = keywords_por_materia.get(subject, [])
+    
+    # Procurar por palavras-chave na mensagem
+    for keyword in keywords:
+        if keyword in message_lower:
+            return keyword.title()
+    
+    # Se não encontrar palavra-chave específica, tentar extrair conceito geral
+    # Dividir a mensagem em palavras e pegar as primeiras palavras significativas
+    words = user_message.split()
+    if len(words) >= 2:
+        # Pegar as primeiras 2-3 palavras como conceito
+        conceito = " ".join(words[:min(3, len(words))])
+        return conceito
+    
+    return ""
 
 def add_teacher_intro(subject: str):
     """Adiciona mensagem de introdução do professor"""
@@ -742,6 +840,19 @@ def render_math_content(content: str) -> None:
     }
     </script>
     """, unsafe_allow_html=True)
+
+def get_analogia_para_professor(conceito: str, materia: str, api_key: str) -> str:
+    """
+    Função para obter analogia específica para um professor/matéria.
+    """
+    try:
+        lazy_import_analogias()
+        if "analogias" in _imported_modules:
+            return _imported_modules["analogias"]["get_analogia"](conceito, materia, api_key)
+        else:
+            return "❌ Sistema de analogias não disponível."
+    except Exception as e:
+        return f"❌ Erro ao gerar analogia: {str(e)}"
 
 def main():
     # Header
@@ -868,8 +979,8 @@ def main():
         # Para Redação, mostra a funcionalidade de correção
         tab1, tab2, tab3, tab4 = st.tabs(["💬 Chat", "✍️ Correção de Redação", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
     else:
-        # Para outras matérias, mostra as abas normais
-        tab1, tab2, tab3 = st.tabs(["💬 Chat", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
+        # Para outras matérias, mostra as abas normais + analogias
+        tab1, tab2, tab3, tab4 = st.tabs(["💬 Chat", "🎬 Analogias", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
     
     with tab1:
         # Área de Chat Principal
@@ -941,6 +1052,22 @@ def main():
                 st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
                 st.rerun()
     
+    # Aba de Analogias (apenas para matérias que não são Redação)
+    if current_subject != "Redação":
+        with tab2:
+            # Sistema de Analogias
+            try:
+                from analogias_rag import setup_analogias_ui
+                setup_analogias_ui()
+            except Exception as e:
+                st.error(f"❌ Erro ao carregar Sistema de Analogias: {e}")
+                st.info("""
+                **Para ativar o Sistema de Analogias:**
+                1. Verifique se o arquivo `analogias_rag.py` está presente
+                2. Certifique-se de que as dependências estão instaladas
+                3. Verifique se os índices FAISS estão disponíveis no Hugging Face
+                """)
+    
     # Aba de Correção de Redação (apenas para Redação)
     if current_subject == "Redação":
         with tab2:
@@ -994,7 +1121,7 @@ def main():
                 """)
     else:
         # Para outras matérias, mostra as abas normais
-        with tab2:
+        with tab3:
             # Mapa Mental
             try:
                 lazy_import_mindmap()
@@ -1011,7 +1138,7 @@ def main():
                 2. Verifique se o arquivo `mapa_mental_markmap.py` está presente
                 """)
         
-        with tab3:
+        with tab4:
             # Exercícios Personalizados
             try:
                 lazy_import_exercises()

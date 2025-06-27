@@ -12,8 +12,8 @@ def main():
     gera embeddings usando um modelo da HuggingFace e cria um índice FAISS
     que é salvo localmente.
     """
-    pdf_directory = "Língua Portuguesa/"
-    faiss_index_path = "faiss_index_portuguese"
+    pdf_directory = "analogia/"
+    faiss_index_path = "faiss_index_analogia"
     
     # 1. Carregar os documentos PDF
     print("Iniciando o carregamento dos documentos PDF...")
@@ -21,7 +21,7 @@ def main():
     
     pdf_files = glob.glob(os.path.join(pdf_directory, "*.pdf"))
     if not pdf_files:
-        print("Nenhum arquivo PDF encontrado no diretório 'cases_sucesso_portuguese/'.")
+        print("Nenhum arquivo PDF encontrado no diretório 'analogia/'.")
         return
 
     print(f"Arquivos PDF encontrados: {pdf_files}")
