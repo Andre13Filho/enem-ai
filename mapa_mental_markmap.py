@@ -21,13 +21,13 @@ except ImportError:
 def get_example_question(subject: str) -> str:
     """Retorna pergunta de exemplo para cada matéria"""
     examples = {
-        'Matemática': 'Como resolver equações do 2º grau?',
+        'Matemática': 'Como resolver uma equação do segundo grau?',
         'Física': 'Como calcular a velocidade de um objeto?',
         'Química': 'Como funciona uma reação de combustão?',
         'Biologia': 'Como ocorre a fotossíntese?',
         'Geografia': 'Como se formam as chuvas?',
         'História': 'Quais foram as causas da Revolução Francesa?',
-        'Português': 'Quais são as figuras de linguagem?',
+        'Língua Portuguesa': 'Quais são as figuras de linguagem?',
         'Redação': 'Como estruturar uma dissertação argumentativa?'
     }
     return examples.get(subject, 'Faça uma pergunta sobre sua dúvida!')
@@ -41,7 +41,7 @@ def get_formula_example(subject: str) -> str:
         'Biologia': '- Respiração: $C_6H_{12}O_6 + O_2 \\rightarrow CO_2 + H_2O$',
         'Geografia': '- Densidade demográfica = População/Área',
         'História': '- Cronologia de eventos',
-        'Português': '- Estrutura: Sujeito + Predicado',
+        'Língua Portuguesa': '- Estrutura: Sujeito + Predicado',
         'Redação': '- Introdução + Desenvolvimento + Conclusão'
     }
     return examples.get(subject, '- Conceito fundamental')
@@ -55,7 +55,7 @@ def get_advanced_formula_example(subject: str) -> str:
         'Biologia': '- Fotossíntese: $6CO_2 + 6H_2O \\rightarrow C_6H_{12}O_6 + 6O_2$',
         'Geografia': '- Índices demográficos complexos',
         'História': '- Análise de causas e consequências',
-        'Português': '- Figuras de linguagem e sintaxe',
+        'Língua Portuguesa': '- Figuras de linguagem e sintaxe',
         'Redação': '- Argumentação e coesão textual'
     }
     return examples.get(subject, '- Conceito avançado')
@@ -69,7 +69,7 @@ def get_subject_system_prompt(subject: str) -> str:
         'Biologia': "Você é um especialista em educação de biologia e mapas mentais, com foco em ENEM.",
         'Geografia': "Você é um especialista em educação de geografia e mapas mentais, com foco em ENEM.",
         'História': "Você é um especialista em educação de história e mapas mentais, com foco em ENEM.",
-        'Português': "Você é um especialista em educação de português e mapas mentais, com foco em ENEM.",
+        'Língua Portuguesa': "Você é um especialista em educação de português e mapas mentais, com foco em ENEM.",
         'Redação': "Você é um especialista em educação de redação e mapas mentais, com foco em ENEM."
     }
     return prompts.get(subject, "Você é um especialista em educação e mapas mentais.")
@@ -129,7 +129,7 @@ def display_mapa_mental_markmap():
             'Biologia': '🧬',
             'Geografia': '🌍',
             'História': '🏛️',
-            'Português': '📚',
+            'Língua Portuguesa': '📚',
             'Redação': '✍️'
         }
         
@@ -724,7 +724,7 @@ def detectar_topico_principal(pergunta: str, current_subject: str) -> str:
             'Idade Moderna': ['renascimento', 'reforma', 'descobrimentos'],
             'Idade Contemporânea': ['revolução industrial', 'guerra mundial', 'imperialismo']
         },
-        'Português': {
+        'Língua Portuguesa': {
             'Gramática': ['verbo', 'substantivo', 'sintaxe', 'concordância'],
             'Literatura': ['romantismo', 'realismo', 'modernismo', 'poesia'],
             'Redação': ['dissertação', 'argumentação', 'introdução', 'conclusão'],

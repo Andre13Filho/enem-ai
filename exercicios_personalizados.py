@@ -72,7 +72,7 @@ def calculate_relevance(question_data, keywords, subject):
         "Biologia": ["biologia"],
         "História": ["história"],
         "Geografia": ["geografia"],
-        "Português": ["português", "literatura", "artes"],
+        "Língua Portuguesa": ["português", "literatura", "artes"],
         "Linguagens": ["português", "literatura", "artes", "espanhol"],
         "Redação": ["redação", "português", "literatura"]
     }

@@ -345,13 +345,6 @@ SUBJECTS = {
         "description": "Especialista em matemática do ENEM com sistema RAG local e formatação matemática aprimorada",
         "intro": "Olá, Futura Senhora Sther Souza! Sou o Professor Carlos, seu professor particular de Matemática! Agora tenho formatação matemática melhorada com LaTeX, respostas mais claras e sem duplicações. Vamos dominar a matemática do ENEM juntos! 🚀"
     },
-    "Português": {
-        "teacher": "Profa. Ana",
-        "icon": "📚",
-        "avatar": "👩‍🏫",
-        "description": "Literatura, gramática e interpretação de texto",
-        "intro": "Olá, Futura Dra. Sther! Sou a Professora Ana, especialista em Português para o ENEM. Vou te ajudar com gramática, literatura e redação!"
-    },
     "Biologia": {
         "teacher": "Prof. Roberto",
         "icon": "🧬",
@@ -740,7 +733,7 @@ def extract_conceito_principal_melhorado(user_message: str, subject: str) -> str
             "imperialismo", "feudalismo", "renascimento", "ditadura", "democracia",
             "capitalismo", "socialismo", "nacionalismo", "liberalismo", "absolutismo"
         ],
-        "Português": [
+        "Língua Portuguesa": [
             "verbo", "substantivo", "sintaxe", "literatura", "redação", "texto",
             "gramática", "interpretação", "figura", "concordância", "regência",
             "pontuação", "acentuação", "morfologia", "semântica", "estilística"

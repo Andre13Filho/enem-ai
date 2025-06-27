@@ -16,16 +16,16 @@ O **Professor de Matemática** agora possui um sistema **RAG (Retrieval-Augmente
 
 ## 👨‍🏫 **Professores Disponíveis**
 
-| Matéria              | Professor(a)     | Especialização                              | Status           |
-| -------------------- | ---------------- | ------------------------------------------- | ---------------- |
-| **🔢 Matemática**    | **Prof. Carlos** | **Sistema RAG Local + Docs Locais**         | **⭐ RAG LOCAL** |
-| 📚 Língua Portuguesa | Profa. Ana       | Gramática, Literatura, Redação              | 🤖 IA Padrão     |
-| 🧬 Biologia          | Prof. Ricardo    | Biologia Celular, Genética, Ecologia        | 🤖 IA Padrão     |
-| 🌍 Geografia         | Profa. Marina    | Geografia Física/Humana, Geopolítica        | 🤖 IA Padrão     |
-| 🏛️ História          | Prof. Eduardo    | História do Brasil/Geral, Atualidades       | 🤖 IA Padrão     |
-| ⚗️ Química           | Profa. Juliana   | Química Orgânica/Inorgânica, Físico-química | 🤖 IA Padrão     |
-| ⚡ Física            | Prof. Miguel     | Mecânica, Eletromagnetismo, Ondulatória     | 🤖 IA Padrão     |
-| ✍️ Redação           | Profa. Camila    | Dissertativa-argumentativa, Argumentação    | 🤖 IA Padrão     |
+| Matéria              | Professor(a)       | Especialização                              | Status           |
+| -------------------- | ------------------ | ------------------------------------------- | ---------------- |
+| **🔢 Matemática**    | **Prof. Carlos**   | **Sistema RAG Local + Docs Locais**         | **⭐ RAG LOCAL** |
+| 📚 Língua Portuguesa | **Profa. Letícia** | **Sistema RAG Local + Docs Locais**         | **⭐ RAG LOCAL** |
+| 🧬 Biologia          | Prof. Ricardo      | Biologia Celular, Genética, Ecologia        | 🤖 IA Padrão     |
+| 🌍 Geografia         | Profa. Marina      | Geografia Física/Humana, Geopolítica        | 🤖 IA Padrão     |
+| 🏛️ História          | Prof. Eduardo      | História do Brasil/Geral, Atualidades       | 🤖 IA Padrão     |
+| ⚗️ Química           | Profa. Juliana     | Química Orgânica/Inorgânica, Físico-química | 🤖 IA Padrão     |
+| ⚡ Física            | Prof. Miguel       | Mecânica, Eletromagnetismo, Ondulatória     | 🤖 IA Padrão     |
+| ✍️ Redação           | Profa. Camila      | Dissertativa-argumentativa, Argumentação    | 🤖 IA Padrão     |
 
 ## 🚀 **Funcionalidades**
 
