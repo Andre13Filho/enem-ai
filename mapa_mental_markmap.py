@@ -608,35 +608,6 @@ def criar_mapa_mental_basico(pergunta: str, nivel: str, current_subject: str) ->
     if nivel == "Básico":
         return f"""---
 markmap:
-  # Configurações de navegação
-  pan: true
-  zoom: true
-  zoomInButton: true
-  zoomOutButton: true
-  resetButton: true
-  
-  # Configurações de expansão inicial
-  initialExpandLevel: 1
-  maxExpandLevel: 3
-  
-  # Configurações de layout
-  maxWidth: 400
-  colorFreezeLevel: 2
-  duration: 300
-  spacingHorizontal: 100
-  spacingVertical: 10
-  
-  # Configurações de interatividade
-  autoFit: true
-  fitRatio: 0.95
-  padding: 20
-  
-  # Configurações de estilo
-  nodeMinHeight: 16
-  lineHeight: 1.5
-  fontSize: 14
----
-
 # 🎯 {topico}
 
 ## 📚 Conceitos Fundamentais
@@ -662,34 +633,6 @@ markmap:
     elif nivel == "Intermediário":
         return f"""---
 markmap:
-  # Configurações de navegação
-  pan: true
-  zoom: true
-  zoomInButton: true
-  zoomOutButton: true
-  resetButton: true
-  
-  # Configurações de expansão inicial
-  initialExpandLevel: 1
-  maxExpandLevel: 4
-  
-  # Configurações de layout
-  maxWidth: 400
-  colorFreezeLevel: 2
-  duration: 300
-  spacingHorizontal: 100
-  spacingVertical: 10
-  
-  # Configurações de interatividade
-  autoFit: true
-  fitRatio: 0.95
-  padding: 20
-  
-  # Configurações de estilo
-  nodeMinHeight: 16
-  lineHeight: 1.5
-  fontSize: 14
----
 
 # 🎯 {topico}
 
@@ -724,34 +667,6 @@ markmap:
     else:  # Avançado
         return f"""---
 markmap:
-  # Configurações de navegação
-  pan: true
-  zoom: true
-  zoomInButton: true
-  zoomOutButton: true
-  resetButton: true
-  
-  # Configurações de expansão inicial
-  initialExpandLevel: 1
-  maxExpandLevel: 5
-  
-  # Configurações de layout
-  maxWidth: 400
-  colorFreezeLevel: 2
-  duration: 300
-  spacingHorizontal: 100
-  spacingVertical: 10
-  
-  # Configurações de interatividade
-  autoFit: true
-  fitRatio: 0.95
-  padding: 20
-  
-  # Configurações de estilo
-  nodeMinHeight: 16
-  lineHeight: 1.5
-  fontSize: 14
----
 
 # 🎯 {topico}
 
