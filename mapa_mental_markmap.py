@@ -183,15 +183,66 @@ def display_mapa_mental_markmap():
         )
     
     with col3:
-        if st.button("🔄 Regenerar", help="Gerar nova versão do mapa mental"):
+        # Botão para gerar/regenerar o mapa mental
+        if st.button("🧠 Gerar Mapa Mental", help="Gerar mapa mental baseado na sua pergunta"):
+            # Marcar que o mapa mental deve ser gerado
+            st.session_state.gerar_mapa_mental = True
+            st.session_state.nivel_mapa_mental = nivel_detalhamento
+            st.success("🧠 Gerando mapa mental...")
+            st.rerun()
+    
+    # Verificar se o mapa mental deve ser exibido
+    if st.session_state.get('gerar_mapa_mental', False):
+        # Controles de debug (em expander para não poluir a interface)
+        with st.expander("🔧 Configurações Avançadas (Debug)", expanded=False):
+            col_debug1, col_debug2 = st.columns(2)
+            
+            with col_debug1:
+                show_debug = st.checkbox("Mostrar informações de debug", value=False)
+                test_pan = st.checkbox("Forçar configurações de Pan/Zoom", value=True)
+            
+            with col_debug2:
+                if st.button("🗑️ Limpar Cache"):
+                    # Limpar cache do mapa mental
+                    cache_key = f"markmap_{hash(ultima_pergunta)}_{nivel_detalhamento}_{current_subject}"
+                    if cache_key in st.session_state:
+                        del st.session_state[cache_key]
+                    st.success("Cache limpo!")
+                    st.rerun()
+            
+            if show_debug:
+                st.markdown("**Diagnóstico:**")
+                st.write(f"- streamlit-markmap versão: 1.0.1")
+                st.write(f"- Cache keys: {len([k for k in st.session_state.keys() if 'markmap' in k])}")
+                st.write(f"- Pergunta hash: {hash(ultima_pergunta)}")
+                st.write(f"- Matéria atual: {current_subject}")
+                
+            if test_pan:
+                st.info("🔧 Configurações de Pan/Zoom serão forçadas no mapa mental")
+        
+        # Gerar e exibir mapa mental
+        debug_options = {
+            'show_debug': st.session_state.get('show_debug', False),
+            'test_pan': st.session_state.get('test_pan', True)
+        }
+        
+        # Salvar configurações de debug no session_state
+        if 'show_debug' in locals():
+            st.session_state.show_debug = show_debug
+        if 'test_pan' in locals():
+            st.session_state.test_pan = test_pan
+        
+        exibir_mapa_mental_markmap(ultima_pergunta, api_key, nivel_detalhamento, debug_options, current_subject)
+        
+        # Botão para regenerar o mapa mental
+        if st.button("🔄 Regenerar Mapa Mental", help="Gerar nova versão do mapa mental"):
+            # Limpar cache do mapa mental
             cache_key = f"markmap_{hash(ultima_pergunta)}_{nivel_detalhamento}_{current_subject}"
             first_render_key = f"first_render_{cache_key}"
             
-            # Limpar cache do mapa mental
             if cache_key in st.session_state:
                 del st.session_state[cache_key]
             
-            # Limpar cache de primeira renderização
             if first_render_key in st.session_state:
                 del st.session_state[first_render_key]
             
@@ -202,46 +253,19 @@ def display_mapa_mental_markmap():
             
             st.success("🔄 Mapa mental será regenerado!")
             st.rerun()
-    
-    # Controles de debug (em expander para não poluir a interface)
-    with st.expander("🔧 Configurações Avançadas (Debug)", expanded=False):
-        col_debug1, col_debug2 = st.columns(2)
+    else:
+        # Mostrar instruções quando o mapa mental ainda não foi gerado
+        st.info(f"""
+        💡 **Para gerar o mapa mental:**
         
-        with col_debug1:
-            show_debug = st.checkbox("Mostrar informações de debug", value=False)
-            test_pan = st.checkbox("Forçar configurações de Pan/Zoom", value=True)
+        1. **Escolha o nível** de detalhamento (Básico, Intermediário ou Avançado)
+        2. **Clique em "🧠 Gerar Mapa Mental"** para criar o mapa baseado na sua pergunta
+        3. **Explore o mapa** usando pan, zoom e clique para expandir/recolher nós
+        4. **Use "🔄 Regenerar"** se quiser uma nova perspectiva
         
-        with col_debug2:
-            if st.button("🧪 Testar Mapa Simple"):
-                st.info("📝 Execute: streamlit run teste_markmap_pan.py --server.port 8502")
-            if st.button("🗑️ Limpar Cache"):
-                if hasattr(st.session_state, 'markmap_cache'):
-                    del st.session_state.markmap_cache
-                st.success("Cache limpo!")
-        
-        if show_debug:
-            st.markdown("**Diagnóstico:**")
-            st.write(f"- streamlit-markmap versão: 1.0.1")
-            st.write(f"- Cache keys: {len([k for k in st.session_state.keys() if 'markmap' in k])}")
-            st.write(f"- Pergunta hash: {hash(ultima_pergunta)}")
-            st.write(f"- Matéria atual: {current_subject}")
-            
-        if test_pan:
-            st.info("🔧 Configurações de Pan/Zoom serão forçadas no mapa mental")
-    
-    # Gerar e exibir mapa mental
-    debug_options = {
-        'show_debug': st.session_state.get('show_debug', False),
-        'test_pan': st.session_state.get('test_pan', True)
-    }
-    
-    # Salvar configurações de debug no session_state
-    if 'show_debug' in locals():
-        st.session_state.show_debug = show_debug
-    if 'test_pan' in locals():
-        st.session_state.test_pan = test_pan
-    
-    exibir_mapa_mental_markmap(ultima_pergunta, api_key, nivel_detalhamento, debug_options, current_subject)
+        **Sua pergunta:** "{ultima_pergunta}"
+        **Matéria:** {current_subject}
+        """)
 
 def obter_ultima_pergunta(chat_history: List[Any]) -> Optional[str]:
     """Obtém a última pergunta feita pelo usuário a partir de uma lista de objetos."""
@@ -867,6 +891,10 @@ def analisar_markdown_stats(markdown: str) -> Dict[str, int]:
 
 def display_mapa_mental_wrapper():
     """Wrapper para compatibilidade com o app principal"""
+    # Inicializar estado do mapa mental se não existir
+    if 'gerar_mapa_mental' not in st.session_state:
+        st.session_state.gerar_mapa_mental = False
+    
     display_mapa_mental_markmap()
 
 if __name__ == "__main__":

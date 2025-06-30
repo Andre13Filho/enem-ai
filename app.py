@@ -941,6 +941,11 @@ def main():
         
         if current_subject != st.session_state.current_subject:
             st.session_state.current_subject = current_subject
+            # Limpar estado do mapa mental ao mudar de matéria
+            if 'gerar_mapa_mental' in st.session_state:
+                del st.session_state.gerar_mapa_mental
+            if 'nivel_mapa_mental' in st.session_state:
+                del st.session_state.nivel_mapa_mental
             cleanup_unused_modules(current_subject)
             lazy_import_professor(current_subject)
             st.rerun()
