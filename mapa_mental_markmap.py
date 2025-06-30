@@ -272,7 +272,7 @@ markmap:
   maxExpandLevel: 5
   
   # Configurações de layout
-  maxWidth: 400
+  maxWidth: 800
   colorFreezeLevel: 2
   duration: 300
   spacingHorizontal: 100
@@ -280,7 +280,7 @@ markmap:
   
   # Configurações de interatividade
   autoFit: true
-  fitRatio: 0.95
+  fitRatio: 0.9
   padding: 20
   
   # Configurações de estilo
@@ -410,8 +410,7 @@ def exibir_mapa_mental_markmap(pergunta: str, api_key: str, nivel: str, debug_op
                 # Configurações específicas para melhor interatividade
                 markmap(
                     markdown_content, 
-                    height=800,  # Altura aumentada para evitar corte
-                    width=1200   # Largura adequada para visualização completa
+                    height=800  # Altura aumentada para evitar corte
                 )
                 st.success("✅ Mapa mental renderizado com sucesso!")
                 
