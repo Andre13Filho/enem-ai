@@ -313,9 +313,6 @@ def garantir_configuracoes_interatividade(markdown_content: str) -> str:
 #   fontSize: 14
 # ---"""
     
-    # Se não tem frontmatter, adicionar
-    if not markdown_content.startswith('---'):
-        return config_avancada + "\n\n" + markdown_content
     
     # Se tem frontmatter, verificar e melhorar configurações
     lines = markdown_content.split('\n')
@@ -362,9 +359,6 @@ markmap:
 ---
 
 {remaining_content}"""
-    
-    # Fallback: adicionar configurações avançadas
-    return config_avancada + "\n\n" + markdown_content
 
 def exibir_mapa_mental_markmap(pergunta: str, api_key: str, nivel: str, debug_options: dict = None, current_subject: str = 'Matemática'):
     """Gera e exibe o mapa mental usando streamlit-markmap com configurações otimizadas"""
