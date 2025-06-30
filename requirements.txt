@@ -29,7 +29,7 @@ pandas>=2.0.0
 requests>=2.31.0
 
 # Funcionalidades extras
-streamlit-markmap==1.0.1  # Para mapas mentais interativos
+streamlit-markmap>=1.0.0  # Para mapas mentais interativos
 
 # Formatadores específicos por matéria (incluídos no projeto)
 # physics_formatter.py - Formatação de fórmulas de física
