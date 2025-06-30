@@ -8,6 +8,7 @@ from groq import Groq
 from local_redacao_rag import setup_redacao_ui, analyze_redacao_pdf
 from local_portuguese_rag import local_portuguese_rag, LocalPortugueseRAG
 from professor_leticia_local import setup_professor_leticia_local_ui, get_professor_leticia_local_response
+from conversas_utils import carregar_historico, adicionar_conversa, apagar_conversa, atualizar_conversa, obter_conversa
 
 # Import for chat message types
 try:
@@ -927,242 +928,78 @@ def main():
         if f"chat_history_{subject}" not in st.session_state:
             st.session_state[f"chat_history_{subject}"] = []
 
-    # Sidebar
+    # --- HISTÓRICO DE CONVERSAS ---
+    if 'conversa_id_selecionada' not in st.session_state:
+        st.session_state.conversa_id_selecionada = None
+    if 'nova_conversa' not in st.session_state:
+        st.session_state.nova_conversa = False
+
+    historico = carregar_historico()
+
     with st.sidebar:
-        st.markdown("### 🎯 Selecione a Matéria")
-        
-        # Seletor de matéria
-        current_subject = st.selectbox(
-            "Escolha sua matéria:",
-            options=list(SUBJECTS.keys()),
-            index=list(SUBJECTS.keys()).index(st.session_state.current_subject),
-            format_func=lambda x: f"{SUBJECTS[x]['icon']} {x}"
-        )
-        
-        if current_subject != st.session_state.current_subject:
-            st.session_state.current_subject = current_subject
-            # Limpar estado do mapa mental ao mudar de matéria
-            if 'gerar_mapa_mental' in st.session_state:
-                del st.session_state.gerar_mapa_mental
-            if 'nivel_mapa_mental' in st.session_state:
-                del st.session_state.nivel_mapa_mental
-            cleanup_unused_modules(current_subject)
-            lazy_import_professor(current_subject)
+        st.markdown("### 💬 Histórico de Conversas")
+        # Botão para nova conversa
+        if st.button("+ Nova conversa"):
+            st.session_state.nova_conversa = True
+            st.session_state.conversa_id_selecionada = None
             st.rerun()
-        else:
-            lazy_import_professor(current_subject)
-        
-        # Garante que subject_info sempre tenha um valor padrão
-        subject_info = SUBJECTS.get(current_subject, SUBJECTS["Boas-vindas"])
-        
-        st.markdown(f"""
-        <div class="teacher-intro">
-            <h3>{subject_info['icon']} {subject_info['teacher']}</h3>
-            <p>{subject_info['description']}</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Painel de Status da Base de Conhecimento (apenas para Matemática)
-        if current_subject == "Matemática" and "carlos" in _imported_modules:
-            with st.expander("🔎 Status da Base de Conhecimento", expanded=True):
-                try:
-                    # Importa o singleton diretamente para pegar os stats
-                    from local_math_rag import local_math_rag
-                    stats = local_math_rag.get_stats()
-                    
-                    status_icon = "✅" if stats.get("status") == "Carregado" else "❌"
-                    st.markdown(f"**Status:** {status_icon} {stats.get('status', 'N/A')}")
-                    st.markdown(f"**Documentos Indexados:** {stats.get('total_documents', 'N/A')}")
-
-                    sample_docs = stats.get("sample_documents", [])
-                    if sample_docs:
-                        st.markdown("**Amostra de Documentos na Base:**")
-                        for doc_name in sample_docs:
-                            st.markdown(f"- `{doc_name}`")
-                except Exception as e:
-                    st.error(f"Erro ao obter status: {e}")
-
-        if st.button("🗑️ Limpar Histórico da Matéria"):
-            st.session_state[f"chat_history_{current_subject}"] = []
-            st.rerun()
-
-        # Status da API Key
+        # Lista de conversas
+        for conversa in historico:
+            col1, col2 = st.columns([6,1])
+            with col1:
+                if st.button(conversa['titulo'], key=conversa['id']):
+                    st.session_state.conversa_id_selecionada = conversa['id']
+                    st.session_state.nova_conversa = False
+                    st.rerun()
+            with col2:
+                if st.button("🗑️", key="del_"+conversa['id']):
+                    apagar_conversa(conversa['id'])
+                    if st.session_state.conversa_id_selecionada == conversa['id']:
+                        st.session_state.conversa_id_selecionada = None
+                    st.rerun()
         st.markdown("---")
-        st.markdown("### 🔧 Status da API Key")
-        
-        # Mostra status da API key
-        current_api_key = get_api_key()
-        if current_api_key:
-            api_preview = f"{current_api_key[:8]}...{current_api_key[-4:]}" if len(current_api_key) > 12 else "***"
-            st.success(f"✅ API Key carregada: `{api_preview}`")
-        else:
-            st.error("❌ API Key não encontrada")
-            st.info("Configure sua API Key no Streamlit Cloud ou arquivo .env")
+    # --- FIM HISTÓRICO SIDEBAR ---
 
-    # Área Principal com Abas
-    if current_subject == "Redação":
-        # Para Redação, mostra a funcionalidade de correção
-        tab1, tab2, tab3, tab4 = st.tabs(["💬 Chat", "✍️ Correção de Redação", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
+    # Lógica para usar conversa selecionada ou nova
+    if st.session_state.nova_conversa or not st.session_state.conversa_id_selecionada:
+        # Nova conversa: pede título e matéria
+        st.session_state['chat_mensagens'] = []
+        st.session_state['chat_titulo'] = st.text_input("Título da conversa", value="Nova conversa")
+        st.session_state['chat_materia'] = st.selectbox("Matéria", list(SUBJECTS.keys()), index=0)
+        if st.button("Iniciar conversa"):
+            nova_id = adicionar_conversa(st.session_state['chat_titulo'], st.session_state['chat_materia'], [])
+            st.session_state.conversa_id_selecionada = nova_id
+            st.session_state.nova_conversa = False
+            st.rerun()
+        st.stop()
     else:
-        # Para outras matérias, mostra as abas normais
-        tab1, tab2, tab3 = st.tabs(["💬 Chat", "🧠 Mapa Mental", "📚 Exercícios Personalizados"])
-    
-    with tab1:
-        # Área de Chat Principal
-        st.header(f"Conversando com {subject_info.get('teacher', 'Assistente')}")
+        conversa = obter_conversa(st.session_state.conversa_id_selecionada)
+        if not conversa:
+            st.error("Conversa não encontrada.")
+            st.stop()
+        st.session_state['chat_mensagens'] = conversa['mensagens']
+        st.session_state['chat_titulo'] = conversa['titulo']
+        st.session_state['chat_materia'] = conversa['materia']
 
-        # Adiciona introdução do professor se o chat estiver vazio
-        if not st.session_state[f"chat_history_{current_subject}"]:
-            st.session_state[f"chat_history_{current_subject}"].append(
-                AIMessage(content=subject_info["intro"])
-            )
-
-        # Exibe o histórico de chat
-        for message in st.session_state[f"chat_history_{current_subject}"]:
-            avatar = subject_info.get('avatar', '🤖') if isinstance(message, AIMessage) else "🧑‍🎓"
-            with st.chat_message(name="assistant" if isinstance(message, AIMessage) else "user", avatar=avatar):
-                # Para matérias que podem conter fórmulas matemáticas, usa renderização especial
-                if current_subject in ["Matemática", "Física", "Química"] and isinstance(message, AIMessage):
-                    render_math_content(message.content)
-                else:
-                    st.markdown(message.content)
-        
-        # Input do usuário
-        if prompt := st.chat_input(f"Envie uma mensagem para {subject_info.get('teacher', 'Assistente')}..."):
-            # Salva a última pergunta para os exercícios personalizados
-            st.session_state.last_user_question = {
-                'content': prompt,
-                'subject': current_subject
-            }
-            
-            st.session_state[f"chat_history_{current_subject}"].append(HumanMessage(content=prompt))
-            
-            with st.chat_message("user", avatar="🧑‍🎓"):
-                st.markdown(prompt)
-                
-            with st.chat_message("assistant", avatar=subject_info.get("avatar", "🤖")):
-                message_placeholder = st.empty()
-                
-                # Obtém a resposta do professor adequado
-                try:
-                    full_response = get_teacher_response(current_subject, prompt, api_key)
-                    
-                    # Verifica se há erro de API key e tenta resolver
-                    if handle_api_error(full_response):
-                        # Tenta novamente com uma nova API key
-                        new_api_key = get_api_key()
-                        if new_api_key and new_api_key != api_key:
-                            st.info("🔄 Tentando novamente com API key atualizada...")
-                            full_response = get_teacher_response(current_subject, prompt, new_api_key)
-                except Exception as e:
-                    from encoding_utils import safe_api_error
-                    full_response = safe_api_error(e)
-                    handle_api_error(full_response)  # Tenta resolver automaticamente
-                
-                # Simula efeito de digitação e renderiza com fórmulas matemáticas
-                if current_subject in ["Matemática", "Física", "Química"]:
-                    # Para matérias com fórmulas, usa renderização especial
-                    with message_placeholder.container():
-                        render_math_content(full_response + "▌")
-                    time.sleep(0.01)
-                    message_placeholder.empty()
-                    with message_placeholder.container():
-                        render_math_content(full_response)
-                else:
-                    # Para outras matérias, usa markdown padrão
-                    message_placeholder.markdown(full_response + "▌")
-                    time.sleep(0.01)
-                    message_placeholder.markdown(full_response)
-
-                st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
-                st.rerun()
-    
-    # Aba de Correção de Redação (apenas para Redação)
-    if current_subject == "Redação":
-        with tab2:
-            # Correção de Redação
-            try:
-                if "redacao" in _imported_modules:
-                    _imported_modules["redacao"]["setup"]()
-                else:
-                    st.error("❌ Sistema de Correção de Redação não disponível")
-                    st.info("Verifique se o arquivo `local_redacao_rag.py` está presente.")
-            except Exception as e:
-                st.error(f"❌ Erro ao carregar Correção de Redação: {e}")
-                st.info("""
-                **Para ativar a Correção de Redação:**
-                1. Verifique se o arquivo `local_redacao_rag.py` está presente
-                2. Certifique-se de que as dependências PyPDF2 e PyMuPDF estão instaladas
-                """)
-        
-        with tab3:
-            # Mapa Mental
-            try:
-                lazy_import_mindmap()
-                if "mindmap" in _imported_modules:
-                    _imported_modules["mindmap"]()
-                else:
-                    st.error("❌ Sistema de Mapa Mental não disponível")
-                    st.info("Verifique se o arquivo `mapa_mental_markmap.py` está presente e as dependências estão instaladas.")
-            except Exception as e:
-                st.error(f"❌ Erro ao carregar Mapa Mental: {e}")
-                st.info("""
-                **Para ativar o Mapa Mental:**
-                1. Instale: `pip install streamlit-markmap==1.0.1`
-                2. Verifique se o arquivo `mapa_mental_markmap.py` está presente
-                """)
-        
-        with tab4:
-            # Exercícios Personalizados
-            try:
-                lazy_import_exercises()
-                if "exercicios" in _imported_modules:
-                    _imported_modules["exercicios"].setup_ui()
-                else:
-                    st.error("❌ Sistema de Exercícios Personalizados não disponível")
-                    st.info("Verifique se o arquivo `exercicios_personalizados.py` está presente e os arquivos JSON de questões estão disponíveis.")
-            except Exception as e:
-                st.error(f"❌ Erro ao carregar Exercícios Personalizados: {e}")
-                st.info("""
-                **Para ativar os Exercícios Personalizados:**
-                1. Verifique se o arquivo `exercicios_personalizados.py` está presente
-                2. Certifique-se de que os arquivos `questions_primeiro_dia.json` e `questions_segundo_enem.json` existem
-                """)
-    else:
-        # Para outras matérias, mostra as abas normais
-        with tab2:
-            # Mapa Mental
-            try:
-                lazy_import_mindmap()
-                if "mindmap" in _imported_modules:
-                    _imported_modules["mindmap"]()
-                else:
-                    st.error("❌ Sistema de Mapa Mental não disponível")
-                    st.info("Verifique se o arquivo `mapa_mental_markmap.py` está presente e as dependências estão instaladas.")
-            except Exception as e:
-                st.error(f"❌ Erro ao carregar Mapa Mental: {e}")
-                st.info("""
-                **Para ativar o Mapa Mental:**
-                1. Instale: `pip install streamlit-markmap==1.0.1`
-                2. Verifique se o arquivo `mapa_mental_markmap.py` está presente
-                """)
-        
-        with tab3:
-            # Exercícios Personalizados
-            try:
-                lazy_import_exercises()
-                if "exercicios" in _imported_modules:
-                    _imported_modules["exercicios"].setup_ui()
-                else:
-                    st.error("❌ Sistema de Exercícios Personalizados não disponível")
-                    st.info("Verifique se o arquivo `exercicios_personalizados.py` está presente e os arquivos JSON de questões estão disponíveis.")
-            except Exception as e:
-                st.error(f"❌ Erro ao carregar Exercícios Personalizados: {e}")
-                st.info("""
-                **Para ativar os Exercícios Personalizados:**
-                1. Verifique se o arquivo `exercicios_personalizados.py` está presente
-                2. Certifique-se de que os arquivos `questions_primeiro_dia.json` e `questions_segundo_enem.json` existem
-                """)
+    # --- Chat principal usando o histórico selecionado ---
+    st.header(f"Conversando sobre {st.session_state['chat_materia']} - {st.session_state['chat_titulo']}")
+    for msg in st.session_state['chat_mensagens']:
+        with st.chat_message(msg.get('autor', 'user')):
+            st.markdown(msg['texto'])
+    if prompt := st.chat_input("Envie uma mensagem..."):
+        st.session_state['chat_mensagens'].append({
+            'autor': 'user',
+            'texto': prompt
+        })
+        # Chamada real da IA
+        api_key = get_api_key()
+        resposta = get_teacher_response(st.session_state['chat_materia'], prompt, api_key)
+        st.session_state['chat_mensagens'].append({
+            'autor': 'ia',
+            'texto': resposta
+        })
+        atualizar_conversa(st.session_state.conversa_id_selecionada, st.session_state['chat_mensagens'])
+        st.rerun()
 
 if __name__ == "__main__":
     main() 
