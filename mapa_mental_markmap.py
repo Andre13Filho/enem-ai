@@ -255,10 +255,10 @@ def obter_ultima_pergunta(chat_history: List[Any]) -> Optional[str]:
     return None
 
 def garantir_configuracoes_interatividade(markdown_content: str) -> str:
-    """Garante que o markdown tenha todas as configurações de interatividade necessárias"""
+    """Garante que o markdown tenha configurações básicas de interatividade"""
     
-    # Configurações padrão de interatividade
-    config_padrao = """---
+    # Configurações básicas e compatíveis
+    config_basica = """---
 markmap:
   pan: true
   zoom: true
@@ -268,17 +268,13 @@ markmap:
   duration: 500
   spacingHorizontal: 80
   spacingVertical: 5
-  autoFit: true
-  zoomInButton: true
-  zoomOutButton: true
-  resetButton: true
 ---"""
     
     # Se não tem frontmatter, adicionar
     if not markdown_content.startswith('---'):
-        return config_padrao + "\n\n" + markdown_content
+        return config_basica + "\n\n" + markdown_content
     
-    # Se tem frontmatter, verificar e adicionar configurações faltantes
+    # Se tem frontmatter, verificar se tem configurações básicas
     lines = markdown_content.split('\n')
     yaml_end = -1
     
@@ -293,19 +289,10 @@ markmap:
         yaml_content = '\n'.join(lines[1:yaml_end])
         remaining_content = '\n'.join(lines[yaml_end+1:])
         
-        # Verificar e adicionar configurações essenciais
-        configuracoes_essenciais = [
-            'pan: true',
-            'zoom: true',
-            'autoFit: true',
-            'zoomInButton: true',
-            'zoomOutButton: true',
-            'resetButton: true'
-        ]
-        
-        for config in configuracoes_essenciais:
-            if config not in yaml_content:
-                yaml_content += f'\n  {config}'
+        # Verificar se tem configurações básicas
+        if 'pan: true' not in yaml_content or 'zoom: true' not in yaml_content:
+            # Adicionar configurações básicas se faltarem
+            yaml_content += '\n  pan: true\n  zoom: true'
         
         # Reconstruir markdown
         return f"""---
@@ -315,8 +302,8 @@ markmap:
 
 {remaining_content}"""
     
-    # Fallback: adicionar configurações padrão
-    return config_padrao + "\n\n" + markdown_content
+    # Fallback: adicionar configurações básicas
+    return config_basica + "\n\n" + markdown_content
 
 def exibir_mapa_mental_markmap(pergunta: str, api_key: str, nivel: str, debug_options: dict = None, current_subject: str = 'Matemática'):
     """Gera e exibe o mapa mental usando streamlit-markmap"""
@@ -376,9 +363,8 @@ def exibir_mapa_mental_markmap(pergunta: str, api_key: str, nivel: str, debug_op
         # Garantir que as configurações de interatividade estejam presentes
         markdown_content = garantir_configuracoes_interatividade(markdown_content)
         
-        # Renderizar mapa mental com key única para garantir interatividade
-        container_key = f"mindmap_container_{hash(pergunta)}_{nivel}_{current_subject}"
-        markmap(markdown_content, height=600, key=container_key)
+        # Renderizar mapa mental
+        markmap(markdown_content, height=600)
     else:
         st.error("❌ Erro ao gerar mapa mental. Tente novamente.")
 
