@@ -255,26 +255,45 @@ def obter_ultima_pergunta(chat_history: List[Any]) -> Optional[str]:
     return None
 
 def garantir_configuracoes_interatividade(markdown_content: str) -> str:
-    """Garante que o markdown tenha configurações básicas de interatividade"""
+    """Garante que o markdown tenha configurações avançadas de interatividade"""
     
-    # Configurações básicas e compatíveis
-    config_basica = """---
+    # Configurações avançadas para melhor interatividade
+    config_avancada = """---
 markmap:
+  # Configurações de navegação
   pan: true
   zoom: true
-  initialExpandLevel: 2
-  maxWidth: 300
+  zoomInButton: true
+  zoomOutButton: true
+  resetButton: true
+  
+  # Configurações de expansão inicial
+  initialExpandLevel: 1
+  maxExpandLevel: 5
+  
+  # Configurações de layout
+  maxWidth: 400
   colorFreezeLevel: 2
-  duration: 500
-  spacingHorizontal: 80
-  spacingVertical: 5
+  duration: 300
+  spacingHorizontal: 100
+  spacingVertical: 10
+  
+  # Configurações de interatividade
+  autoFit: true
+  fitRatio: 0.95
+  padding: 20
+  
+  # Configurações de estilo
+  nodeMinHeight: 16
+  lineHeight: 1.5
+  fontSize: 14
 ---"""
     
     # Se não tem frontmatter, adicionar
     if not markdown_content.startswith('---'):
-        return config_basica + "\n\n" + markdown_content
+        return config_avancada + "\n\n" + markdown_content
     
-    # Se tem frontmatter, verificar se tem configurações básicas
+    # Se tem frontmatter, verificar e melhorar configurações
     lines = markdown_content.split('\n')
     yaml_end = -1
     
@@ -289,10 +308,28 @@ markmap:
         yaml_content = '\n'.join(lines[1:yaml_end])
         remaining_content = '\n'.join(lines[yaml_end+1:])
         
-        # Verificar se tem configurações básicas
-        if 'pan: true' not in yaml_content or 'zoom: true' not in yaml_content:
-            # Adicionar configurações básicas se faltarem
-            yaml_content += '\n  pan: true\n  zoom: true'
+        # Configurações essenciais que devem estar presentes
+        configuracoes_essenciais = [
+            'pan: true',
+            'zoom: true',
+            'initialExpandLevel: 1',  # Começar com nós recolhidos
+            'zoomInButton: true',
+            'zoomOutButton: true',
+            'resetButton: true',
+            'autoFit: true'
+        ]
+        
+        # Adicionar configurações que faltam
+        for config in configuracoes_essenciais:
+            if config not in yaml_content:
+                yaml_content += f'\n  {config}'
+        
+        # Garantir que initialExpandLevel seja 1 (nós recolhidos)
+        if 'initialExpandLevel:' in yaml_content:
+            # Substituir qualquer valor por 1
+            yaml_content = re.sub(r'initialExpandLevel:\s*\d+', 'initialExpandLevel: 1', yaml_content)
+        else:
+            yaml_content += '\n  initialExpandLevel: 1'
         
         # Reconstruir markdown
         return f"""---
@@ -302,11 +339,11 @@ markmap:
 
 {remaining_content}"""
     
-    # Fallback: adicionar configurações básicas
-    return config_basica + "\n\n" + markdown_content
+    # Fallback: adicionar configurações avançadas
+    return config_avancada + "\n\n" + markdown_content
 
 def exibir_mapa_mental_markmap(pergunta: str, api_key: str, nivel: str, debug_options: dict = None, current_subject: str = 'Matemática'):
-    """Gera e exibe o mapa mental usando streamlit-markmap"""
+    """Gera e exibe o mapa mental usando streamlit-markmap com configurações otimizadas"""
     
     if debug_options is None:
         debug_options = {'show_debug': False, 'test_pan': True}
@@ -363,8 +400,29 @@ def exibir_mapa_mental_markmap(pergunta: str, api_key: str, nivel: str, debug_op
         # Garantir que as configurações de interatividade estejam presentes
         markdown_content = garantir_configuracoes_interatividade(markdown_content)
         
-        # Renderizar mapa mental
-        markmap(markdown_content, height=600)
+        # Container com altura adequada e configurações otimizadas
+        with st.container():
+            st.markdown("### 🗺️ Mapa Mental Interativo")
+            st.markdown("💡 **Dicas de navegação:** Arraste para mover, use o scroll para zoom, clique nos nós para expandir/recolher")
+            
+            # Renderizar mapa mental com configurações otimizadas
+            try:
+                # Configurações específicas para melhor interatividade
+                markmap(
+                    markdown_content, 
+                    height=800,  # Altura aumentada para evitar corte
+                    width=1200   # Largura adequada para visualização completa
+                )
+                st.success("✅ Mapa mental renderizado com sucesso!")
+                
+            except Exception as e:
+                st.error(f"❌ Erro na renderização: {e}")
+                # Fallback: tentar com configurações mais básicas
+                try:
+                    markmap(markdown_content, height=600)
+                    st.warning("⚠️ Renderização com configurações básicas")
+                except Exception as e2:
+                    st.error(f"❌ Erro crítico: {e2}")
     else:
         st.error("❌ Erro ao gerar mapa mental. Tente novamente.")
 
@@ -527,14 +585,33 @@ def criar_mapa_mental_basico(pergunta: str, nivel: str, current_subject: str) ->
     if nivel == "Básico":
         return f"""---
 markmap:
+  # Configurações de navegação
   pan: true
   zoom: true
-  initialExpandLevel: 2
-  maxWidth: 300
+  zoomInButton: true
+  zoomOutButton: true
+  resetButton: true
+  
+  # Configurações de expansão inicial
+  initialExpandLevel: 1
+  maxExpandLevel: 3
+  
+  # Configurações de layout
+  maxWidth: 400
   colorFreezeLevel: 2
-  duration: 500
-  spacingHorizontal: 80
-  spacingVertical: 5
+  duration: 300
+  spacingHorizontal: 100
+  spacingVertical: 10
+  
+  # Configurações de interatividade
+  autoFit: true
+  fitRatio: 0.95
+  padding: 20
+  
+  # Configurações de estilo
+  nodeMinHeight: 16
+  lineHeight: 1.5
+  fontSize: 14
 ---
 
 # 🎯 {topico}
@@ -562,14 +639,33 @@ markmap:
     elif nivel == "Intermediário":
         return f"""---
 markmap:
+  # Configurações de navegação
   pan: true
   zoom: true
-  initialExpandLevel: 2
-  maxWidth: 300
+  zoomInButton: true
+  zoomOutButton: true
+  resetButton: true
+  
+  # Configurações de expansão inicial
+  initialExpandLevel: 1
+  maxExpandLevel: 4
+  
+  # Configurações de layout
+  maxWidth: 400
   colorFreezeLevel: 2
-  duration: 500
-  spacingHorizontal: 80
-  spacingVertical: 5
+  duration: 300
+  spacingHorizontal: 100
+  spacingVertical: 10
+  
+  # Configurações de interatividade
+  autoFit: true
+  fitRatio: 0.95
+  padding: 20
+  
+  # Configurações de estilo
+  nodeMinHeight: 16
+  lineHeight: 1.5
+  fontSize: 14
 ---
 
 # 🎯 {topico}
@@ -605,14 +701,33 @@ markmap:
     else:  # Avançado
         return f"""---
 markmap:
+  # Configurações de navegação
   pan: true
   zoom: true
-  initialExpandLevel: 2
-  maxWidth: 300
+  zoomInButton: true
+  zoomOutButton: true
+  resetButton: true
+  
+  # Configurações de expansão inicial
+  initialExpandLevel: 1
+  maxExpandLevel: 5
+  
+  # Configurações de layout
+  maxWidth: 400
   colorFreezeLevel: 2
-  duration: 500
-  spacingHorizontal: 80
-  spacingVertical: 5
+  duration: 300
+  spacingHorizontal: 100
+  spacingVertical: 10
+  
+  # Configurações de interatividade
+  autoFit: true
+  fitRatio: 0.95
+  padding: 20
+  
+  # Configurações de estilo
+  nodeMinHeight: 16
+  lineHeight: 1.5
+  fontSize: 14
 ---
 
 # 🎯 {topico}
