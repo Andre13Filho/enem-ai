@@ -282,36 +282,36 @@ def garantir_configuracoes_interatividade(markdown_content: str) -> str:
     """Garante que o markdown tenha configurações avançadas de interatividade"""
     
     # Configurações avançadas para melhor interatividade
-    config_avancada = """---
-markmap:
-  # Configurações de navegação
-  pan: true
-  zoom: true
-  zoomInButton: true
-  zoomOutButton: true
-  resetButton: true
+#     config_avancada = """---
+# markmap:
+#   # Configurações de navegação
+#   pan: true
+#   zoom: true
+#   zoomInButton: true
+#   zoomOutButton: true
+#   resetButton: true
   
-  # Configurações de expansão inicial
-  initialExpandLevel: 1
-  maxExpandLevel: 5
+#   # Configurações de expansão inicial
+#   initialExpandLevel: 1
+#   maxExpandLevel: 5
   
-  # Configurações de layout
-  maxWidth: 800
-  colorFreezeLevel: 2
-  duration: 300
-  spacingHorizontal: 100
-  spacingVertical: 10
+#   # Configurações de layout
+#   maxWidth: 800
+#   colorFreezeLevel: 2
+#   duration: 300
+#   spacingHorizontal: 100
+#   spacingVertical: 10
   
-  # Configurações de interatividade
-  autoFit: true
-  fitRatio: 0.9
-  padding: 20
+#   # Configurações de interatividade
+#   autoFit: true
+#   fitRatio: 0.9
+#   padding: 20
   
-  # Configurações de estilo
-  nodeMinHeight: 16
-  lineHeight: 1.5
-  fontSize: 14
----"""
+#   # Configurações de estilo
+#   nodeMinHeight: 16
+#   lineHeight: 1.5
+#   fontSize: 14
+# ---"""
     
     # Se não tem frontmatter, adicionar
     if not markdown_content.startswith('---'):
