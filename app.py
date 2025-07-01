@@ -138,13 +138,23 @@ def lazy_import_professor(subject: str):
 
     elif subject == "Física" and "fernando" not in _imported_modules:
         try:
+            # Primeiro verifica se o local_physics_rag_fixed está disponível
+            try:
+                from local_physics_rag_fixed import get_local_physics_rag_instance
+                print("✅ Sistema RAG de física fixed disponível")
+            except ImportError:
+                print("⚠️ Sistema RAG de física fixed indisponível")
+                
+            # Agora importa o professor
             from professor_fernando_local import setup_professor_fernando_local_ui, get_professor_fernando_local_response
             _imported_modules["fernando"] = {
                 "setup": setup_professor_fernando_local_ui,
                 "response": get_professor_fernando_local_response
             }
             PROFESSOR_FERNANDO_LOCAL_AVAILABLE = True
+            print("✅ Professor Fernando de Física carregado com sucesso!")
         except ImportError as e:
+            print(f"❌ Erro ao importar o Professor Fernando: {e}")
             pass
     
     elif subject == "Língua Portuguesa" and "leticia" not in _imported_modules:

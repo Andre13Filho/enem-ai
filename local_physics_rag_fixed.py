@@ -60,7 +60,8 @@ class GroqLLM(LLM):
                 model=self.model_name,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.7,
-                max_tokens=2048
+                max_tokens=2048,
+                stop=stop if stop else None
             )
             return response.choices[0].message.content
         except Exception as e:
@@ -148,12 +149,15 @@ class LocalPhysicsRAG:
                 os.remove(index_file)
             if os.path.exists(pkl_file): 
                 os.remove(pkl_file)
-                return False
+            return False
             
     def initialize(self, api_key: str) -> bool:
         """
         Inicializa o sistema: baixa o índice, carrega o vectorstore e cria a cadeia RAG.
         """
+        # Armazena a API key para uso posterior
+        self.api_key = api_key
+        
         if self.is_initialized:
             return True
             
@@ -172,9 +176,14 @@ class LocalPhysicsRAG:
                 st.error("Embeddings não foram inicializadas. Abortando.")
                 return False
 
+            # Define nomes dos arquivos para compatibilidade
+            index_file = os.path.join(FAISS_INDEX_DIR, "index_physics.faiss")
+            pkl_file = os.path.join(FAISS_INDEX_DIR, "index_physics.pkl")
+            
             self.vectorstore = FAISS.load_local(
-                FAISS_INDEX_DIR, 
-                self.embeddings,
+                folder_path=FAISS_INDEX_DIR, 
+                embeddings=self.embeddings,
+                index_name="index_physics", 
                 allow_dangerous_deserialization=True # Necessário para pkl
             )
             self.retriever = self.vectorstore.as_retriever(
@@ -253,8 +262,18 @@ PERGUNTA: {question}
 RESPOSTA (com fórmulas bem formatadas e estilo do Professor Fernando):
 """
             # Atualiza o prompt da cadeia
-            if hasattr(self.rag_chain.combine_docs_chain, "llm_chain"):
-                self.rag_chain.combine_docs_chain.llm_chain.prompt.template = prompt_template
+            try:
+                if hasattr(self.rag_chain.combine_docs_chain, "llm_chain"):
+                    self.rag_chain.combine_docs_chain.llm_chain.prompt = prompt_template
+                elif hasattr(self.rag_chain, "combine_docs_chain"):
+                    from langchain.prompts import PromptTemplate
+                    prompt = PromptTemplate(
+                        input_variables=["context", "question"],
+                        template=prompt_template
+                    )
+                    self.rag_chain.combine_docs_chain.llm_chain.prompt = prompt
+            except Exception as prompt_error:
+                print(f"Aviso: Não foi possível atualizar o prompt: {prompt_error}")
             
             self.is_initialized = True
             st.success("✅ Cadeia RAG criada e pronta para uso!")
@@ -269,12 +288,68 @@ RESPOSTA (com fórmulas bem formatadas e estilo do Professor Fernando):
     def get_response(self, question: str) -> Dict[str, Any]:
         """Obtém uma resposta do sistema RAG."""
         if not self.rag_chain:
-            return {"answer": "O sistema RAG não foi inicializado corretamente."}
+            return {"answer": "O sistema RAG não foi inicializado corretamente.", "source_documents": []}
         
         try:
-            return self.rag_chain({"question": question})
+            # Busca por documentos relevantes
+            docs = self.retriever.get_relevant_documents(question)
+            
+            if not docs:
+                # Fallback para casos onde não encontramos documentos relevantes
+                return {
+                    "answer": "Não encontrei informações específicas sobre isso na base de dados de física, mas posso tentar responder com conhecimento geral.",
+                    "source_documents": []
+                }
+            
+            # Forma o contexto a partir dos documentos
+            context = "\n\n".join([doc.page_content for doc in docs[:5]])
+            
+            # Usa o LLM para gerar uma resposta
+            prompt = f"""Você é o Professor Fernando, especialista em física do ENEM. Responda como um professor para uma estudante de 17 anos chamada Sther.
+
+Com base no contexto a seguir, responda à pergunta da forma mais didática possível.
+Se a resposta não estiver no contexto, use seu conhecimento geral em física do ENEM.
+
+CONTEXTO:
+{context}
+
+PERGUNTA: {question}
+
+RESPOSTA:"""
+            
+            if hasattr(self.rag_chain, "llm") and self.rag_chain.llm:
+                llm = self.rag_chain.llm
+            else:
+                # Caso a cadeia RAG não tenha sido configurada corretamente
+                api_key = os.getenv("GROQ_API_KEY")
+                if not api_key:
+                    # Tenta usar a API KEY armazenada como atributo
+                    if hasattr(self, "api_key") and self.api_key:
+                        api_key = self.api_key
+                    else:
+                        return {"answer": "API Key não disponível. Não é possível gerar resposta.", "source_documents": []}
+                
+                llm = GroqLLM(api_key=api_key)
+            
+            answer = llm.invoke(prompt)
+            
+            # Atualiza memória conversacional
+            if self.memory:
+                self.memory.save_context(
+                    {"question": question}, 
+                    {"answer": answer}
+                )
+                
+            return {
+                "answer": answer,
+                "source_documents": docs
+            }
+            
         except Exception as e:
-            return {"answer": f"Erro ao processar a pergunta: {str(e)}"}
+            import traceback
+            error_details = traceback.format_exc()
+            print(f"Erro ao processar resposta: {error_details}")
+            return {"answer": f"Erro ao processar a pergunta: {str(e)}", "source_documents": []}
     
     def search_relevant_content(self, query: str, k: int = 3) -> List[Document]:
         """Busca por conteúdo relevante no vectorstore."""

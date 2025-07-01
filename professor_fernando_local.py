@@ -1,6 +1,6 @@
 """
 Professor Fernando com Sistema RAG Local
-Usa documentos locais da pasta física em vez da API do Google Drive
+Usa índice FAISS para física em vez de processar documentos locais
 """
 
 import streamlit as st
@@ -10,23 +10,24 @@ import os
 
 # Importa sistema RAG local
 try:
-    from local_physics_rag import LocalPhysicsRAG, local_physics_rag
+    from local_physics_rag_fixed import get_local_physics_rag_instance
     from enem_exercises_rag import ENEMExercisesRAG
     LOCAL_RAG_AVAILABLE = True
 except ImportError:
     LOCAL_RAG_AVAILABLE = False
+    print("❌ Erro ao importar local_physics_rag_fixed.py")
 
 # Importa sistema de analogias da Sther V2
 try:
     from new_analogies_system import add_analogy_if_confused
-    ANALOGIES_AVAILABLE = True
+    ANALOGIAS_AVAILABLE = True
     print("✅ Sistema de analogias V2 baseado nas séries carregado")
 except ImportError:
-    ANALOGIES_AVAILABLE = False
+    ANALOGIAS_AVAILABLE = False
     print("⚠️ Sistema de analogias da Sther não disponível")
 
 class ProfessorFernandoLocal:
-    """Professor Fernando especializado usando documentos locais"""
+    """Professor Fernando especializado usando índice FAISS de física"""
     
     def __init__(self):
         self.rag_system = None
@@ -35,85 +36,69 @@ class ProfessorFernandoLocal:
         self.is_initialized = False
         
         if LOCAL_RAG_AVAILABLE:
-            self.rag_system = local_physics_rag
+            self.rag_system = get_local_physics_rag_instance()
             self.exercises_rag = ENEMExercisesRAG()
+            print("✅ RAG System para física inicializado")
     
     def initialize_system(self, api_key: str) -> bool:
-        """Inicializa o sistema RAG local com melhor tratamento de erros"""
+        """
+        Inicializa o sistema RAG baixando o índice FAISS remoto e configurando a cadeia.
+        """
         if not LOCAL_RAG_AVAILABLE:
-            st.error("Sistema RAG local não disponível. Verifique local_physics_rag.py")
+            st.error("O arquivo 'local_physics_rag_fixed.py' é essencial e não foi encontrado.")
             return False
         
+        if self.is_initialized and self.current_api_key == api_key:
+            st.success("✅ Sistema de Física já inicializado.")
+            return True
+
+        st.info("🔄 Inicializando sistema de física (Professor Fernando)...")
+        
         try:
-            st.info("🔄 Inicializando sistema RAG de Física...")
-            
-            # Inicializa o sistema RAG usando o novo método
+            # A função `initialize` cuida de tudo: download, carregamento e criação da cadeia.
             success = self.rag_system.initialize(api_key)
+            
             if success:
                 self.current_api_key = api_key
                 self.is_initialized = True
-                st.success("✅ Sistema RAG de Física inicializado com sucesso!")
+                st.success("✅ Professor Fernando (Física) pronto!")
+                # Atualiza o estado da sessão para refletir a inicialização bem-sucedida
+                st.session_state.rag_initialized_fernando = True
                 return True
             else:
-                st.error("❌ Falha ao inicializar o sistema RAG")
-                return self._try_fallback_initialization(api_key)
+                st.error("❌ Falha ao inicializar o sistema de Física.")
+                st.warning("O Professor Fernando pode não responder corretamente.")
+                self.is_initialized = False
+                st.session_state.rag_initialized_fernando = False
+                return False
                     
         except Exception as e:
-            st.error(f"❌ Erro na inicialização: {str(e)}")
-            return self._try_fallback_initialization(api_key)
-    
-    def _try_fallback_initialization(self, api_key: str) -> bool:
-        """Tenta inicialização de fallback com conteúdo básico de física"""
-        try:
-            st.warning("🔄 Tentando inicialização de emergência para Física...")
-            
-            # Na nova versão, não podemos adicionar documentos manualmente
-            # em vez disso, vamos tentar novamente com um modelo diferente de embeddings
-            
-            # Forçamos nova tentativa de inicialização
-            if hasattr(self.rag_system, '_setup_embeddings'):
-                # Tenta com modelo alternativo de embeddings
-                self.rag_system.embeddings = None
-                self.rag_system._setup_embeddings("all-MiniLM-L6-v2")
-            
-            # Força nova tentativa de inicialização
-            success = self.rag_system.initialize(api_key)
-            
-            if success:
-                self.current_api_key = api_key
-                self.is_initialized = True
-                st.success("⚠️ Sistema de Física inicializado em modo alternativo")
-                return True
-            
-            st.error("❌ Falha na inicialização alternativa")
-            return False
-            
-        except Exception as fallback_error:
-            st.error(f"❌ Falha total na inicialização de Física: {str(fallback_error)}")
+            st.error(f"❌ Ocorreu um erro crítico durante a inicialização: {str(e)}")
+            self.is_initialized = False
+            st.session_state.rag_initialized_fernando = False
             return False
     
     def get_response(self, user_message: str, api_key: str) -> str:
-        """Gera resposta usando RAG local"""
+        """Gera uma resposta para a mensagem do usuário."""
         
         if not LOCAL_RAG_AVAILABLE:
             return """
 🚧 **Sistema RAG Local Indisponível**
 
 O sistema RAG local não está disponível. Verifique:
-1. Arquivo local_physics_rag.py presente
+1. Arquivo local_physics_rag_fixed.py presente
 2. Dependências instaladas: `pip install -r requirements.txt`
 
-💡 O sistema funciona com um índice FAISS que será baixado automaticamente!
+💡 O sistema funciona com um índice FAISS pré-construído!
 """
         
-        if not api_key:
+        if not api_key or api_key.strip() == "":
             return """
-🔑 **Configure sua API Key do Groq**
+🔑 **API Key da Groq Necessária**
 
 Para ativar o Professor Fernando com RAG Local:
-1. Obtenha uma API Key do Groq (https://console.groq.com)
-2. Insira a chave na barra lateral
-3. O sistema baixará o índice FAISS e se inicializará automaticamente!
+1. Configure a secret GROQ_API_KEY no Streamlit Cloud
+2. O sistema baixará o índice FAISS e inicializará automaticamente!
 
 📚 **Recursos do Sistema RAG Local:**
 - Índice FAISS pré-construído (baixado automaticamente)
@@ -123,9 +108,94 @@ Para ativar o Professor Fernando com RAG Local:
 """
         
         # Inicializa sistema se necessário
-        if not self.is_initialized or api_key != self.current_api_key:
-            if not self.initialize_system(api_key):
-                return "❌ Falha na inicialização do sistema. Verifique sua API key e conexão com internet."
+        if not self.is_initialized:
+            try:
+                st.info("🔧 Iniciando processo de inicialização...")
+                init_success = self.initialize_system(api_key)
+                
+                if not init_success:
+                    st.error("❌ Falha na inicialização - detalhes:")
+                    st.error(f"• RAG System: {self.rag_system is not None}")
+                    st.error(f"• Sistema inicializado: {self.is_initialized}")
+                    
+                    return f"""
+❌ **Falha na Inicialização do Sistema RAG**
+
+O sistema não conseguiu inicializar corretamente. Provavelmente um problema com a API Groq ou com o download do índice.
+
+**🚨 ATIVANDO MODO DE EMERGÊNCIA:**
+
+Olá, Sther! Sou o Professor Fernando, especialista em física do ENEM. 
+
+Mesmo com problemas técnicos no sistema RAG, vou te ajudar com sua pergunta: "{user_message}"
+
+**📚 Resposta baseada em conhecimento geral de física:**
+
+Para determinar como resolver sua questão, preciso de mais detalhes específicos. Posso ajudar com:
+
+**🔍 Mecânica:**
+- Cinemática: $v = \Delta s / \Delta t$
+- Leis de Newton: $F = ma$
+- Energia: $E_c = mv^2/2$, $E_p = mgh$
+
+**🌡️ Termodinâmica:**
+- Calor, temperatura, dilatação
+- Leis da termodinâmica
+
+**⚡ Eletricidade e Magnetismo:**
+- Lei de Ohm: $V = RI$
+- Eletromagnetismo: Indução
+
+**🔊 Ondas e Óptica:**
+- Fenômenos ondulatórios
+- Espelhos e lentes
+
+**⚛️ Física Moderna:**
+- Relatividade
+- Física Quântica
+
+**🎯 Reformule sua pergunta com mais detalhes** que posso te dar uma resposta mais específica!
+
+**Que tal praticar com alguns exercícios do ENEM sobre este tópico, Sther?**
+"""
+                else:
+                    st.success("✅ Inicialização concluída com sucesso!")
+                    
+            except Exception as init_error:
+                st.error(f"❌ Erro crítico na inicialização: {str(init_error)}")
+                import traceback
+                st.error(f"Stack trace: {traceback.format_exc()}")
+                
+                return f"""
+❌ **Erro Crítico na Inicialização**
+
+Ocorreu um erro durante a inicialização do sistema:
+
+```
+{str(init_error)}
+```
+
+**Modo Professor Básico Ativado:**
+
+Olá! Sou o Professor Fernando de Física. Mesmo com limitações técnicas, vou te ajudar!
+
+**Sobre sua pergunta:** "{user_message}"
+
+**Resposta baseada no conhecimento geral:**
+
+Para questões de física do ENEM, é importante focar em:
+
+**🎯 Tópicos Principais:**
+- **Mecânica:** movimento, forças, energia
+- **Termodinâmica:** calor, temperatura, entropia
+- **Eletromagnetismo:** circuitos, campo elétrico e magnético
+- **Ondulatória:** som, luz, ondas mecânicas
+- **Física Moderna:** relatividade, física quântica
+
+Pode me fazer uma pergunta mais específica sobre algum desses tópicos que eu posso ajudar melhor!
+
+🔧 **Nota técnica:** Sistema RAG temporariamente indisponível, mas estou aqui para ajudar!
+"""
         
         try:
             # Gera resposta usando RAG
@@ -134,9 +204,40 @@ Para ativar o Professor Fernando com RAG Local:
             answer = result.get("answer", "Desculpe, não consegui gerar uma resposta.")
             source_docs = result.get("source_documents", [])
             
-            # Resposta já formatada pelo sistema RAG
+            # Verifica se há problemas na resposta
+            if ("Erro na API" in answer or "Error code: 401" in answer or "Invalid API Key" in answer or 
+                "Sistema RAG não inicializado" in answer):
+                return f"""
+🔑 **Problema com a API Key da Groq ou com a Inicialização do RAG**
+
+Detectei um problema de autenticação ou inicialização.
+
+**Mensagem do Sistema:**
+`{answer}`
+
+**Modo Professor Básico Ativado:**
+
+Olá! Sou o Professor Fernando de Física. Mesmo com limitações técnicas, vou te ajudar!
+
+**Sobre sua pergunta:** "{user_message}"
+
+**Resposta baseada no conhecimento geral:**
+
+Para questões de física do ENEM, é importante focar em:
+
+**🎯 Tópicos Principais:**
+- **Mecânica:** movimento uniforme e acelerado, leis de Newton, trabalho e energia
+- **Termodinâmica:** calor, temperatura, leis da termodinâmica
+- **Eletromagnetismo:** circuitos elétricos, campo elétrico e magnético
+- **Ondulatória:** ondas mecânicas e eletromagnéticas, acústica, óptica
+- **Física Moderna:** noções básicas de relatividade e quântica
+
+Pode me fazer uma pergunta mais específica sobre algum desses tópicos que eu posso ajudar melhor!
+
+🔧 **Nota técnica:** Sistema RAG temporariamente indisponível, mas estou aqui para ajudar!
+"""
             
-            # Monta resposta formatada
+            # Resposta formatada
             response = f"""
 {answer}
 
@@ -163,7 +264,7 @@ Para ativar o Professor Fernando com RAG Local:
             
             # SISTEMA DE ANALOGIAS V2 - SÉRIES PERSONALIZADAS
             # SEMPRE tenta adicionar analogias, mesmo se houve erro na API
-            if ANALOGIES_AVAILABLE:
+            if ANALOGIAS_AVAILABLE:
                 try:
                     enhanced_response = add_analogy_if_confused(user_message, response)
                     if enhanced_response != response:  # Se analogia foi adicionada
@@ -176,21 +277,37 @@ Para ativar o Professor Fernando com RAG Local:
             
         except Exception as e:
             error_response = f"""
-❌ **Erro no Sistema RAG Local**
+❌ **Erro no Sistema RAG**
 
 Detalhes: {str(e)}
 
-💡 **Soluções:**
+**Modo Professor Básico Ativado:**
+
+Olá! Sou o Professor Fernando de Física. Mesmo com esse erro técnico, vou te ajudar!
+
+**Sobre sua pergunta:** "{user_message}"
+
+**Resposta baseada no conhecimento geral:**
+
+Para questões de física do ENEM, geralmente trabalhamos com:
+
+**🎯 Conceitos fundamentais:**
+- Cinemática: movimento uniforme, acelerado, lançamentos
+- Dinâmica: forças, leis de Newton, energia e trabalho
+- Termodinâmica: temperatura, calor, gases, entropia
+- Eletromagnetismo: eletricidade, magnetismo, ondas
+- Óptica: reflexão, refração, lentes, espelhos
+
+Se você puder reformular sua pergunta com detalhes específicos, posso te dar uma resposta mais precisa!
+
+💡 **Soluções para o erro:**
 1. Verifique sua conexão com a internet (necessária para Groq e para baixar o índice)
 2. Confirme se a API Key do Groq está correta
-3. Verifique se a pasta 'faiss_index_physics' existe e tem permissões de escrita
-4. Reinicie a aplicação
-
-🔧 Se o problema persistir, exclua a pasta 'faiss_index_physics' e reinicie para tentar baixar novamente.
+3. Reinicie a aplicação
 """
             
             # MESMO COM ERRO, tenta aplicar analogias se usuário está confuso
-            if ANALOGIES_AVAILABLE:
+            if ANALOGIAS_AVAILABLE:
                 try:
                     enhanced_error_response = add_analogy_if_confused(user_message, error_response)
                     if enhanced_error_response != error_response:
@@ -208,183 +325,157 @@ Detalhes: {str(e)}
         
         try:
             docs = self.rag_system.search_relevant_content(query, k=3)
+            
             if not docs:
                 return "Nenhum conteúdo relevante encontrado"
-            
-            preview = "**Conteúdo relevante encontrado:**\n\n"
-            for i, doc in enumerate(docs, 1):
-                content_preview = doc.page_content[:150] + "..." if len(doc.page_content) > 150 else doc.page_content
-                source = doc.metadata.get("source", "Documento")
-                topic = doc.metadata.get("topic", "Geral")
                 
-                preview += f"📚 **Fonte {i}** ({topic}):\n*{source}*\n{content_preview}\n\n"
+            preview = f"**Prévia de conteúdo relevante para:** '{query}'\n\n"
             
+            for i, doc in enumerate(docs, 1):
+                source = doc.metadata.get("source", "Desconhecido")
+                preview += f"**Documento {i} - {source}:**\n"
+                preview += f"{doc.page_content[:150]}...\n\n"
+                
             return preview
             
         except Exception as e:
             return f"Erro ao buscar conteúdo: {str(e)}"
     
     def _add_recommended_exercises(self, user_message: str) -> str:
-        """Adiciona exercícios recomendados baseados na mensagem do usuário"""
+        """Adiciona exercícios do ENEM recomendados"""
+        if not self.exercises_rag:
+            return "\n\n💡 Sistema de exercícios não disponível."
+            
         try:
-            user_lower = user_message.lower()
+            # Tenta extrair tópico da mensagem
+            message_lower = user_message.lower()
             
-            # Detecta se Sther está EXPLICITAMENTE pedindo exercícios
-            exercise_request_keywords = [
-                'exercício', 'exercicios', 'questão', 'questões', 'questao', 'questoes',
-                'praticar', 'treinar', 'resolver', 'fazer exercício', 'atividade',
-                'me dê', 'me de', 'quero', 'preciso', 'tem exercício', 'tem questão'
-            ]
-            
-            is_asking_for_exercises = any(keyword in user_lower for keyword in exercise_request_keywords)
-            
-            if is_asking_for_exercises:
-                # Sther está pedindo exercícios - busca com mais prioridade
-                exercises = self.search_exercises_by_message(user_message, k=3)
+            # Mapeia palavras-chave de física para tópicos
+            physics_keywords = {
+                # Mecânica
+                "cinemática": "Mecânica",
+                "movimento": "Mecânica",
+                "velocidade": "Mecânica",
+                "aceleração": "Mecânica",
+                "queda livre": "Mecânica",
+                "mru": "Mecânica",
+                "mruv": "Mecânica",
+                "força": "Mecânica",
+                "newton": "Mecânica",
+                "atrito": "Mecânica",
+                "impulso": "Mecânica",
+                "quantidade de movimento": "Mecânica",
+                "trabalho": "Mecânica",
+                "potência": "Mecânica",
+                "energia": "Mecânica",
+                "cinética": "Mecânica",
+                "potencial": "Mecânica",
+                "conservação": "Mecânica",
                 
-                if exercises:
-                    exercises_text = """
-
----
-
-📚 **Exercícios ENEM - Conforme solicitado!**
-
-Perfeito, Sther! Aqui estão os exercícios que você pediu:
-
-"""
+                # Termodinâmica
+                "termodinâmica": "Termodinâmica",
+                "calor": "Termodinâmica",
+                "temperatura": "Termodinâmica",
+                "dilatação": "Termodinâmica",
+                "gases": "Termodinâmica",
+                "máquina térmica": "Termodinâmica",
+                
+                # Eletricidade e Magnetismo
+                "eletricidade": "Eletromagnetismo",
+                "carga": "Eletromagnetismo",
+                "corrente": "Eletromagnetismo",
+                "resistência": "Eletromagnetismo",
+                "tensão": "Eletromagnetismo",
+                "voltagem": "Eletromagnetismo",
+                "circuito": "Eletromagnetismo",
+                "potência elétrica": "Eletromagnetismo",
+                "campo elétrico": "Eletromagnetismo",
+                "magnetismo": "Eletromagnetismo",
+                "campo magnético": "Eletromagnetismo",
+                "indução": "Eletromagnetismo",
+                
+                # Ondulatória
+                "onda": "Ondulatória",
+                "frequência": "Ondulatória",
+                "comprimento de onda": "Ondulatória",
+                "som": "Ondulatória",
+                "acústica": "Ondulatória",
+                "óptica": "Ondulatória",
+                "reflexão": "Ondulatória",
+                "refração": "Ondulatória",
+                "espelho": "Ondulatória",
+                "lente": "Ondulatória",
+                
+                # Física Moderna
+                "relatividade": "Física Moderna",
+                "quântica": "Física Moderna",
+                "dualidade": "Física Moderna",
+                "fóton": "Física Moderna",
+                "efeito fotoelétrico": "Física Moderna",
+            }
+            
+            # Busca tópicos identificados
+            identified_topics = []
+            for keyword, topic in physics_keywords.items():
+                if keyword in message_lower:
+                    identified_topics.append(topic)
+            
+            # Remove duplicatas
+            identified_topics = list(set(identified_topics))
+            
+            # Se não identificou tópicos, tenta extrair do conteúdo
+            if not identified_topics:
+                identified_topics = ["Física Geral"]
+            
+            # Busca exercícios para cada tópico
+            exercises_content = "\n\n📝 **Exercícios Relacionados do ENEM:**\n"
+            exercises_found = False
+            
+            for topic in identified_topics[:2]:  # Máximo 2 tópicos
+                try:
+                    exercises = self.exercises_rag.search_exercises_by_topic(topic, "Ciências da Natureza", k=1)
                     
-                    for i, exercise in enumerate(exercises, 1):
-                        year = exercise["year"] 
-                        question_num = exercise["question_number"]
-                        topic = exercise["topic"]
+                    if exercises:
+                        exercises_found = True
+                        exercise = exercises[0]
+                        year = exercise.metadata.get("year", "Ano desconhecido")
+                        question_num = exercise.metadata.get("question_number", "")
                         
-                        # Limita o conteúdo para não sobrecarregar
-                        content = exercise["content"].strip()
-                        if len(content) > 800:
-                            content = content[:800] + "\n\n[...continua - me peça para ver o resto se precisar!]"
-                        
-                        exercises_text += f"""
-**📝 Exercício {i} - ENEM {year} (Questão {question_num})**
-*Tópico: {topic}*
-
+                        # Limita o comprimento do exercício
+                        content = exercise.page_content
+                        if len(content) > 300:
+                            content = content[:300] + "..."
+                            
+                        exercises_content += f"""
+**Exercício ENEM {year} - Questão {question_num} ({topic})**
 {content}
 
-*💬 Quer que eu explique alguma parte? É só perguntar!*
-
----
 """
-                    
-                    exercises_text += """
-🎯 **Dica:** Leia com calma, tente resolver primeiro e depois me pergunte se tiver dúvidas! 💪
-"""
-                    
-                    return exercises_text
-                
-                else:
-                    # Sther pediu exercícios mas não encontrou nada específico
-                    return """
-
----
-
-❌ **Não encontrei exercícios específicos**
-
-Desculpe, Sther! Não encontrei exercícios exatos sobre esse tópico na base ENEM.
-
-💡 **Tente reformular assim:**
-- "Exercícios de Geometria"
-- "Questões de Funções" 
-- "Exercícios do ENEM 2024"
-- "Problemas de Probabilidade"
-
-📚 **Ou me pergunte sobre a teoria primeiro** que eu explico e depois trago exercícios relacionados!
-"""
+                except Exception as ex_error:
+                    print(f"Erro ao buscar exercício para {topic}: {str(ex_error)}")
             
-            else:
-                # Pergunta normal - apenas sugere exercícios sutilmente
-                exercises = self.search_exercises_by_message(user_message, k=1)
+            if not exercises_found:
+                exercises_content = "\n\n💡 **Quer praticar?** Me peça exercícios específicos sobre este assunto do ENEM!"
                 
-                if exercises:
-                    exercise = exercises[0]
-                    year = exercise["year"]
-                    topic = exercise["topic"]
-                    
-                    return f"""
-
----
-
-💡 **Sugestão de Prática**
-
-Para fixar esse conteúdo, que tal resolver um exercício do ENEM {year} sobre {topic}? 
-Se quiser, é só me pedir: "Professor, me dê exercícios sobre {topic.lower()}"! 
-
-🚀 Prática é fundamental!
-"""
-                
-                else:
-                    return """
-
----
-
-💡 **Sugestão de Prática**
-
-Para fixar bem esse conteúdo, sempre recomendo praticar com exercícios! 
-Me peça exercícios específicos quando quiser treinar! 🚀
-"""
-                
+            return exercises_content
+            
         except Exception as e:
-            # Em caso de erro, retorna sugestão simples
-            return """
-
----
-
-💡 **Prática recomendada**
-
-Para fixar o conteúdo, sempre recomendo exercícios! Me pergunte quando quiser praticar! 💪
-"""
-    
-    def _extract_math_topic_from_context(self, user_message: str, response_content: str) -> str:
-        """Extrai o tópico matemático principal da conversa"""
-        combined_text = (user_message + " " + response_content).lower()
-        
-        # Mapeia palavras-chave para tópicos principais
-        topic_priority = [
-            ("função", "Funções"),
-            ("quadrática", "Funções"),
-            ("parábola", "Funções"),
-            ("geometria", "Geometria"),
-            ("triângulo", "Geometria"),
-            ("círculo", "Geometria"),
-            ("área", "Geometria"),
-            ("volume", "Geometria"),
-            ("álgebra", "Álgebra"),
-            ("equação", "Álgebra"),
-            ("sistema", "Álgebra"),
-            ("probabilidade", "Estatística e Probabilidade"),
-            ("estatística", "Estatística e Probabilidade"),
-            ("dados", "Estatística e Probabilidade"),
-            ("juros", "Matemática Financeira"),
-            ("porcentagem", "Matemática Financeira"),
-            ("progressão", "Progressões"),
-            ("sequência", "Progressões")
-        ]
-        
-        # Retorna o primeiro tópico encontrado (ordem de prioridade)
-        for keyword, topic in topic_priority:
-            if keyword in combined_text:
-                return topic
-        
-        return "Geral"
+            print(f"Erro ao adicionar exercícios: {str(e)}")
+            return "\n\n💡 **Quer praticar?** Me peça exercícios específicos sobre este assunto do ENEM!"
     
     def get_knowledge_stats(self) -> Dict[str, Any]:
         """Retorna estatísticas da base de conhecimento"""
         if not self.rag_system:
-            return {"erro": "Sistema não disponível"}
+            return {"status": "não disponível"}
         
-        return self.rag_system.get_stats()
+        try:
+            return self.rag_system.get_stats()
+        except Exception as e:
+            return {"erro": str(e)}
     
     def clear_memory(self):
-        """Limpa memória da conversa"""
-        if self.rag_system:
+        """Limpa memória conversacional"""
+        if self.rag_system and hasattr(self.rag_system, "clear_memory"):
             self.rag_system.clear_memory()
     
     def reprocess_documents(self, api_key: str) -> bool:
@@ -397,7 +488,7 @@ Para fixar o conteúdo, sempre recomendo exercícios! Me pergunte quando quiser 
             
             # Limpa a pasta FAISS_INDEX_DIR para forçar um novo download
             import shutil
-            from local_physics_rag import FAISS_INDEX_DIR
+            from local_physics_rag_fixed import FAISS_INDEX_DIR
             
             if os.path.exists(FAISS_INDEX_DIR):
                 try:
@@ -428,7 +519,7 @@ Para fixar o conteúdo, sempre recomendo exercícios! Me pergunte quando quiser 
         except Exception as e:
             st.error(f"Erro na reinicialização: {str(e)}")
             return False
-    
+            
     def search_exercises(self, topic: str, subject_area: str = None, k: int = 3) -> List[Dict[str, Any]]:
         """Busca exercícios do ENEM relacionados ao tópico"""
         if not self.exercises_rag:
@@ -457,288 +548,8 @@ Para fixar o conteúdo, sempre recomendo exercícios! Me pergunte quando quiser 
             return exercises
             
         except Exception as e:
-            st.error(f"Erro ao buscar exercícios: {str(e)}")
+            print(f"Erro ao buscar exercícios: {str(e)}")
             return []
-    
-    def search_exercises_by_message(self, user_message: str, k: int = 3) -> List[Dict[str, Any]]:
-        """Busca exercícios baseados na mensagem do usuário"""
-        if not self.exercises_rag:
-            return []
-        
-        try:
-            # Carrega vectorstore se necessário
-            if not self.exercises_rag.vectorstore:
-                self.exercises_rag.load_existing_vectorstore()
-            
-            # Identifica tópicos na mensagem
-            message_lower = user_message.lower()
-            
-            # Mapeia palavras-chave para tópicos (expandido para melhor detecção)
-            topic_keywords = {
-                # Funções
-                "função": "Funções",
-                "funções": "Funções",
-                "quadrática": "Funções", 
-                "parábola": "Funções",
-                "gráfico": "Funções",
-                "vértice": "Funções",
-                "raiz": "Funções",
-                "coeficiente": "Funções",
-                
-                # Geometria
-                "geometria": "Geometria",
-                "triângulo": "Geometria",
-                "área": "Geometria",
-                "círculo": "Geometria",
-                "retângulo": "Geometria",
-                "quadrado": "Geometria",
-                "polígono": "Geometria",
-                "volume": "Geometria",
-                "perímetro": "Geometria",
-                "ângulo": "Geometria",
-                "teorema": "Geometria",
-                "pitágoras": "Geometria",
-                "circunferência": "Geometria",
-                "raio": "Geometria",
-                "diâmetro": "Geometria",
-                
-                # Trigonometria
-                "trigonometria": "Geometria",
-                "seno": "Geometria",
-                "cosseno": "Geometria",
-                "tangente": "Geometria",
-                "sen": "Geometria",
-                "cos": "Geometria",
-                "tan": "Geometria",
-                
-                # Estatística e Probabilidade
-                "probabilidade": "Estatística e Probabilidade",
-                "chance": "Estatística e Probabilidade",
-                "estatística": "Estatística e Probabilidade",
-                "média": "Estatística e Probabilidade",
-                "mediana": "Estatística e Probabilidade",
-                "moda": "Estatística e Probabilidade",
-                "dados": "Estatística e Probabilidade",
-                "amostra": "Estatística e Probabilidade",
-                "frequência": "Estatística e Probabilidade",
-                
-                # Álgebra
-                "álgebra": "Álgebra",
-                "algebra": "Álgebra",
-                "equação": "Álgebra",
-                "inequação": "Álgebra",
-                "sistema": "Álgebra",
-                "determinante": "Álgebra",
-                "matriz": "Álgebra",
-                
-                # Matemática Financeira
-                "juros": "Matemática Financeira",
-                "porcentagem": "Matemática Financeira",
-                "desconto": "Matemática Financeira",
-                "financeira": "Matemática Financeira",
-                "capital": "Matemática Financeira",
-                "montante": "Matemática Financeira",
-                "taxa": "Matemática Financeira",
-                
-                # Progressões
-                "progressão": "Progressões",
-                "sequência": "Progressões",
-                "pa": "Progressões",
-                "pg": "Progressões",
-                "aritmética": "Progressões",
-                "geométrica": "Progressões",
-                
-                # Análise Combinatória
-                "combinação": "Análise Combinatória",
-                "permutação": "Análise Combinatória",
-                "arranjo": "Análise Combinatória",
-                "combinatória": "Análise Combinatória",
-                "fatorial": "Análise Combinatória",
-                
-                # Geometria Analítica
-                "reta": "Geometria Analítica",
-                "ponto": "Geometria Analítica",
-                "coordenadas": "Geometria Analítica",
-                "cartesiano": "Geometria Analítica",
-                "distância": "Geometria Analítica",
-                
-                # Logaritmo
-                "logaritmo": "Outros",
-                "log": "Outros",
-                "exponencial": "Outros"
-            }
-            
-            # Busca tópicos identificados
-            identified_topics = []
-            for keyword, topic in topic_keywords.items():
-                if keyword in message_lower:
-                    identified_topics.append(topic)
-            
-            # Remove duplicatas
-            identified_topics = list(set(identified_topics))
-            
-            all_exercises = []
-            
-            # Busca exercícios para cada tópico identificado
-            if identified_topics:
-                for topic in identified_topics:
-                    # Determina área baseada no tópico
-                    if topic in ["Física", "Química", "Biologia"]:
-                        subject_area = "Ciências da Natureza"
-                    else:
-                        subject_area = "Matemática"
-                    
-                    docs = self.exercises_rag.search_exercises_by_topic(topic, subject_area, k=2)
-                    
-                    for doc in docs:
-                        exercise = {
-                            "content": doc.page_content,
-                            "year": doc.metadata.get("year", "N/A"),
-                            "question_number": doc.metadata.get("question_number", "N/A"),
-                            "subject_area": doc.metadata.get("subject_area", "N/A"),
-                            "topic": doc.metadata.get("topic", "N/A"),
-                            "source_file": doc.metadata.get("source_file", "N/A"),
-                            "identified_from": topic
-                        }
-                        all_exercises.append(exercise)
-            
-            # Se não identificou tópicos específicos, busca pela mensagem diretamente
-            if not all_exercises:
-                docs = self.exercises_rag.search_exercises_by_topic(user_message, "Matemática", k)
-                
-                for doc in docs:
-                    exercise = {
-                        "content": doc.page_content,
-                        "year": doc.metadata.get("year", "N/A"),
-                        "question_number": doc.metadata.get("question_number", "N/A"),
-                        "subject_area": doc.metadata.get("subject_area", "N/A"),
-                        "topic": doc.metadata.get("topic", "N/A"),
-                        "source_file": doc.metadata.get("source_file", "N/A"),
-                        "identified_from": "busca_geral"
-                    }
-                    all_exercises.append(exercise)
-            
-            # Remove duplicatas baseado no ano e número da questão
-            unique_exercises = []
-            seen = set()
-            for ex in all_exercises:
-                key = (ex["year"], ex["question_number"])
-                if key not in seen:
-                    seen.add(key)
-                    unique_exercises.append(ex)
-            
-            return unique_exercises[:k]
-            
-        except Exception as e:
-            print(f"Erro ao buscar exercícios por mensagem: {str(e)}")
-            return []
-    
-    def get_exercises_stats(self) -> Dict[str, Any]:
-        """Retorna estatísticas dos exercícios disponíveis"""
-        if not self.exercises_rag:
-            return {"erro": "Sistema de exercícios não disponível"}
-        
-        try:
-            # Carrega vectorstore se necessário
-            if not self.exercises_rag.vectorstore:
-                self.exercises_rag.load_existing_vectorstore()
-            
-            return self.exercises_rag.get_stats()
-            
-        except Exception as e:
-            return {"erro": f"Erro ao obter estatísticas: {str(e)}"}
-    
-    def suggest_exercises_for_question(self, user_question: str, api_key: str) -> str:
-        """Sugere exercícios relevantes baseados na pergunta do usuário"""
-        if not self.exercises_rag or not api_key:
-            return "Sistema de exercícios não disponível ou API key não configurada."
-        
-        try:
-            # Extrai tópicos da pergunta do usuário
-            topic_keywords = {
-                "função": "Função Quadrática",
-                "quadrática": "Função Quadrática", 
-                "parábola": "Função Quadrática",
-                "geometria": "Geometria",
-                "triângulo": "Geometria",
-                "área": "Geometria",
-                "trigonometria": "Trigonometria",
-                "seno": "Trigonometria",
-                "probabilidade": "Probabilidade",
-                "estatística": "Estatística",
-                "média": "Estatística",
-                "logaritmo": "Logaritmo",
-                "progressão": "Progressão",
-                "física": "Física",
-                "força": "Física",
-                "energia": "Física",
-                "química": "Química",
-                "biologia": "Biologia"
-            }
-            
-            # Identifica tópico principal
-            user_question_lower = user_question.lower()
-            identified_topic = "matemática"  # default
-            subject_area = None
-            
-            for keyword, topic in topic_keywords.items():
-                if keyword in user_question_lower:
-                    identified_topic = topic
-                    if topic in ["Física", "Química", "Biologia"]:
-                        subject_area = "Ciências da Natureza"
-                    else:
-                        subject_area = "Matemática"
-                    break
-            
-            # Busca exercícios relacionados
-            exercises = self.search_exercises(identified_topic, subject_area, k=3)
-            
-            if not exercises:
-                exercises = self.search_exercises(user_question, None, k=3)
-            
-            if exercises:
-                response = f"""
-🎯 **Exercícios Recomendados sobre "{identified_topic}"**
-
-Baseado na sua pergunta, encontrei estes exercícios do ENEM que podem te ajudar:
-
-"""
-                
-                for i, exercise in enumerate(exercises, 1):
-                    year = exercise["year"]
-                    question_num = exercise["question_number"]
-                    content_preview = exercise["content"][:300] + "..." if len(exercise["content"]) > 300 else exercise["content"]
-                    
-                    response += f"""
-**📝 Exercício {i} - ENEM {year} (Questão {question_num})**
-*Área: {exercise["subject_area"]} | Tópico: {exercise["topic"]}*
-
-{content_preview}
-
----
-"""
-                
-                response += """
-💡 **Dica:** Tente resolver estes exercícios e me pergunte se tiver dúvidas sobre algum passo específico!
-"""
-                
-                return response
-            else:
-                return f"""
-🔍 **Nenhum exercício específico encontrado**
-
-Não encontrei exercícios diretamente relacionados ao tópico "{identified_topic}" na base do ENEM.
-
-💡 **Sugestões:**
-- Reformule sua pergunta com termos mais específicos
-- Posso ajudar com teoria e explicações sobre o assunto
-- Tente buscar por tópicos relacionados
-
-📚 **Tópicos disponíveis:** Função Quadrática, Geometria, Trigonometria, Probabilidade, Estatística, Física, Química, Biologia
-"""
-                
-        except Exception as e:
-            return f"Erro ao sugerir exercícios: {str(e)}"
 
 # Instância global do Professor Fernando Local
 professor_fernando_local = ProfessorFernandoLocal()
@@ -751,7 +562,6 @@ def get_professor_fernando_local_response(user_message: str, api_key: str) -> st
     """Função para obter resposta do Professor Fernando Local"""
     return professor_fernando_local.get_response(user_message, api_key)
 
-# Função de busca prévia (opcional)
 def preview_local_search(query: str) -> str:
     """Preview do conteúdo que seria recuperado"""
     return professor_fernando_local.get_relevant_content_preview(query) 
