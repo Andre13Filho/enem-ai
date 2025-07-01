@@ -108,6 +108,8 @@ def get_physics_question_solution(question_id, question_text, api_key=None):
         if api_key:
             rag_system.initialize(api_key)
             physics_context = rag_system.get_physics_context(question_text)
+        else:
+            physics_context = "Sistema RAG não inicializado. Conhecimento limitado."
     
     # Constrói o prompt para o modelo
     system_prompt = """

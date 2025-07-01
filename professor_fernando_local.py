@@ -78,17 +78,22 @@ class ProfessorFernandoLocal:
             st.session_state.rag_initialized_fernando = False
             return False
     
-    def get_response(self, query: str, temperature: float = 0.2) -> str:
+    def get_response(self, query: str, api_key: str = None, temperature: float = 0.2) -> str:
         """
         Obtém resposta do Professor Fernando para uma consulta
         
         Args:
             query: A consulta do usuário
+            api_key: API key da OpenAI (opcional)
             temperature: Temperatura para geração de texto
             
         Returns:
             A resposta formatada do Professor Fernando
         """
+        # Se uma nova API key for fornecida e for diferente da atual, reinicializa
+        if api_key and api_key != self.current_api_key:
+            self.initialize_system(api_key)
+        
         if not self.is_initialized or not self.client:
             return "⚠️ Sistema não inicializado. Por favor, configure a API key primeiro."
         
@@ -209,21 +214,26 @@ def setup_professor_fernando_local_ui():
             return
         
         with st.spinner("Professor Fernando está elaborando a resposta..."):
-            response = professor_fernando_local.get_response(query)
+            api_key = st.session_state.get("api_key_fernando", None)
+            response = professor_fernando_local.get_response(query, api_key)
             
         st.markdown("### Resposta do Professor Fernando:")
         st.markdown(response)
 
-def get_professor_fernando_local_response(query: str) -> str:
+def get_professor_fernando_local_response(query: str, api_key: str = None) -> str:
     """Função para obter resposta do Professor Fernando para uso em outros módulos"""
     # Verifica se o sistema está inicializado
     if not professor_fernando_local.is_initialized:
-        # Tenta inicializar com a API key da sessão
-        api_key = st.session_state.get("openai_api_key", None)
+        # Usa a API key fornecida ou tenta obter da sessão
         if api_key:
             professor_fernando_local.initialize_system(api_key)
         else:
-            return "⚠️ Sistema não inicializado. Por favor, configure a API key primeiro."
+            # Tenta inicializar com a API key da sessão
+            session_api_key = st.session_state.get("openai_api_key", None)
+            if session_api_key:
+                professor_fernando_local.initialize_system(session_api_key)
+            else:
+                return "⚠️ Sistema não inicializado. Por favor, configure a API key primeiro."
     
     # Retorna a resposta
     return professor_fernando_local.get_response(query)

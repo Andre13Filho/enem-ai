@@ -30,7 +30,7 @@ def test_professor_response():
     professor_fernando_local.initialize_system(api_key)
     
     print("Consultando o Professor Fernando...\n")
-    response = professor_fernando_local.get_response(query)
+    response = professor_fernando_local.get_response(query, api_key)
     
     print("Resposta do Professor Fernando:\n")
     print(response)
