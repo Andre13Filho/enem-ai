@@ -1138,34 +1138,9 @@ def main():
                 # Obtém a cor da matéria
                 subject_color = SUBJECT_COLORS.get(subject, "#757575")  # Cinza como cor padrão
                 
-                # Cria um botão para cada conversa com estilo personalizado
-                button_html = f"""
-                <div style="margin-bottom: 5px;">
-                    <button 
-                        style="
-                            background-color: {subject_color}; 
-                            color: white; 
-                            border: none; 
-                            border-radius: 4px; 
-                            padding: 8px 12px; 
-                            width: 100%; 
-                            text-align: left;
-                            cursor: pointer;
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                            font-size: 0.9em;
-                        "
-                        onclick="parent.postMessage({{key: 'conv_{conv_id}'}}, '*')">
-                        <span>{display_title}</span>
-                        <small style="color: rgba(255,255,255,0.8);">{subject} - {date_str}</small>
-                    </button>
-                </div>
-                """
-                st.markdown(button_html, unsafe_allow_html=True)
-                
-                # Botão invisível para capturar o clique (necessário para o JavaScript funcionar)
-                if st.button("", key=f"conv_{conv_id}", help=display_title, style="display: none;"):
+                # Usa abordagem nativa do Streamlit para botões
+                btn_label = f"📝 {display_title} ({subject} - {date_str})"
+                if st.button(btn_label, key=f"conv_{conv_id}"):
                     st.session_state.current_conversation_id = conv_id
                     st.session_state.current_subject = subject
                     st.rerun()
