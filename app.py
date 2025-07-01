@@ -2,6 +2,7 @@ import streamlit as st
 import time
 import re
 import os
+import sqlite3
 from typing import Dict, List, Any
 from datetime import datetime
 from groq import Groq
@@ -999,6 +1000,63 @@ def main():
             st.error("❌ API Key não encontrada")
             st.info("Configure sua API Key no Streamlit Cloud ou arquivo .env")
 
+        # Histórico de mensagens (SQLite)
+        st.markdown("---")
+        st.markdown("### 📝 Histórico de Conversas")
+        
+        # Inicializa o banco de dados SQLite
+        def init_db():
+            conn = sqlite3.connect('chat_history.db')
+            c = conn.cursor()
+            c.execute('''
+                CREATE TABLE IF NOT EXISTS messages
+                (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 sender TEXT NOT NULL,
+                 content TEXT NOT NULL,
+                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)
+            ''')
+            conn.commit()
+            return conn
+        
+        # Salva mensagem no banco de dados
+        def save_message(sender, content):
+            conn = init_db()
+            c = conn.cursor()
+            c.execute("INSERT INTO messages (sender, content, timestamp) VALUES (?, ?, ?)",
+                     (sender, content, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            conn.commit()
+            conn.close()
+        
+        # Carrega as últimas 10 mensagens
+        def load_last_messages(limit=10):
+            conn = init_db()
+            c = conn.cursor()
+            c.execute("SELECT sender, content, timestamp FROM messages ORDER BY timestamp DESC LIMIT ?", (limit,))
+            messages = c.fetchall()
+            conn.close()
+            return list(reversed(messages))  # Inverte para mostrar do mais antigo para o mais recente
+        
+        # Salva mensagens do histórico atual se ainda não existirem
+        if prompt := st.session_state.get("_last_user_prompt"):
+            if not hasattr(st.session_state, "_last_saved_prompt") or st.session_state._last_saved_prompt != prompt:
+                save_message("aluna", prompt)
+                st.session_state._last_saved_prompt = prompt
+        
+        if response := st.session_state.get("_last_ai_response"):
+            if not hasattr(st.session_state, "_last_saved_response") or st.session_state._last_saved_response != response:
+                save_message("professor", response[:100] + "..." if len(response) > 100 else response)
+                st.session_state._last_saved_response = response
+        
+        # Exibe as últimas mensagens
+        messages = load_last_messages()
+        if messages:
+            for sender, content, timestamp in messages:
+                time_str = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S").strftime("%H:%M")
+                icon = "🧑‍🎓" if sender == "aluna" else "🧑‍🏫"
+                st.sidebar.markdown(f"**{icon} {time_str}:** {content[:50]}..." if len(content) > 50 else f"**{icon} {time_str}:** {content}")
+        else:
+            st.sidebar.info("Nenhuma mensagem no histórico")
+
     # Área Principal com Abas
     if current_subject == "Redação":
         # Para Redação, mostra a funcionalidade de correção
@@ -1075,6 +1133,11 @@ def main():
                     message_placeholder.markdown(full_response)
 
                 st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
+                
+                # Salvar mensagens no histórico SQLite
+                st.session_state._last_user_prompt = prompt
+                st.session_state._last_ai_response = full_response
+                
                 st.rerun()
     
     # Aba de Correção de Redação (apenas para Redação)
