@@ -47,40 +47,16 @@ class ProfessorFernandoLocal:
         try:
             st.info("🔄 Inicializando sistema RAG de Física...")
             
-            # Tenta carregar vectorstore existente primeiro ou criar em memória
-            if self.rag_system.load_existing_vectorstore():
-                st.info("📚 Base de conhecimento carregada!")
-                try:
-                    self.rag_system.create_rag_chain(api_key)
-                    self.current_api_key = api_key
-                    self.is_initialized = True
-                    st.success("✅ Sistema RAG de Física inicializado com sucesso!")
-                    return True
-                except Exception as chain_error:
-                    st.error(f"Erro ao criar cadeia RAG: {str(chain_error)}")
-                    return False
+            # Inicializa o sistema RAG usando o novo método
+            success = self.rag_system.initialize(api_key)
+            if success:
+                self.current_api_key = api_key
+                self.is_initialized = True
+                st.success("✅ Sistema RAG de Física inicializado com sucesso!")
+                return True
             else:
-                # Se load_existing_vectorstore falhou, tenta processar documentos
-                st.info("🔄 Processando documentos de física...")
-                
-                with st.spinner("Processando documentos da pasta física..."):
-                    try:
-                        success = self.rag_system.process_physics_documents()
-                        if success:
-                            # Força criação do vectorstore após processamento
-                            self.rag_system._create_vectorstore()
-                            self.rag_system.create_rag_chain(api_key)
-                            self.current_api_key = api_key
-                            self.is_initialized = True
-                            st.success("✅ Sistema RAG de Física inicializado com sucesso!")
-                            return True
-                        else:
-                            st.error("❌ Falha ao processar documentos")
-                            return False
-                    except Exception as processing_error:
-                        st.error(f"❌ Erro no processamento: {str(processing_error)}")
-                        # Tenta fallback com documentos básicos
-                        return self._try_fallback_initialization(api_key)
+                st.error("❌ Falha ao inicializar o sistema RAG")
+                return self._try_fallback_initialization(api_key)
                     
         except Exception as e:
             st.error(f"❌ Erro na inicialização: {str(e)}")
@@ -91,44 +67,26 @@ class ProfessorFernandoLocal:
         try:
             st.warning("🔄 Tentando inicialização de emergência para Física...")
             
-            # Cria documento básico de física
-            from langchain.schema import Document
+            # Na nova versão, não podemos adicionar documentos manualmente
+            # em vez disso, vamos tentar novamente com um modelo diferente de embeddings
             
-            basic_content = """
-            # Física - Conceitos ENEM
+            # Forçamos nova tentativa de inicialização
+            if hasattr(self.rag_system, '_setup_embeddings'):
+                # Tenta com modelo alternativo de embeddings
+                self.rag_system.embeddings = None
+                self.rag_system._setup_embeddings("all-MiniLM-L6-v2")
             
-            ## Cinemática
-            Velocidade média: v = Δs/Δt
-            Movimento uniformemente variado: v = v₀ + at
-            Equação de Torricelli: v² = v₀² + 2aΔs
+            # Força nova tentativa de inicialização
+            success = self.rag_system.initialize(api_key)
             
-            ## Dinâmica
-            Segunda Lei de Newton: F = ma
-            Força de atrito: Fat = μN
+            if success:
+                self.current_api_key = api_key
+                self.is_initialized = True
+                st.success("⚠️ Sistema de Física inicializado em modo alternativo")
+                return True
             
-            ## Energia
-            Energia cinética: Ec = ½mv²
-            Energia potencial gravitacional: Epg = mgh
-            
-            ## Eletricidade
-            Lei de Ohm: V = RI
-            Potência elétrica: P = VI
-            """
-            
-            basic_doc = Document(
-                page_content=basic_content,
-                metadata={"source": "conteudo_emergencia", "topic": "física_geral"}
-            )
-            
-            self.rag_system.documents = [basic_doc]
-            self.rag_system._create_vectorstore()
-            self.rag_system.create_rag_chain(api_key)
-            
-            self.current_api_key = api_key
-            self.is_initialized = True
-            
-            st.success("⚠️ Sistema de Física inicializado em modo básico - funcionando com conteúdo limitado")
-            return True
+            st.error("❌ Falha na inicialização alternativa")
+            return False
             
         except Exception as fallback_error:
             st.error(f"❌ Falha total na inicialização de Física: {str(fallback_error)}")
@@ -145,29 +103,29 @@ O sistema RAG local não está disponível. Verifique:
 1. Arquivo local_physics_rag.py presente
 2. Dependências instaladas: `pip install -r requirements.txt`
 
-💡 O sistema funciona com documentos locais da pasta física!
+💡 O sistema funciona com um índice FAISS que será baixado automaticamente!
 """
         
         if not api_key:
             return """
-🔑 **Configure sua API Key do OpenRouter**
+🔑 **Configure sua API Key do Groq**
 
 Para ativar o Professor Fernando com RAG Local:
-1. Obtenha uma API Key do OpenRouter (https://openrouter.ai)
+1. Obtenha uma API Key do Groq (https://console.groq.com)
 2. Insira a chave na barra lateral
-3. O sistema processará seus documentos locais automaticamente!
+3. O sistema baixará o índice FAISS e se inicializará automaticamente!
 
 📚 **Recursos do Sistema RAG Local:**
-- Processa documentos DOCX e PDF
-- Busca semântica inteligente
+- Índice FAISS pré-construído (baixado automaticamente)
+- Busca semântica inteligente com respostas formatadas
 - Memória conversacional
-- Base totalmente local (sem Google Drive)
+- Modelo DeepSeek R1 Distill 70B
 """
         
         # Inicializa sistema se necessário
         if not self.is_initialized or api_key != self.current_api_key:
             if not self.initialize_system(api_key):
-                return "❌ Falha na inicialização do sistema. Verifique sua API key e documentos."
+                return "❌ Falha na inicialização do sistema. Verifique sua API key e conexão com internet."
         
         try:
             # Gera resposta usando RAG
@@ -223,12 +181,12 @@ Para ativar o Professor Fernando com RAG Local:
 Detalhes: {str(e)}
 
 💡 **Soluções:**
-1. Verifique se a pasta 'física' existe
-2. Confirme se há documentos válidos (.docx, .pdf)
-3. Verifique sua conexão com a internet (para DeepSeek)
-4. Confirme se a API Key está correta
+1. Verifique sua conexão com a internet (necessária para Groq e para baixar o índice)
+2. Confirme se a API Key do Groq está correta
+3. Verifique se a pasta 'faiss_index_physics' existe e tem permissões de escrita
+4. Reinicie a aplicação
 
-🔧 Se o problema persistir, tente reprocessar os documentos.
+🔧 Se o problema persistir, exclua a pasta 'faiss_index_physics' e reinicie para tentar baixar novamente.
 """
             
             # MESMO COM ERRO, tenta aplicar analogias se usuário está confuso
@@ -430,25 +388,45 @@ Para fixar o conteúdo, sempre recomendo exercícios! Me pergunte quando quiser 
             self.rag_system.clear_memory()
     
     def reprocess_documents(self, api_key: str) -> bool:
-        """Força reprocessamento dos documentos"""
+        """Força reinicialização do sistema RAG"""
         if not self.rag_system:
             return False
         
         try:
-            st.info("🔄 Reprocessando documentos...")
-            success = self.rag_system.process_math_documents()
+            st.info("🔄 Forçando reinicialização do sistema...")
             
-            if success and api_key:
-                self.rag_system.create_rag_chain(api_key)
+            # Limpa a pasta FAISS_INDEX_DIR para forçar um novo download
+            import shutil
+            from local_physics_rag import FAISS_INDEX_DIR
+            
+            if os.path.exists(FAISS_INDEX_DIR):
+                try:
+                    shutil.rmtree(FAISS_INDEX_DIR)
+                    st.info("📥 Pasta do índice FAISS excluída. Baixando novamente...")
+                except Exception as e:
+                    st.error(f"❌ Erro ao excluir pasta do índice: {str(e)}")
+            
+            # Reinicializa o sistema
+            self.is_initialized = False
+            self.rag_system.is_initialized = False
+            self.rag_system.vectorstore = None
+            self.rag_system.retriever = None
+            self.rag_system.rag_chain = None
+            self.rag_system.embeddings = None
+            
+            # Tenta inicializar novamente
+            success = self.initialize_system(api_key)
+            
+            if success:
                 self.current_api_key = api_key
-                self.is_initialized = True
-                st.success("✅ Documentos reprocessados com sucesso!")
+                st.success("✅ Sistema reinicializado com sucesso!")
                 return True
-            
-            return success
-            
+            else:
+                st.error("❌ Falha na reinicialização")
+                return False
+                
         except Exception as e:
-            st.error(f"Erro no reprocessamento: {str(e)}")
+            st.error(f"Erro na reinicialização: {str(e)}")
             return False
     
     def search_exercises(self, topic: str, subject_area: str = None, k: int = 3) -> List[Dict[str, Any]]:
