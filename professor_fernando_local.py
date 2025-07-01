@@ -8,7 +8,6 @@ import streamlit as st
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 import os
-from openai import OpenAI
 from physics_formatter import format_professor_response
 
 # Importa sistema RAG local
@@ -37,14 +36,13 @@ class ProfessorFernandoLocal:
         self.exercises_rag = ENEMExercisesRAG("Física") if 'ENEMExercisesRAG' in globals() else None
         self.current_api_key = None
         self.is_initialized = False
-        self.client = None
         
     def initialize_system(self, api_key: str) -> bool:
         """
-        Inicializa o sistema RAG e o cliente OpenAI
+        Inicializa o sistema RAG e o cliente Groq
         
         Args:
-            api_key: API key da OpenAI
+            api_key: API key da Groq
             
         Returns:
             True se a inicialização for bem-sucedida, False caso contrário
@@ -60,7 +58,6 @@ class ProfessorFernandoLocal:
             if success:
                 self.current_api_key = api_key
                 self.is_initialized = True
-                self.client = OpenAI(api_key=api_key)
                 st.success("✅ Professor Fernando (Física) pronto!")
                 # Atualiza o estado da sessão para refletir a inicialização bem-sucedida
                 st.session_state.rag_initialized_fernando = True
@@ -84,7 +81,7 @@ class ProfessorFernandoLocal:
         
         Args:
             query: A consulta do usuário
-            api_key: API key da OpenAI (opcional)
+            api_key: API key da Groq (opcional)
             temperature: Temperatura para geração de texto
             
         Returns:
@@ -94,58 +91,15 @@ class ProfessorFernandoLocal:
         if api_key and api_key != self.current_api_key:
             self.initialize_system(api_key)
         
-        if not self.is_initialized or not self.client:
+        if not self.is_initialized:
             return "⚠️ Sistema não inicializado. Por favor, configure a API key primeiro."
         
         try:
-            # Obtém o conhecimento relevante de física
-            physics_context = self.rag_system.get_physics_context(query)
+            # Usa o sistema RAG para obter a resposta
+            result = self.rag_system.get_response(query)
+            raw_response = result.get("answer", "")
             
-            # Prompt do sistema para o Professor Fernando
-            system_prompt = """
-            Você é o Professor Fernando, um especialista em Física com mais de 20 anos de experiência ensinando alunos do ensino médio.
-
-            Seu objetivo é explicar conceitos de Física de forma clara, precisa e didática, adequada para estudantes que estão se preparando para o ENEM.
-
-            Características importantes:
-            - Use linguagem acessível, mas precisa cientificamente
-            - Explique os conceitos físicos com exemplos do cotidiano
-            - Utilize fórmulas e notação matemática quando necessário (use LaTeX)
-            - Destaque os conceitos-chave que são frequentemente cobrados no ENEM
-            - Evite explicações excessivamente técnicas ou que fujam do escopo do ensino médio
-
-            Ao responder questões:
-            1. Identifique os conceitos físicos envolvidos
-            2. Explique a teoria relevante de forma concisa
-            3. Demonstre a aplicação das fórmulas quando necessário
-            4. Resolva o problema passo a passo
-            5. Conclua com a resposta final destacada
-
-            Lembre-se que você está preparando alunos para o ENEM, então foque nos tópicos mais relevantes para a prova.
-            """
-            
-            # Constrói o prompt completo
-            user_prompt = f"""
-            Consulta do aluno: {query}
-            
-            Conhecimento relevante de Física:
-            {physics_context}
-            
-            Responda à consulta do aluno como o Professor Fernando, usando o conhecimento fornecido.
-            """
-            
-            # Chama a API do OpenAI
-            response = self.client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                temperature=temperature
-            )
-            
-            # Extrai e formata a resposta
-            raw_response = response.choices[0].message.content
+            # Formata a resposta
             formatted_response = format_professor_response(raw_response)
             
             # Adiciona analogia se o sistema estiver disponível
@@ -189,18 +143,6 @@ def setup_professor_fernando_local_ui():
     if "rag_initialized_fernando" not in st.session_state:
         st.session_state.rag_initialized_fernando = False
     
-    # Configuração da API Key
-    with st.sidebar:
-        st.subheader("🔑 Configuração do Professor Fernando")
-        api_key = st.text_input("API Key da OpenAI:", type="password", key="api_key_fernando")
-        
-        if st.button("Inicializar Professor Fernando", key="init_fernando"):
-            if not api_key:
-                st.error("❌ Por favor, forneça uma API Key válida.")
-            else:
-                with st.spinner("Inicializando sistema de Física..."):
-                    professor_fernando_local.initialize_system(api_key)
-    
     # Campo para a pergunta do usuário
     query = st.text_area("Digite sua pergunta sobre Física:", height=100, key="query_fernando")
     
@@ -236,7 +178,7 @@ def get_professor_fernando_local_response(query: str, api_key: str = None) -> st
                 return "⚠️ Sistema não inicializado. Por favor, configure a API key primeiro."
     
     # Retorna a resposta
-    return professor_fernando_local.get_response(query)
+    return professor_fernando_local.get_response(query, api_key)
 
 # Para teste direto
 if __name__ == "__main__":

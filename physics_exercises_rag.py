@@ -7,7 +7,7 @@ Baseado no modelo de outros sistemas de exercícios do projeto
 import os
 import json
 import streamlit as st
-from openai import OpenAI
+from groq import Groq
 
 # Importa o sistema RAG de física fixed
 try:
@@ -17,17 +17,17 @@ except ImportError:
     LOCAL_RAG_AVAILABLE = False
     print("❌ Erro ao importar local_physics_rag_fixed.py")
 
-# Inicializa o cliente OpenAI com fallback para st.secrets
-def get_openai_client():
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key and hasattr(st, "secrets") and "OPENAI_API_KEY" in st.secrets:
-        api_key = st.secrets["OPENAI_API_KEY"]
+# Inicializa o cliente Groq com fallback para st.secrets
+def get_groq_client():
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key and hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
+        api_key = st.secrets["GROQ_API_KEY"]
     
     if not api_key:
-        print("API Key da OpenAI não encontrada. Configure a variável de ambiente OPENAI_API_KEY ou adicione em st.secrets.")
+        print("API Key da Groq não encontrada. Configure a variável de ambiente GROQ_API_KEY ou adicione em st.secrets.")
         return None
         
-    return OpenAI(api_key=api_key)
+    return Groq(api_key=api_key)
 
 # Caminhos para os arquivos de questões e gabaritos
 QUESTIONS_PRIMEIRO_DIA = "questions_primeiro_dia.json"
@@ -88,7 +88,7 @@ def get_physics_question_solution(question_id, question_text, api_key=None):
     Args:
         question_id: ID da questão
         question_text: Texto da questão
-        api_key: API key da OpenAI (opcional)
+        api_key: API key da Groq (opcional)
         
     Returns:
         Explicação da solução
@@ -112,7 +112,7 @@ def get_physics_question_solution(question_id, question_text, api_key=None):
             physics_context = "Sistema RAG não inicializado. Conhecimento limitado."
     
     # Constrói o prompt para o modelo
-    system_prompt = """
+    prompt = f"""
     Você é o Professor Fernando, especialista em Física para o ENEM.
     Sua tarefa é explicar detalhadamente a solução de uma questão de física do ENEM.
     
@@ -124,9 +124,7 @@ def get_physics_question_solution(question_id, question_text, api_key=None):
     5. Por que as outras alternativas estão incorretas
     
     Use fórmulas e notação matemática quando necessário (LaTeX).
-    """
     
-    user_prompt = f"""
     Questão de Física do ENEM:
     {question_text}
     
@@ -139,19 +137,17 @@ def get_physics_question_solution(question_id, question_text, api_key=None):
     """
     
     try:
-        # Obtém o cliente OpenAI
-        client = get_openai_client()
+        # Obtém o cliente Groq
+        client = get_groq_client()
         if not client:
-            return "Não foi possível inicializar o cliente OpenAI. Verifique sua API Key."
+            return "Não foi possível inicializar o cliente Groq. Verifique sua API Key."
             
-        # Chama a API do OpenAI
+        # Chama a API do Groq
         response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.3
+            model="deepseek-r1-distill-llama-70b",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+            max_tokens=2048
         )
         
         # Retorna a explicação
@@ -168,7 +164,7 @@ def get_physics_exercise_with_solution(year=None, api_key=None):
     
     Args:
         year: Ano específico para filtrar questões (opcional)
-        api_key: API key da OpenAI (opcional)
+        api_key: API key da Groq (opcional)
         
     Returns:
         Dicionário com questão e solução
@@ -230,10 +226,10 @@ class ENEMExercisesRAG:
 
 # Para teste direto
 if __name__ == "__main__":
-    api_key = os.environ.get("OPENAI_API_KEY")
+    api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
-        api_key = input("Digite sua API key da OpenAI: ")
-        os.environ["OPENAI_API_KEY"] = api_key
+        api_key = input("Digite sua API key da Groq: ")
+        os.environ["GROQ_API_KEY"] = api_key
         
     exercise = get_physics_exercise_with_solution(api_key=api_key)
     print("Questão de Física:\n")

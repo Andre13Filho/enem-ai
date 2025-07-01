@@ -9,15 +9,15 @@ from professor_fernando_local import professor_fernando_local
 from physics_exercises_rag import get_physics_exercise_with_solution
 
 def setup_api_key():
-    """Configura a API key da OpenAI para os testes"""
+    """Configura a API key da Groq para os testes"""
     # Tenta obter a API key do ambiente
-    api_key = os.environ.get("OPENAI_API_KEY")
+    api_key = os.environ.get("GROQ_API_KEY")
     
     # Se não encontrou, solicita ao usuário
     if not api_key:
-        print("OPENAI_API_KEY não encontrada no ambiente.")
-        api_key = input("Por favor, digite sua API key da OpenAI: ")
-        os.environ["OPENAI_API_KEY"] = api_key
+        print("GROQ_API_KEY não encontrada no ambiente.")
+        api_key = input("Por favor, digite sua API key da Groq: ")
+        os.environ["GROQ_API_KEY"] = api_key
         
     return bool(api_key)
 
@@ -26,7 +26,7 @@ def test_professor_response():
     query = "Explique o que é acústica e como funciona o eco"
     
     print("Inicializando o Professor Fernando...")
-    api_key = os.environ.get("OPENAI_API_KEY")
+    api_key = os.environ.get("GROQ_API_KEY")
     professor_fernando_local.initialize_system(api_key)
     
     print("Consultando o Professor Fernando...\n")
@@ -39,7 +39,8 @@ def test_professor_response():
 def test_physics_exercise():
     """Testa a obtenção de exercício de física com solução"""
     print("Obtendo um exercício de física...\n")
-    exercise = get_physics_exercise_with_solution()
+    api_key = os.environ.get("GROQ_API_KEY")
+    exercise = get_physics_exercise_with_solution(api_key=api_key)
     
     print("Questão de Física:\n")
     print(exercise["question"])
