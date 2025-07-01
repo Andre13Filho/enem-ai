@@ -1057,6 +1057,13 @@ def main():
                 del st.session_state.gerar_mapa_mental
             if 'nivel_mapa_mental' in st.session_state:
                 del st.session_state.nivel_mapa_mental
+            # Limpar o histórico de chat ao mudar de matéria
+            if 'current_conversation_id' in st.session_state:
+                del st.session_state.current_conversation_id
+            # Limpar o chat atual
+            for subject in SUBJECTS.keys():
+                if f"chat_history_{subject}" in st.session_state:
+                    st.session_state[f"chat_history_{subject}"] = []
             cleanup_unused_modules(current_subject)
             lazy_import_professor(current_subject)
             st.rerun()
@@ -1115,16 +1122,20 @@ def main():
         st.markdown("### 💬 Histórico de Conversas")
         
         # Botões de ação para o histórico
-        col1, col2 = st.columns(2)
+        col1, col2 = st.sidebar.columns(2)
         with col1:
-            if st.button("+ Nova conversa"):
+            if st.sidebar.button("+ Nova conversa"):
                 if 'current_conversation_id' in st.session_state:
                     del st.session_state.current_conversation_id
+                # Limpar todos os históricos de chat
+                for subject in SUBJECTS.keys():
+                    if f"chat_history_{subject}" in st.session_state:
+                        st.session_state[f"chat_history_{subject}"] = []
                 st.rerun()
         with col2:
-            if st.button("🗑️ Limpar histórico"):
+            if st.sidebar.button("🗑️ Limpar histórico"):
                 clear_all_conversations()
-                st.success("Histórico apagado!")
+                st.sidebar.success("Histórico apagado!")
                 st.rerun()
         
         # Lista de conversas recentes
@@ -1140,12 +1151,12 @@ def main():
                 
                 # Usa abordagem nativa do Streamlit para botões
                 btn_label = f"📝 {display_title} ({subject} - {date_str})"
-                if st.button(btn_label, key=f"conv_{conv_id}"):
+                if st.sidebar.button(btn_label, key=f"conv_{conv_id}"):
                     st.session_state.current_conversation_id = conv_id
                     st.session_state.current_subject = subject
                     st.rerun()
         else:
-            st.info("Nenhuma conversa no histórico. Faça uma pergunta para começar!")
+            st.sidebar.info("Nenhuma conversa no histórico. Faça uma pergunta para começar!")
 
     # Área Principal com Abas
     if current_subject == "Redação":
@@ -1167,7 +1178,10 @@ def main():
             conversation_id = st.session_state.current_conversation_id
             
             # Limpa o histórico em memória para carregar do banco
-            st.session_state[f"chat_history_{current_subject}"] = []
+            # Limpar todos os históricos de chat para evitar confusão
+            for subject in SUBJECTS.keys():
+                if f"chat_history_{subject}" in st.session_state:
+                    st.session_state[f"chat_history_{subject}"] = []
             
             # Carrega mensagens da conversa selecionada
             messages = get_conversation_messages(conversation_id)
