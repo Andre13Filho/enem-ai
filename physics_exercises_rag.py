@@ -6,11 +6,28 @@ Baseado no modelo de outros sistemas de exercícios do projeto
 
 import os
 import json
+import streamlit as st
 from openai import OpenAI
-from local_physics_rag import get_physics_knowledge
 
-# Inicializa o cliente OpenAI
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+# Importa o sistema RAG de física fixed
+try:
+    from local_physics_rag_fixed import get_local_physics_rag_instance
+    LOCAL_RAG_AVAILABLE = True
+except ImportError:
+    LOCAL_RAG_AVAILABLE = False
+    print("❌ Erro ao importar local_physics_rag_fixed.py")
+
+# Inicializa o cliente OpenAI com fallback para st.secrets
+def get_openai_client():
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key and hasattr(st, "secrets") and "OPENAI_API_KEY" in st.secrets:
+        api_key = st.secrets["OPENAI_API_KEY"]
+    
+    if not api_key:
+        print("API Key da OpenAI não encontrada. Configure a variável de ambiente OPENAI_API_KEY ou adicione em st.secrets.")
+        return None
+        
+    return OpenAI(api_key=api_key)
 
 # Caminhos para os arquivos de questões e gabaritos
 QUESTIONS_PRIMEIRO_DIA = "questions_primeiro_dia.json"
@@ -64,13 +81,14 @@ def get_physics_questions(year=None, num_questions=5):
     
     return physics_questions
 
-def get_physics_question_solution(question_id, question_text):
+def get_physics_question_solution(question_id, question_text, api_key=None):
     """
     Obtém a solução para uma questão de física
     
     Args:
         question_id: ID da questão
         question_text: Texto da questão
+        api_key: API key da OpenAI (opcional)
         
     Returns:
         Explicação da solução
@@ -84,7 +102,12 @@ def get_physics_question_solution(question_id, question_text):
         correct_answer = gabaritos[question_id].get("gabarito", "")
     
     # Obtém conhecimento relevante de física
-    physics_context = get_physics_knowledge(question_text)
+    physics_context = ""
+    if LOCAL_RAG_AVAILABLE:
+        rag_system = get_local_physics_rag_instance()
+        if api_key:
+            rag_system.initialize(api_key)
+            physics_context = rag_system.get_physics_context(question_text)
     
     # Constrói o prompt para o modelo
     system_prompt = """
@@ -114,6 +137,11 @@ def get_physics_question_solution(question_id, question_text):
     """
     
     try:
+        # Obtém o cliente OpenAI
+        client = get_openai_client()
+        if not client:
+            return "Não foi possível inicializar o cliente OpenAI. Verifique sua API Key."
+            
         # Chama a API do OpenAI
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -129,15 +157,16 @@ def get_physics_question_solution(question_id, question_text):
     
     except Exception as e:
         print(f"Erro ao obter solução: {e}")
-        return "Não foi possível gerar a solução para esta questão no momento."
+        return f"Não foi possível gerar a solução para esta questão no momento. Erro: {str(e)}"
 
 # Função principal para uso em outros módulos
-def get_physics_exercise_with_solution(year=None):
+def get_physics_exercise_with_solution(year=None, api_key=None):
     """
     Obtém um exercício de física com solução
     
     Args:
         year: Ano específico para filtrar questões (opcional)
+        api_key: API key da OpenAI (opcional)
         
     Returns:
         Dicionário com questão e solução
@@ -161,7 +190,7 @@ def get_physics_exercise_with_solution(year=None):
         question_text += f"{option_key}) {option_text}\n"
     
     # Obtém a solução
-    solution = get_physics_question_solution(question['id'], question_text)
+    solution = get_physics_question_solution(question['id'], question_text, api_key)
     
     return {
         "question": question_text,
@@ -170,9 +199,41 @@ def get_physics_exercise_with_solution(year=None):
         "id": question['id']
     }
 
+# Classe para compatibilidade com outros sistemas
+class ENEMExercisesRAG:
+    """Classe para compatibilidade com outros sistemas de exercícios"""
+    
+    def __init__(self, subject):
+        self.subject = subject
+        self.is_initialized = False
+        self.api_key = None
+        
+    def initialize(self, api_key):
+        """Inicializa o sistema"""
+        self.api_key = api_key
+        self.is_initialized = True
+        return True
+        
+    def get_exercise_with_solution(self, year=None):
+        """Obtém um exercício com solução"""
+        if self.subject.lower() == "física":
+            return get_physics_exercise_with_solution(year, self.api_key)
+        else:
+            return {
+                "question": f"Exercícios de {self.subject} não disponíveis.",
+                "solution": "",
+                "year": "",
+                "id": ""
+            }
+
 # Para teste direto
 if __name__ == "__main__":
-    exercise = get_physics_exercise_with_solution()
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        api_key = input("Digite sua API key da OpenAI: ")
+        os.environ["OPENAI_API_KEY"] = api_key
+        
+    exercise = get_physics_exercise_with_solution(api_key=api_key)
     print("Questão de Física:\n")
     print(exercise["question"])
     print("\nSolução:\n")
