@@ -2,6 +2,7 @@ import streamlit as st
 import time
 import re
 import os
+import sqlite3
 from typing import Dict, List, Any
 from datetime import datetime
 from groq import Groq
@@ -874,6 +875,89 @@ def get_analogia_para_professor(conceito: str, materia: str, api_key: str) -> st
     except Exception as e:
         return f"❌ Erro ao gerar analogia: {str(e)}"
 
+def init_conversation_db():
+    """Inicializa o banco de dados de conversas"""
+    conn = sqlite3.connect('conversations.db')
+    c = conn.cursor()
+    # Tabela de conversas
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS conversations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            subject TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    # Tabela de mensagens
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            conversation_id INTEGER,
+            sender TEXT NOT NULL,
+            text TEXT NOT NULL,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (conversation_id) REFERENCES conversations (id)
+        )
+    ''')
+    conn.commit()
+    return conn
+
+def get_or_create_conversation(subject):
+    """Obtém a conversa atual ou cria uma nova"""
+    if 'current_conversation_id' not in st.session_state:
+        # Cria uma nova conversa
+        conn = init_conversation_db()
+        c = conn.cursor()
+        title = f"Conversa sobre {subject}"
+        c.execute("INSERT INTO conversations (title, subject) VALUES (?, ?)", (title, subject))
+        conn.commit()
+        conversation_id = c.lastrowid
+        conn.close()
+        st.session_state.current_conversation_id = conversation_id
+        return conversation_id
+    return st.session_state.current_conversation_id
+
+def save_message(conversation_id, sender, text):
+    """Salva uma mensagem no banco de dados"""
+    conn = init_conversation_db()
+    c = conn.cursor()
+    c.execute(
+        "INSERT INTO messages (conversation_id, sender, text) VALUES (?, ?, ?)",
+        (conversation_id, sender, text)
+    )
+    conn.commit()
+    conn.close()
+
+def get_conversation_messages(conversation_id):
+    """Obtém todas as mensagens de uma conversa"""
+    conn = init_conversation_db()
+    c = conn.cursor()
+    c.execute(
+        "SELECT sender, text FROM messages WHERE conversation_id = ? ORDER BY timestamp",
+        (conversation_id,)
+    )
+    messages = c.fetchall()
+    conn.close()
+    return messages
+
+def get_recent_conversations(limit=10):
+    """Obtém as conversas mais recentes"""
+    conn = init_conversation_db()
+    c = conn.cursor()
+    c.execute(
+        """
+        SELECT c.id, c.title, c.subject, c.created_at, 
+               (SELECT text FROM messages WHERE conversation_id = c.id ORDER BY timestamp LIMIT 1) as first_message
+        FROM conversations c
+        ORDER BY c.created_at DESC
+        LIMIT ?
+        """,
+        (limit,)
+    )
+    conversations = c.fetchall()
+    conn.close()
+    return conversations
+
 def main():
     # Header
     st.markdown("""
@@ -998,6 +1082,29 @@ def main():
         else:
             st.error("❌ API Key não encontrada")
             st.info("Configure sua API Key no Streamlit Cloud ou arquivo .env")
+        
+        # Histórico de conversas (na parte inferior da sidebar)
+        st.markdown("---")
+        st.markdown("### 💬 Histórico de Conversas")
+        
+        # Botão para nova conversa
+        if st.sidebar.button("+ Nova conversa"):
+            if 'current_conversation_id' in st.session_state:
+                del st.session_state.current_conversation_id
+            st.rerun()
+        
+        # Lista de conversas recentes
+        recent_conversations = get_recent_conversations()
+        for conv_id, title, subject, created_at, first_message in recent_conversations:
+            # Formata o título da conversa (usa o início da primeira mensagem se disponível)
+            display_title = first_message[:30] + "..." if first_message and len(first_message) > 30 else title
+            date_str = datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S").strftime("%d/%m %H:%M")
+            
+            # Cria um botão para cada conversa
+            if st.sidebar.button(f"{display_title} ({date_str})", key=f"conv_{conv_id}"):
+                st.session_state.current_conversation_id = conv_id
+                st.session_state.current_subject = subject
+                st.rerun()
 
     # Área Principal com Abas
     if current_subject == "Redação":
@@ -1010,12 +1117,37 @@ def main():
     with tab1:
         # Área de Chat Principal
         st.header(f"Conversando com {subject_info.get('teacher', 'Assistente')}")
-
+        
+        # Obtém ou cria a conversa atual
+        conversation_id = get_or_create_conversation(current_subject)
+        
+        # Se temos uma conversa selecionada, carrega as mensagens do banco de dados
+        if 'current_conversation_id' in st.session_state:
+            # Limpa o histórico em memória para carregar do banco
+            if st.session_state[f"chat_history_{current_subject}"]:
+                st.session_state[f"chat_history_{current_subject}"] = []
+            
+            # Carrega mensagens da conversa selecionada
+            messages = get_conversation_messages(st.session_state.current_conversation_id)
+            
+            # Se não há mensagens na conversa selecionada, adiciona a introdução
+            if not messages:
+                intro_message = subject_info["intro"]
+                save_message(conversation_id, "assistant", intro_message)
+                st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=intro_message))
+            else:
+                # Adiciona as mensagens ao histórico em memória
+                for sender, text in messages:
+                    if sender == "user":
+                        st.session_state[f"chat_history_{current_subject}"].append(HumanMessage(content=text))
+                    else:
+                        st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=text))
+        
         # Adiciona introdução do professor se o chat estiver vazio
         if not st.session_state[f"chat_history_{current_subject}"]:
-            st.session_state[f"chat_history_{current_subject}"].append(
-                AIMessage(content=subject_info["intro"])
-            )
+            intro_message = subject_info["intro"]
+            save_message(conversation_id, "assistant", intro_message)
+            st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=intro_message))
 
         # Exibe o histórico de chat
         for message in st.session_state[f"chat_history_{current_subject}"]:
@@ -1034,6 +1166,9 @@ def main():
                 'content': prompt,
                 'subject': current_subject
             }
+            
+            # Salva a mensagem do usuário no banco de dados
+            save_message(conversation_id, "user", prompt)
             
             st.session_state[f"chat_history_{current_subject}"].append(HumanMessage(content=prompt))
             
@@ -1074,6 +1209,9 @@ def main():
                     time.sleep(0.01)
                     message_placeholder.markdown(full_response)
 
+                # Salva a resposta da IA no banco de dados
+                save_message(conversation_id, "assistant", full_response)
+                
                 st.session_state[f"chat_history_{current_subject}"].append(AIMessage(content=full_response))
                 st.rerun()
     
