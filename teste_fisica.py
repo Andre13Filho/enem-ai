@@ -1,78 +1,40 @@
 #!/usr/bin/env python3
 """
-Script de teste para o professor de física
+Teste do Professor Fernando - Especialista em Física
 """
 
-import os
-import sys
-from dotenv import load_dotenv
-import time
+from professor_fernando_local import get_professor_fernando_response
+from physics_exercises_rag import get_physics_exercise_with_solution
 
-# Carrega variáveis de ambiente (API_KEY)
-load_dotenv()
-
-# Configuração básica
-print("📋 Teste do Professor Fernando (Física)")
-print("🔧 Verificando arquivos necessários...")
-
-required_files = [
-    "professor_fernando_local.py",
-    "local_physics_rag_fixed.py"
-]
-
-for file in required_files:
-    if not os.path.exists(file):
-        print(f"❌ Arquivo {file} não encontrado!")
-        sys.exit(1)
-    else:
-        print(f"✅ {file} encontrado")
-
-# Importa o professor
-try:
-    print("🔄 Importando professor_fernando_local...")
-    from professor_fernando_local import get_professor_fernando_local_response, professor_fernando_local
-    print("✅ Importação bem-sucedida")
-except Exception as e:
-    print(f"❌ Erro na importação: {e}")
-    sys.exit(1)
-
-# Verifica API Key
-api_key = os.getenv("GROQ_API_KEY")
-if not api_key:
-    print("❌ API Key não encontrada no ambiente. Defina GROQ_API_KEY")
-    sys.exit(1)
-print("✅ API Key encontrada")
-
-# Tenta inicializar o sistema
-print("\n🔄 Inicializando o sistema...")
-try:
-    init_success = professor_fernando_local.initialize_system(api_key)
-    if init_success:
-        print("✅ Sistema inicializado com sucesso!")
-    else:
-        print("❌ Falha na inicialização. Pulando para o teste com resposta de fallback...")
-except Exception as e:
-    print(f"❌ Erro na inicialização: {e}")
-    print("⚠️ Pulando para o teste com resposta de fallback...")
-
-# Testa uma pergunta simples
-print("\n🔄 Testando pergunta: 'O que é a Segunda Lei de Newton?'")
-try:
-    start_time = time.time()
-    response = get_professor_fernando_local_response("O que é a Segunda Lei de Newton?", api_key)
-    elapsed_time = time.time() - start_time
+def test_professor_response():
+    """Testa a resposta do Professor Fernando"""
+    query = "Explique o que é acústica e como funciona o eco"
     
-    print(f"✅ Resposta recebida em {elapsed_time:.2f} segundos!")
-    print("\n----- RESPOSTA -----")
-    print(response[:500] + "..." if len(response) > 500 else response)
-    print("----- FIM DA RESPOSTA -----\n")
+    print("Consultando o Professor Fernando...\n")
+    response = get_professor_fernando_response(query)
     
-    if "Erro" in response or "erro" in response:
-        print("⚠️ A resposta contém menção a erros!")
-    else:
-        print("✅ A resposta não contém erros aparentes")
-        
-except Exception as e:
-    print(f"❌ Erro ao obter resposta: {e}")
+    print("Resposta do Professor Fernando:\n")
+    print(response)
+    print("\n" + "-"*50 + "\n")
 
-print("\n📋 Teste concluído!") 
+def test_physics_exercise():
+    """Testa a obtenção de exercício de física com solução"""
+    print("Obtendo um exercício de física...\n")
+    exercise = get_physics_exercise_with_solution()
+    
+    print("Questão de Física:\n")
+    print(exercise["question"])
+    print("\nSolução:\n")
+    print(exercise["solution"])
+    print("\n" + "-"*50 + "\n")
+
+if __name__ == "__main__":
+    print("="*50)
+    print("TESTE DO PROFESSOR FERNANDO - FÍSICA")
+    print("="*50 + "\n")
+    
+    # Testa a resposta do professor
+    test_professor_response()
+    
+    # Testa o exercício com solução
+    test_physics_exercise() 
