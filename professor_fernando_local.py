@@ -1,58 +1,62 @@
-#!/usr/bin/env python3
 """
 Professor Fernando com Sistema RAG Local
-Usa índice FAISS para física em vez de processar documentos locais
+Usa documentos locais da pasta Física em vez da API do Google Drive
 """
 
 import streamlit as st
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 import os
-from physics_formatter import format_professor_response
 
 # Importa sistema RAG local
 try:
-    from local_physics_rag_fixed import get_local_physics_rag_instance
+    from local_physics_rag import get_local_physics_rag_instance
     from enem_exercises_rag import ENEMExercisesRAG
+    from physics_formatter import format_professor_response
     LOCAL_RAG_AVAILABLE = True
+    physics_FORMATTER_AVAILABLE = True
 except ImportError:
     LOCAL_RAG_AVAILABLE = False
-    print("❌ Erro ao importar local_physics_rag_fixed.py")
+    physics_FORMATTER_AVAILABLE = False
 
 # Importa sistema de analogias da Sther V2
 try:
     from new_analogies_system import add_analogy_if_confused
-    ANALOGIAS_AVAILABLE = True
+    ANALOGIES_AVAILABLE = True
     print("✅ Sistema de analogias V2 baseado nas séries carregado")
 except ImportError:
-    ANALOGIAS_AVAILABLE = False
+    ANALOGIES_AVAILABLE = False
     print("⚠️ Sistema de analogias da Sther não disponível")
 
 class ProfessorFernandoLocal:
-    """Classe para gerenciar o Professor Fernando de Física"""
+    """Professor Fernando especializado usando documentos locais"""
     
     def __init__(self):
-        self.rag_system = get_local_physics_rag_instance() if LOCAL_RAG_AVAILABLE else None
-        self.exercises_rag = ENEMExercisesRAG("Física") if 'ENEMExercisesRAG' in globals() else None
+        self.rag_system = None
+        self.exercises_rag = None
         self.current_api_key = None
         self.is_initialized = False
         
+        if LOCAL_RAG_AVAILABLE:
+            self.rag_system = get_local_physics_rag_instance()
+            self.exercises_rag = ENEMExercisesRAG()
+    
     def initialize_system(self, api_key: str) -> bool:
         """
-        Inicializa o sistema RAG e o cliente Groq
-        
-        Args:
-            api_key: API key da Groq
-            
-        Returns:
-            True se a inicialização for bem-sucedida, False caso contrário
+        Inicializa o sistema RAG baixando o índice FAISS remoto e configurando a cadeia.
         """
         if not LOCAL_RAG_AVAILABLE:
-            st.error("❌ Sistema RAG de física não disponível.")
+            st.error("O arquivo 'local_physics_rag.py' é essencial e não foi encontrado.")
             return False
         
+        if self.is_initialized and self.current_api_key == api_key:
+            st.success("✅ Sistema de Física já inicializado.")
+            return True
+
+        st.info("🔄 Inicializando sistema de Física (Professor Fernando)...")
+        
         try:
-            # A função `initialize` cuida de tudo: download, carregamento e criação da cadeia.
+            # A nova função `initialize` cuida de tudo: download, carregamento e criação da cadeia.
             success = self.rag_system.initialize(api_key)
             
             if success:
@@ -60,130 +64,349 @@ class ProfessorFernandoLocal:
                 self.is_initialized = True
                 st.success("✅ Professor Fernando (Física) pronto!")
                 # Atualiza o estado da sessão para refletir a inicialização bem-sucedida
-                st.session_state.rag_initialized_fernando = True
+                st.session_state.rag_initialized_Fernando = True
                 return True
             else:
                 st.error("❌ Falha ao inicializar o sistema de Física.")
                 st.warning("O Professor Fernando pode não responder corretamente.")
                 self.is_initialized = False
-                st.session_state.rag_initialized_fernando = False
+                st.session_state.rag_initialized_Fernando = False
                 return False
                     
         except Exception as e:
             st.error(f"❌ Ocorreu um erro crítico durante a inicialização: {str(e)}")
             self.is_initialized = False
-            st.session_state.rag_initialized_fernando = False
+            st.session_state.rag_initialized_Fernando = False
             return False
     
-    def get_response(self, query: str, api_key: str = None, temperature: float = 0.2) -> str:
-        """
-        Obtém resposta do Professor Fernando para uma consulta
+    def get_response(self, user_message: str, api_key: str) -> str:
+        """Gera uma resposta para a mensagem do usuário."""
         
-        Args:
-            query: A consulta do usuário
-            api_key: API key da Groq (opcional)
-            temperature: Temperatura para geração de texto
-            
-        Returns:
-            A resposta formatada do Professor Fernando
-        """
-        # Se uma nova API key for fornecida e for diferente da atual, reinicializa
-        if api_key and api_key != self.current_api_key:
-            self.initialize_system(api_key)
+        if not LOCAL_RAG_AVAILABLE:
+            return """
+🚧 **Sistema RAG Local Indisponível**
+
+O sistema RAG local não está disponível. Verifique:
+1. Arquivo local_physics_rag.py presente
+2. Dependências instaladas: `pip install -r requirements.txt`
+
+💡 O sistema funciona com documentos locais da pasta Física!
+"""
         
+        if not api_key or api_key.strip() == "":
+            return """
+🔑 **API Key da Groq Necessária**
+
+Para ativar o Professor Fernando com RAG Local:
+1. Configure a secret GROQ_API_KEY no Streamlit Cloud
+2. O sistema processará seus documentos locais automaticamente!
+
+📚 **Recursos do Sistema RAG Local:**
+- Processa documentos DOCX e PDF
+- Busca semântica inteligente
+- Memória conversacional
+- Base totalmente local (sem Google Drive)
+"""
+        
+        # Debug: Mostra informações da API key (apenas os primeiros caracteres)
+        api_key_preview = api_key[:10] + "..." if len(api_key) > 10 else api_key
+        
+        # Inicializa sistema se necessário
+        # Remove comparação direta de API key para evitar reinicializações desnecessárias
         if not self.is_initialized:
-            return "⚠️ Sistema não inicializado. Por favor, configure a API key primeiro."
+            try:
+                st.info("🔧 Iniciando processo de inicialização...")
+                init_success = self.initialize_system(api_key)
+                
+                if not init_success:
+                    st.error("❌ Falha na inicialização - detalhes:")
+                    st.error(f"• RAG System: {self.rag_system is not None}")
+                    st.error(f"• Pasta Física: {self.rag_system.physics_folder_path if self.rag_system else 'N/A'}")
+                    st.error(f"• Sistema inicializado: {self.is_initialized}")
+                    
+                    return f"""
+❌ **Falha na Inicialização do Sistema RAG**
+
+O sistema não conseguiu inicializar corretamente.
+
+**Debug Info:**
+- API Key recebida: {api_key_preview}
+- RAG System disponível: {self.rag_system is not None}
+- Pasta Física: {self.rag_system.physics_folder_path if self.rag_system else 'N/A'}
+- Sistema inicializado: {self.is_initialized}
+
+**🚨 ATIVANDO MODO DE EMERGÊNCIA AVANÇADO:**
+
+Olá, Sther! Sou o Professor Fernando, especialista em Física do ENEM. 
+
+Estou com problemas técnicos com minha base de dados, volte mais tarde!
+"""
+                else:
+                    st.success("✅ Inicialização concluída com sucesso!")
+                    
+            except Exception as init_error:
+                st.error(f"❌ Erro crítico na inicialização: {str(init_error)}")
+                import traceback
+                st.error(f"Stack trace: {traceback.format_exc()}")
+                
+                return f"""
+❌ **Erro Crítico na Inicialização**
+
+Ocorreu um erro durante a inicialização do sistema:
+
+```
+{str(init_error)}
+```
+
+**Modo Professor Básico Ativado:**
+Estou com alguns probleminhas, volte mais tarde
+"""
         
         try:
-            # Usa o sistema RAG para obter a resposta
-            result = self.rag_system.get_response(query)
-            raw_response = result.get("answer", "")
+            # Gera resposta usando RAG
+            result = self.rag_system.get_response(user_message)
             
-            # Formata a resposta
-            formatted_response = format_professor_response(raw_response)
+            answer = result.get("answer", "Desculpe, não consegui gerar uma resposta.")
+            source_docs = result.get("source_documents", [])
             
-            # Adiciona analogia se o sistema estiver disponível
-            if ANALOGIAS_AVAILABLE:
+            # Verifica se há problemas na resposta
+            if ("Erro na API" in answer or "Error code: 401" in answer or "Invalid API Key" in answer or 
+                "Sistema RAG não inicializado" in answer):
+                return f"""
+🔑 **Problema com a API Key da Groq ou com a Inicialização do RAG**
+
+Detectei um problema de autenticação ou inicialização.
+
+**Mensagem do Sistema:**
+`{answer}`
+
+**Modo Professor Básico Ativado:**
+
+Olá! Sou o Professor Fernando de Física. Mesmo com limitações técnicas, vou te ajudar!
+
+**Sobre sua pergunta:** "{user_message}"
+
+**Resposta baseada no conhecimento geral:**
+Estou com probleminhas técnicos Sther, pode voltar depois?
+"""
+            
+            # Aplica formatação Física melhorada
+            if physics_FORMATTER_AVAILABLE:
+                answer = format_professor_response(answer)
+            
+            # Monta resposta formatada
+            response = f"""
+{answer}
+
+---
+
+📚 **Materiais Consultados:**
+"""
+            
+            # Adiciona informações das fontes
+            sources_added = set()
+            for doc in source_docs[:3]:  # Máximo 3 fontes
+                source_name = doc.metadata.get("source", "Documento desconhecido")
+                topic = doc.metadata.get("topic", "Tópico geral")
+                
+                if source_name not in sources_added:
+                    response += f"\n• {topic} - {source_name}"
+                    sources_added.add(source_name)
+            
+            if not sources_added:
+                response += "\n• Base de conhecimento geral de Física"
+            
+            # SEMPRE adiciona exercícios recomendados
+            # response += self._add_recommended_exercises(user_message)
+            
+            # SISTEMA DE ANALOGIAS V2 - SÉRIES PERSONALIZADAS
+            # SEMPRE tenta adicionar analogias, mesmo se houve erro na API
+            if ANALOGIES_AVAILABLE:
                 try:
-                    formatted_response = add_analogy_if_confused(
-                        formatted_response, query, "física", self.current_api_key
-                    )
-                except Exception as e:
-                    print(f"Erro ao adicionar analogia: {e}")
+                    enhanced_response = add_analogy_if_confused(user_message, response)
+                    if enhanced_response != response:  # Se analogia foi adicionada
+                        response = enhanced_response
+                        response += "\n\n🎬 *Sistema de analogias com suas séries favoritas ativo! Friends, Grey's Anatomy, Stranger Things e mais...*"
+                except Exception as analogy_error:
+                    print(f"⚠️ Erro no sistema de analogias: {analogy_error}")
             
-            return formatted_response
-        
+            return response
+            
         except Exception as e:
-            print(f"Erro ao obter resposta do Professor Fernando: {e}")
-            return f"Desculpe, não consegui processar sua consulta no momento. Erro: {str(e)}"
+            error_response = f"""
+❌ **Erro no Sistema RAG Local**
 
-# Instância global do Professor Fernando Local
-professor_fernando_local = ProfessorFernandoLocal()
+Detalhes: {str(e)}
 
-def setup_professor_fernando_local_ui():
-    """Configura UI específica do Professor Fernando Local (barra lateral)"""
-    st.title("Professor Fernando - Física")
-    st.markdown("""
-    ### 👨‍🔬 Professor Fernando
-    
-    Especialista em Física para o ENEM com mais de 20 anos de experiência.
-    
-    **Áreas de especialidade:**
-    - Mecânica
-    - Termodinâmica
-    - Eletromagnetismo
-    - Óptica
-    - Física Moderna
-    - Ondulatória
-    
-    Faça perguntas sobre conceitos físicos, resolução de problemas ou dúvidas sobre o ENEM.
-    """)
-    
-    # Verifica se o sistema já está inicializado
-    if "rag_initialized_fernando" not in st.session_state:
-        st.session_state.rag_initialized_fernando = False
-    
-    # Campo para a pergunta do usuário
-    query = st.text_area("Digite sua pergunta sobre Física:", height=100, key="query_fernando")
-    
-    if st.button("Enviar pergunta ao Professor Fernando", key="send_fernando"):
-        if not query:
-            st.warning("Por favor, digite uma pergunta.")
-            return
-        
-        if not st.session_state.rag_initialized_fernando:
-            st.error("⚠️ Sistema não inicializado. Configure a API key primeiro.")
-            return
-        
-        with st.spinner("Professor Fernando está elaborando a resposta..."):
-            api_key = st.session_state.get("api_key_fernando", None)
-            response = professor_fernando_local.get_response(query, api_key)
+💡 **Soluções:**
+1. Verifique se a pasta 'Física' existe
+2. Confirme se há documentos válidos (.docx, .pdf)
+3. Verifique sua conexão com a internet (para DeepSeek)
+4. Confirme se a API Key está correta
+
+🔧 Se o problema persistir, tente reprocessar os documentos.
+
+**Exemplo de Física com fórmulas:**
+A Segunda Lei de Newton relaciona a força resultante $\vec{F}$ com a massa $m$ e a aceleração $\vec{a}$:
+$$\vec{F} = m\vec{a}$$
+
+Para calcular a energia cinética de um objeto com massa $m$ e velocidade $v$, usamos:
+$$E_c = \frac{1}{2}mv^2$$
+
+O trabalho realizado por uma força constante é dado por:
+$$W = \vec{F} \cdot \vec{d} = |F||d|\cos\theta$$
+onde $\theta$ é o ângulo entre a força e o deslocamento.
+"""
             
-        st.markdown("### Resposta do Professor Fernando:")
-        st.markdown(response)
-
-def get_professor_fernando_local_response(query: str, api_key: str = None) -> str:
-    """Função para obter resposta do Professor Fernando para uso em outros módulos"""
-    # Verifica se o sistema está inicializado
-    if not professor_fernando_local.is_initialized:
-        # Usa a API key fornecida ou tenta obter da sessão
-        if api_key:
-            professor_fernando_local.initialize_system(api_key)
-        else:
-            # Tenta inicializar com a API key da sessão
-            session_api_key = st.session_state.get("openai_api_key", None)
-            if session_api_key:
-                professor_fernando_local.initialize_system(session_api_key)
-            else:
-                return "⚠️ Sistema não inicializado. Por favor, configure a API key primeiro."
+            # MESMO COM ERRO, tenta aplicar analogias se usuário está confuso
+            if ANALOGIES_AVAILABLE:
+                try:
+                    enhanced_error_response = add_analogy_if_confused(user_message, error_response)
+                    if enhanced_error_response != error_response:
+                        error_response = enhanced_error_response
+                        error_response += "\n\n🎬 *Pelo menos as analogias funcionam! 😊*"
+                except Exception as analogy_error:
+                    print(f"⚠️ Erro no sistema de analogias: {analogy_error}")
+            
+            return error_response
     
-    # Retorna a resposta
-    return professor_fernando_local.get_response(query, api_key)
-
-# Para teste direto
-if __name__ == "__main__":
-    # Configura a página Streamlit
-    st.set_page_config(page_title="Professor Fernando - Física", layout="wide")
+    def get_relevant_content_preview(self, query: str) -> str:
+        """Mostra prévia do conteúdo que seria recuperado"""
+        if not self.rag_system or not self.is_initialized:
+            return "Sistema não inicializado"
+        
+        try:
+            docs = self.rag_system.search_relevant_content(query, k=3)
+            if not docs:
+                return "Nenhum conteúdo relevante encontrado"
+            
+            preview = "**Conteúdo relevante encontrado:**\n\n"
+            for i, doc in enumerate(docs, 1):
+                content_preview = doc.page_content[:150] + "..." if len(doc.page_content) > 150 else doc.page_content
+                source = doc.metadata.get("source", "Documento")
+                topic = doc.metadata.get("topic", "Geral")
+                
+                preview += f"📚 **Fonte {i}** ({topic}):\n*{source}*\n{content_preview}\n\n"
+            
+            return preview
+            
+        except Exception as e:
+            return f"Erro ao buscar conteúdo: {str(e)}"
     
-    # Configura a UI
-    setup_professor_fernando_local_ui() 
+    # def _add_recommended_exercises(self, user_message: str) -> str:
+    #     """Adiciona exercícios recomendados baseados na mensagem do usuário"""
+    #     try:
+    #         user_lower = user_message.lower()
+            
+    #         # Detecta se Sther está EXPLICITAMENTE pedindo exercícios
+    #         exercise_request_keywords = [
+    #             'exercício', 'exercicios', 'questão', 'questões', 'questao', 'questoes',
+    #             'praticar', 'treinar', 'resolver', 'fazer exercício', 'atividade',
+    #             'me dê', 'me de', 'quero', 'preciso', 'tem exercício', 'tem questão'
+    #         ]
+            
+    #         is_asking_for_exercises = any(keyword in user_lower for keyword in exercise_request_keywords)
+            
+#             if is_asking_for_exercises:
+#                 # Sther está pedindo exercícios - busca com mais prioridade
+#                 exercises = self.search_exercises_by_message(user_message, k=3)
+                
+#                 if exercises:
+#                     exercises_text = """
+
+# ---
+
+# 📚 **Exercícios ENEM - Conforme solicitado!**
+
+# Perfeito, Sther! Aqui estão os exercícios que você pediu:
+
+# """
+                    
+#                     for i, exercise in enumerate(exercises, 1):
+#                         year = exercise["year"] 
+#                         question_num = exercise["question_number"]
+#                         topic = exercise["topic"]
+                        
+#                         # Limita o conteúdo para não sobrecarregar
+#                         content = exercise["content"].strip()
+#                         if len(content) > 800:
+#                             content = content[:800] + "\n\n[...continua - me peça para ver o resto se precisar!]"
+                        
+#                         exercises_text += f"""
+# **📝 Exercício {i} - ENEM {year} (Questão {question_num})**
+# *Tópico: {topic}*
+
+# {content}
+
+# *💬 Quer que eu explique alguma parte? É só perguntar!*
+
+# ---
+# """
+                    
+#                     exercises_text += """
+# 🎯 **Dica:** Leia com calma, tente resolver primeiro e depois me pergunte se tiver dúvidas! 💪
+# """
+                    
+#                     return exercises_text
+                
+#                 else:
+#                     # Sther pediu exercícios mas não encontrou nada específico
+#                     return """
+
+# ---
+
+# ❌ **Não encontrei exercícios específicos**
+
+# Desculpe, Sther! Não encontrei exercícios exatos sobre esse tópico na base ENEM.
+
+# 💡 **Tente reformular assim:**
+# - "Exercícios de Geometria"
+# - "Questões de Funções" 
+# - "Exercícios do ENEM 2024"
+# - "Problemas de Probabilidade"
+
+# 📚 **Ou me pergunte sobre a teoria primeiro** que eu explico e depois trago exercícios relacionados!
+# """
+            
+#             else:
+#                 # Pergunta normal - apenas sugere exercícios sutilmente
+#                 exercises = self.search_exercises_by_message(user_message, k=1)
+                
+#                 if exercises:
+#                     exercise = exercises[0]
+#                     year = exercise["year"]
+#                     topic = exercise["topic"]
+                    
+#                     return f"""
+
+# ---
+
+# 💡 **Sugestão de Prática**
+
+# Para fixar esse conteúdo, que tal resolver um exercício do ENEM {year} sobre {topic}? 
+# Se quiser, é só me pedir: "Professor, me dê exercícios sobre {topic.lower()}"! 
+
+# 🚀 Prática é fundamental!
+# """
+                
+#                 else:
+#                     return """
+
+# ---
+
+# 💡 **Sugestão de Prática**
+
+# Para fixar bem esse conteúdo, sempre recomendo praticar com exercícios! 
+# Me peça exercícios específicos quando quiser treinar! 🚀
+# """
+                
+#         except Exception as e:
+#             # Em caso de erro, retorna sugestão simples
+#             return """
+
+# ---
+
+# 💡 **Prática recomendada**
+
+# Para fixar o conteúdo, sempre recomendo exercícios! Me pergunte quando quiser praticar! 💪
+# """
