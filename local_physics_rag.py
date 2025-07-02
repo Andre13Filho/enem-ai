@@ -130,8 +130,8 @@ class LocalphysicsRAG:
         print("📥 Baixando índice de Física do Hugging Face...")
 
         # URLs dos arquivos no Hugging Face
-        faiss_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index.faiss"
-        pkl_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index.pkl"
+        faiss_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index_physics.faiss"
+        pkl_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index_physics.pkl" 
 
         # Baixa os dois arquivos
         faiss_success = self._download_file(faiss_url, index_file)
