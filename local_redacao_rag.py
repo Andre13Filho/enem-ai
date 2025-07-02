@@ -29,12 +29,14 @@ except ImportError:
     from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.schema import Document
 from langchain.chains import ConversationalRetrievalChain
+from langchain.chains.question_answering import load_qa_chain
 try:
     from langchain_community.memory import ConversationBufferMemory
 except ImportError:
     from langchain.memory import ConversationBufferMemory
 from langchain.llms.base import LLM
 from langchain.callbacks.manager import CallbackManagerForLLMRun
+from langchain.prompts import PromptTemplate
 
 # Groq para LLM
 from groq import Groq
@@ -234,19 +236,13 @@ class LocalRedacaoRAG:
             )
             
             # Template de prompt específico para redação
-            prompt_template = """Você é a Professora Carla, especialista em redação do ENEM. Responda como uma professora para uma estudante de 17 anos chamada Sther.
+            template = """Você é a Professora Carla, especialista em redação do ENEM. Responda como uma professora para uma estudante de 17 anos chamada Sther.
 
-CONTEXTO DO CONHECIMENTO (Material Pedagógico):
+Use o contexto fornecido abaixo para responder à pergunta da estudante:
+
 {context}
 
-CASOS DE SUCESSO (Redações Nota 1000):
-{success_cases}
-
-HISTÓRICO DA CONVERSA:
-{chat_history}
-
-PERGUNTA DA STHER:
-{question}
+Pergunta: {question}
 
 INSTRUÇÕES PARA RESPOSTA:
 
@@ -265,12 +261,7 @@ INSTRUÇÕES PARA RESPOSTA:
    - Use exemplos práticos e aplicáveis
    - Conecte teoria com prática
 
-4. **USE O MATERIAL DE APOIO:**
-   - Referencie o contexto pedagógico quando relevante
-   - Compare com casos de sucesso quando apropriado
-   - Dê exemplos específicos de como melhorar
-
-5. **ESTILO DA PROFESSORA CARLA:**
+4. **ESTILO DA PROFESSORA CARLA:**
    - Seja maternal mas profissional
    - Use analogias simples quando necessário
    - Mantenha o foco na evolução da estudante
@@ -285,16 +276,28 @@ IMPORTANTE:
 - Se for dúvida sobre técnicas, seja específica e prática
 - Se for pedido de exemplos, use os casos de sucesso como referência
 
-RESPOSTA (com conceitos bem formatados e estilo da Professora Carla):"""
+Resposta da Professora Carla:"""
 
-            # Criar cadeia RAG conversacional
-            self.rag_chain = ConversationalRetrievalChain.from_llm(
+            # Criar prompt template
+            prompt = PromptTemplate(
+                template=template,
+                input_variables=["context", "question"]
+            )
+            
+            # Criar cadeia QA personalizada
+            doc_chain = load_qa_chain(
                 llm=llm,
+                chain_type="stuff",
+                prompt=prompt
+            )
+            
+            # Criar cadeia RAG conversacional
+            self.rag_chain = ConversationalRetrievalChain(
                 retriever=self.retriever,
                 memory=self.memory,
+                combine_docs_chain=doc_chain,
                 return_source_documents=True,
-                verbose=False,
-                combine_docs_chain_kwargs={"prompt_template": prompt_template}
+                verbose=False
             )
             
             st.success("✅ Sistema RAG de redação inicializado com sucesso!")
