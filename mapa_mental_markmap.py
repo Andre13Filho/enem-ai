@@ -347,74 +347,96 @@ def exibir_mapa_mental_markmap(pergunta: str, api_key: str, nivel: str, debug_op
         st.error("❌ Erro ao gerar mapa mental. Tente novamente.")
 
 def gerar_markdown_mapa_mental(pergunta: str, api_key: str, nivel: str, current_subject: str) -> str:
-    """Gera o conteúdo markdown do mapa mental usando IA"""
+    """Gera o conteúdo markdown do mapa mental usando IA com RAG"""
     
     try:
-        client = Groq(api_key=api_key)
-        
         # Detectar tópico específico da pergunta ANTES de gerar o prompt
         topico_especifico = extrair_topico_especifico(pergunta, current_subject)
         
-        # Configurações por nível
+        # INTEGRAÇÃO COM RAG - Buscar conteúdo real do Hugging Face
+        rag_content = buscar_conteudo_rag(pergunta, current_subject, api_key)
+        
+        # Configurações por nível com diferenças REAIS
         nivel_config = {
             "Básico": {
-                "conceitos": "4-6 conceitos fundamentais",
-                "profundidade": "2-3 níveis de hierarquia",
-                "detalhes": "explicações simples e diretas",
-                "foco": "conceitos básicos essenciais"
+                "conceitos": 3,
+                "profundidade": 2,
+                "detalhes": "definições básicas",
+                "expansion": "initialExpandLevel: 1",
+                "style": "conceitos fundamentais apenas"
             },
             "Intermediário": {
-                "conceitos": "7-10 conceitos relacionados",
-                "profundidade": "3-4 níveis de hierarquia",
-                "detalhes": "fórmulas principais e exemplos práticos",
-                "foco": "aplicações e métodos de resolução"
+                "conceitos": 6,
+                "profundidade": 3,
+                "detalhes": "fórmulas e aplicações",
+                "expansion": "initialExpandLevel: 2", 
+                "style": "métodos e estratégias"
             },
             "Avançado": {
-                "conceitos": "10-14 conceitos e subdivisões",
-                "profundidade": "4-5 níveis de hierarquia",
-                "detalhes": "fórmulas completas, demonstrações e conexões",
-                "foco": "análise profunda e aplicações complexas"
+                "conceitos": 12,
+                "profundidade": 4,
+                "detalhes": "demonstrações e conexões profundas",
+                "expansion": "initialExpandLevel: 3",
+                "style": "análise completa e aplicações complexas"
             }
         }
         
         config = nivel_config.get(nivel, nivel_config["Intermediário"])
         
-        # Prompt completamente reformulado para ser ESPECÍFICO à dúvida
+        client = Groq(api_key=api_key)
+        
+        # Prompt completamente reformulado para usar RAG e ser ESPECÍFICO
         prompt = f"""
-Você é um especialista em educação e mapas mentais, focado em ENEM. Sua tarefa é criar um mapa mental ESPECÍFICO e DIRECIONADO.
+Você é um especialista em educação e mapas mentais, focado em ENEM. Crie um mapa mental ESPECÍFICO baseado no CONTEÚDO RAG fornecido.
 
 **PERGUNTA DA ESTUDANTE:** "{pergunta}"
-**MATÉRIA:** {current_subject}
-**TÓPICO IDENTIFICADO:** {topico_especifico}
-**NÍVEL:** {nivel}
+**TÓPICO ESPECÍFICO:** {topico_especifico}
+**NÍVEL:** {nivel} ({config['style']})
 
-**INSTRUÇÕES CRÍTICAS:**
+**CONTEÚDO RAG (USE COMO BASE):**
+{rag_content}
 
-1. **FOQUE EXCLUSIVAMENTE NO TÓPICO:** O mapa mental deve ser sobre "{topico_especifico}" especificamente, NÃO sobre {current_subject} em geral.
+**INSTRUÇÕES OBRIGATÓRIAS:**
 
-2. **ANALISE A PERGUNTA:** Se a pergunta menciona um conceito específico (ex: "matrizes", "termodinâmica", "função quadrática"), TODO o mapa deve girar em torno DESSE conceito.
+1. **TEMA CENTRAL = TÓPICO ESPECÍFICO:** 
+   - Título principal: "{topico_especifico}" (NÃO "{current_subject}")
+   - Todo mapa gira em torno deste tópico específico
 
-3. **ESTRUTURA DIRECIONADA:**
-   - Título principal: O tópico específico da pergunta
-   - Ramificações: Aspectos diretos desse tópico
-   - Subtópicos: Conceitos que ajudam a entender especificamente esse assunto
-   - {config['conceitos']} no total
-   - {config['profundidade']} máximo
-   - Foco: {config['foco']}
+2. **USE O CONTEÚDO RAG:**
+   - Extraia informações específicas do conteúdo RAG acima
+   - Crie ramificações baseadas nos conceitos encontrados no RAG
+   - Use fórmulas e exemplos do material RAG
 
-4. **EVITE GENERALIDADES:** NÃO inclua conceitos gerais da matéria que não se relacionam diretamente com o tópico da pergunta.
+3. **ESTRUTURA POR NÍVEL:**
+   - Conceitos: exatamente {config['conceitos']} conceitos principais
+   - Profundidade: máximo {config['profundidade']} níveis hierárquicos
+   - Foco: {config['style']}
 
-5. **FORMATO DE SAÍDA:**
-   - Inclua sempre o frontmatter YAML
+4. **FORMATO YAML + MARKDOWN:**
+   - Inclua frontmatter YAML com {config['expansion']}
    - Use emojis relevantes
-   - Fórmulas em LaTeX quando necessário
-   - Responda APENAS com o markdown
+   - Fórmulas em LaTeX ($formula$)
+   - Responda APENAS com o markdown completo
 
-**EXEMPLO CORRETO:**
-Se pergunta = "Como resolver equações do segundo grau?"
-Mapa = Foco total em "Equações do Segundo Grau", não em "Matemática geral"
+**EXEMPLO DE ESTRUTURA:**
+```
+---
+markmap:
+  {config['expansion']}
+---
 
-Agora crie o mapa específico para "{topico_especifico}":
+# 🎯 {topico_especifico}
+
+## [Conceito 1 do RAG]
+### [Subconceito específico]
+- [Detalhe do RAG]
+
+## [Conceito 2 do RAG]
+### [Aplicação específica]
+- [Exemplo do material]
+```
+
+Agora crie o mapa específico usando o conteúdo RAG:
 """
         
         # Usar modelo mais recente e estável
@@ -476,26 +498,168 @@ def limpar_markdown(texto: str) -> str:
     return texto.strip() 
 
 def extrair_topico_especifico(pergunta: str, current_subject: str) -> str:
-    """Extrai o tópico específico da pergunta"""
+    """Extrai o tópico específico da pergunta com detecção avançada"""
     pergunta_lower = pergunta.lower()
     
-    # Detecção específica para alguns tópicos principais
-    if 'matriz' in pergunta_lower:
-        return 'Matrizes'
-    elif 'segundo grau' in pergunta_lower or 'bhaskara' in pergunta_lower:
-        return 'Equações do 2º Grau'
-    elif 'trigonometria' in pergunta_lower or 'seno' in pergunta_lower:
-        return 'Trigonometria'
-    elif 'força' in pergunta_lower or 'newton' in pergunta_lower:
-        return 'Dinâmica'
-    elif 'termodinamica' in pergunta_lower or 'calor' in pergunta_lower:
-        return 'Termodinâmica'
-    else:
-        # Extrair primeiras palavras como tópico
-        palavras = pergunta.split()
-        if len(palavras) > 2:
-            return ' '.join(palavras[:2]).title()
-        return current_subject
+    # MATEMÁTICA - Tópicos específicos
+    if current_subject == 'Matemática':
+        if any(palavra in pergunta_lower for palavra in ['matriz', 'matrizes', 'determinante']):
+            return 'Matrizes e Determinantes'
+        elif any(palavra in pergunta_lower for palavra in ['segundo grau', 'bhaskara', 'quadrática']):
+            return 'Equações do 2º Grau'
+        elif any(palavra in pergunta_lower for palavra in ['trigonometria', 'seno', 'cosseno', 'tangente']):
+            return 'Trigonometria'
+        elif any(palavra in pergunta_lower for palavra in ['função', 'funcao', 'linear', 'afim']):
+            return 'Funções'
+        elif any(palavra in pergunta_lower for palavra in ['logaritmo', 'log', 'exponencial']):
+            return 'Logaritmos e Exponenciais'
+        elif any(palavra in pergunta_lower for palavra in ['geometria', 'área', 'volume', 'perímetro']):
+            return 'Geometria'
+        elif any(palavra in pergunta_lower for palavra in ['probabilidade', 'estatística', 'média']):
+            return 'Estatística e Probabilidade'
+    
+    # FÍSICA - Tópicos específicos
+    elif current_subject == 'Física':
+        if any(palavra in pergunta_lower for palavra in ['força', 'newton', 'dinâmica', 'dinamica']):
+            return 'Dinâmica'
+        elif any(palavra in pergunta_lower for palavra in ['termodinâmica', 'termodinamica', 'calor', 'temperatura']):
+            return 'Termodinâmica'
+        elif any(palavra in pergunta_lower for palavra in ['eletricidade', 'circuito', 'corrente', 'voltagem']):
+            return 'Eletricidade'
+        elif any(palavra in pergunta_lower for palavra in ['onda', 'ondas', 'som', 'luz']):
+            return 'Ondulatória'
+        elif any(palavra in pergunta_lower for palavra in ['velocidade', 'aceleração', 'movimento']):
+            return 'Cinemática'
+        elif any(palavra in pergunta_lower for palavra in ['energia', 'trabalho', 'potência']):
+            return 'Energia e Trabalho'
+    
+    # QUÍMICA - Tópicos específicos
+    elif current_subject == 'Química':
+        if any(palavra in pergunta_lower for palavra in ['átomo', 'atomo', 'estrutura atômica']):
+            return 'Estrutura Atômica'
+        elif any(palavra in pergunta_lower for palavra in ['ligação', 'ligacao', 'iônica', 'covalente']):
+            return 'Ligações Químicas'
+        elif any(palavra in pergunta_lower for palavra in ['reação', 'reacao', 'equação química']):
+            return 'Reações Químicas'
+        elif any(palavra in pergunta_lower for palavra in ['solução', 'soluçao', 'concentração']):
+            return 'Soluções'
+        elif any(palavra in pergunta_lower for palavra in ['ácido', 'base', 'ph']):
+            return 'Ácidos e Bases'
+        elif any(palavra in pergunta_lower for palavra in ['orgânica', 'organica', 'carbono']):
+            return 'Química Orgânica'
+    
+    # BIOLOGIA - Tópicos específicos
+    elif current_subject == 'Biologia':
+        if any(palavra in pergunta_lower for palavra in ['célula', 'celula', 'membrana']):
+            return 'Citologia'
+        elif any(palavra in pergunta_lower for palavra in ['dna', 'gene', 'genética', 'genetica']):
+            return 'Genética'
+        elif any(palavra in pergunta_lower for palavra in ['fotossíntese', 'fotossintese', 'respiração']):
+            return 'Metabolismo Celular'
+        elif any(palavra in pergunta_lower for palavra in ['evolução', 'evoluçao', 'darwin']):
+            return 'Evolução'
+        elif any(palavra in pergunta_lower for palavra in ['ecologia', 'ecosystem', 'cadeia alimentar']):
+            return 'Ecologia'
+        elif any(palavra in pergunta_lower for palavra in ['corpo humano', 'sistema', 'anatomia']):
+            return 'Anatomia e Fisiologia'
+    
+    # GEOGRAFIA - Tópicos específicos
+    elif current_subject == 'Geografia':
+        if any(palavra in pergunta_lower for palavra in ['clima', 'temperatura', 'chuva']):
+            return 'Climatologia'
+        elif any(palavra in pergunta_lower for palavra in ['relevo', 'montanha', 'planície']):
+            return 'Geomorfologia'
+        elif any(palavra in pergunta_lower for palavra in ['população', 'demografia', 'migração']):
+            return 'Geografia da População'
+        elif any(palavra in pergunta_lower for palavra in ['urbano', 'cidade', 'metrópole']):
+            return 'Geografia Urbana'
+        elif any(palavra in pergunta_lower for palavra in ['brasil', 'região', 'território']):
+            return 'Geografia do Brasil'
+    
+    # HISTÓRIA - Tópicos específicos
+    elif current_subject == 'História':
+        if any(palavra in pergunta_lower for palavra in ['guerra fria', 'capitalismo', 'socialismo']):
+            return 'Guerra Fria'
+        elif any(palavra in pergunta_lower for palavra in ['revolução francesa', 'iluminismo']):
+            return 'Revolução Francesa'
+        elif any(palavra in pergunta_lower for palavra in ['brasil colônia', 'colonização']):
+            return 'Brasil Colonial'
+        elif any(palavra in pergunta_lower for palavra in ['primeira guerra', 'segunda guerra']):
+            return 'Guerras Mundiais'
+        elif any(palavra in pergunta_lower for palavra in ['república', 'ditadura', 'democracia']):
+            return 'História Política do Brasil'
+    
+    # LÍNGUA PORTUGUESA - Tópicos específicos
+    elif current_subject == 'Língua Portuguesa':
+        if any(palavra in pergunta_lower for palavra in ['figura de linguagem', 'metáfora', 'metonímia']):
+            return 'Figuras de Linguagem'
+        elif any(palavra in pergunta_lower for palavra in ['sintaxe', 'sujeito', 'predicado']):
+            return 'Sintaxe'
+        elif any(palavra in pergunta_lower for palavra in ['interpretação', 'texto', 'leitura']):
+            return 'Interpretação de Textos'
+        elif any(palavra in pergunta_lower for palavra in ['literatura', 'modernismo', 'romantismo']):
+            return 'Literatura Brasileira'
+    
+    # Fallback: extrair palavras-chave da pergunta
+    palavras = pergunta.split()
+    if len(palavras) > 1:
+        # Pegar palavras importantes (substantivos geralmente)
+        palavras_importantes = []
+        for palavra in palavras[:3]:  # Primeiras 3 palavras
+            palavra_limpa = palavra.lower().strip('.,?!')
+            if len(palavra_limpa) > 3 and palavra_limpa not in ['como', 'qual', 'onde', 'quando', 'quem']:
+                palavras_importantes.append(palavra_limpa.title())
+        
+        if palavras_importantes:
+            return ' '.join(palavras_importantes[:2])
+    
+    return current_subject
+
+def buscar_conteudo_rag(pergunta: str, current_subject: str, api_key: str) -> str:
+    """Busca conteúdo específico usando o sistema RAG dos professores"""
+    try:
+        # Importar o sistema RAG apropriado baseado na matéria
+        rag_system = None
+        
+        if current_subject == 'Matemática':
+            from local_math_rag import get_local_math_rag_instance
+            rag_system = get_local_math_rag_instance()
+        elif current_subject == 'Física':
+            from local_physics_rag import LocalphysicsRAG
+            rag_system = LocalphysicsRAG()
+        elif current_subject == 'Química':
+            from local_chemistry_rag import LocalChemistryRAG
+            rag_system = LocalChemistryRAG()
+        elif current_subject == 'Biologia':
+            from local_biology_rag import LocalBiologyRAG
+            rag_system = LocalBiologyRAG()
+        elif current_subject == 'Geografia':
+            from local_geography_rag import LocalGeographyRAG
+            rag_system = LocalGeographyRAG()
+        elif current_subject == 'História':
+            from local_history_rag import LocalHistoryRAG
+            rag_system = LocalHistoryRAG()
+        elif current_subject == 'Língua Portuguesa':
+            from local_portuguese_rag import LocalPortugueseRAG
+            rag_system = LocalPortugueseRAG()
+        
+        if rag_system:
+            # Inicializar o sistema RAG
+            success = rag_system.initialize(api_key)
+            if success:
+                # Buscar conteúdo relevante
+                docs = rag_system.search_relevant_content(pergunta, k=3)
+                if docs:
+                    # Concatenar conteúdo dos documentos encontrados
+                    conteudo = "\n\n".join([doc.page_content[:500] for doc in docs])
+                    return f"CONTEÚDO ESPECÍFICO ENCONTRADO:\n{conteudo}"
+        
+        # Fallback se não conseguir usar RAG
+        return f"TÓPICO: {extrair_topico_especifico(pergunta, current_subject)} da matéria {current_subject}"
+        
+    except Exception as e:
+        # Fallback em caso de erro
+        return f"TÓPICO: {extrair_topico_especifico(pergunta, current_subject)} da matéria {current_subject}"
 
 def validar_especificidade_mapa(markdown_content: str, topico_especifico: str) -> bool:
     """Valida se o mapa mental é específico ao tópico identificado"""
@@ -504,7 +668,7 @@ def validar_especificidade_mapa(markdown_content: str, topico_especifico: str) -
     return topico_especifico.lower() in markdown_content.lower()
 
 def criar_mapa_mental_especifico(pergunta: str, topico_especifico: str, nivel: str, current_subject: str) -> str:
-    """Cria um mapa mental específico para o tópico identificado"""
+    """Cria um mapa mental específico para o tópico identificado com níveis diferenciados"""
     
     # Emojis por matéria
     emoji_materia = {
@@ -513,11 +677,112 @@ def criar_mapa_mental_especifico(pergunta: str, topico_especifico: str, nivel: s
     }
     emoji = emoji_materia.get(current_subject, '📚')
     
+    # Configurar diferentes níveis de expansão
+    if nivel == "Básico":
+        expansion_level = 1
+        conceitos_basicos = f"""
+# {emoji} {topico_especifico}
+
+## 📚 Conceito Central
+- O que é {topico_especifico.lower()}
+- Importância no ENEM
+
+## 🔍 Definição
+- Características principais
+- {get_formula_example(current_subject)}
+
+## 🎯 Aplicação Básica
+- Como identificar
+- Exemplo simples
+"""
+    elif nivel == "Intermediário":
+        expansion_level = 2
+        conceitos_basicos = f"""
+# {emoji} {topico_especifico}
+
+## 📚 Conceitos Fundamentais
+### 🔍 Definição
+- O que é {topico_especifico.lower()}
+- Características principais
+- Elementos essenciais
+
+### 📐 Propriedades
+- {get_formula_example(current_subject)}
+- Relações importantes
+
+## 🎯 Aplicações
+### 📝 Métodos de Resolução
+- Estratégias principais
+- Passo a passo
+
+### 🎓 No ENEM
+- Tipos de questão
+- Dicas importantes
+
+## 🔧 Prática
+### ✍️ Exercícios Típicos
+- Casos mais comuns
+- Estratégias de resolução
+"""
+    else:  # Avançado
+        expansion_level = 3
+        conceitos_basicos = f"""
+# {emoji} {topico_especifico}
+
+## 📚 Fundamentos Teóricos
+### 🔍 Definição Completa
+- O que é {topico_especifico.lower()}
+- Contexto histórico
+- Características fundamentais
+
+### 📐 Propriedades Matemáticas
+- {get_formula_example(current_subject)}
+- {get_advanced_formula_example(current_subject)}
+- Demonstrações importantes
+
+### 🧮 Relações Conceituais
+- Conexões com outros tópicos
+- Interdisciplinaridade
+
+## 🎯 Aplicações Práticas
+### 📝 Métodos Avançados
+- Técnicas especializadas
+- Algoritmos de resolução
+- Casos complexos
+
+### 🎓 ENEM Aprofundado
+- Questões de alta complexidade
+- Interpretação avançada
+- Análise crítica
+
+### 🌐 Aplicações Reais
+- Tecnologia
+- Ciência
+- Cotidiano
+
+## 🔧 Resolução de Problemas
+### ✍️ Exercícios Complexos
+- Problemas contextualizados
+- Múltiplas abordagens
+- Análise de erros comuns
+
+### 🧠 Estratégias Mentais
+- Heurísticas de resolução
+- Padrões de reconhecimento
+- Otimização de tempo
+
+## 📊 Avaliação e Preparação
+### 📈 Níveis de Dificuldade
+- Progressão gradual
+- Autoavaliação
+- Pontos de atenção
+"""
+    
     return f"""---
 markmap:
   pan: true
   zoom: true
-  initialExpandLevel: 2
+  initialExpandLevel: {expansion_level}
   maxWidth: 300
   colorFreezeLevel: 2
   duration: 500
@@ -525,25 +790,7 @@ markmap:
   spacingVertical: 5
 ---
 
-# {emoji} {topico_especifico}
-
-## 📚 Conceitos Fundamentais
-### 🔍 Definição
-- O que é {topico_especifico.lower()}
-- Características principais
-
-### 📐 Propriedades
-- Elementos essenciais
-- {get_formula_example(current_subject)}
-
-## 🎯 Aplicações
-### 📝 Como resolver
-- Métodos principais
-- Estratégias de solução
-
-### 🎓 No ENEM
-- Tipos de questão
-- Dicas importantes
+{conceitos_basicos}
 """
 
 def detectar_topico_principal(pergunta: str, current_subject: str) -> str:
