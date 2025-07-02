@@ -646,13 +646,13 @@ Por favor, configure sua API Key corretamente nas configurações do Streamlit C
         elif subject == "Geografia" and "marina" in _imported_modules:
             base_response = _imported_modules["marina"]["response"](user_message, api_key)
         
-        # Professor Fernando especializado (RAG Local de Física)
-        elif subject == "Física" and "fernando" in _imported_modules:
-            base_response = _imported_modules["fernando"]["response"](user_message, api_key)
-        
         # Professora Letícia (RAG Local de Português)
         elif subject == "Língua Portuguesa" and "leticia" in _imported_modules:
             base_response = _imported_modules["leticia"]["response"](user_message, api_key)
+        
+        # Professor Fernando especializado (RAG Local de Física)
+        elif subject == "Física" and "fernando" in _imported_modules:
+            base_response = _imported_modules["fernando"]["response"](user_message, api_key)
         
         # Outros professores (Groq genérico)
         else:
@@ -1118,14 +1118,14 @@ def main():
         st.markdown("---")
         st.markdown("### 🔧 Status da API Key")
         
-        # Mostra status da API key da Groq
+        # Mostra status da API key
         current_api_key = get_api_key()
         if current_api_key:
             api_preview = f"{current_api_key[:8]}...{current_api_key[-4:]}" if len(current_api_key) > 12 else "***"
-            st.success(f"✅ API Key Groq carregada: `{api_preview}`")
+            st.success(f"✅ API Key carregada: `{api_preview}`")
         else:
-            st.error("❌ API Key da Groq não encontrada")
-            st.info("Configure sua API Key da Groq no Streamlit Cloud ou arquivo .env")
+            st.error("❌ API Key não encontrada")
+            st.info("Configure sua API Key no Streamlit Cloud ou arquivo .env")
         
         # Histórico de conversas (na parte inferior da sidebar)
         st.markdown("---")
@@ -1301,11 +1301,7 @@ def main():
                     _imported_modules["mindmap"]()
                 else:
                     st.error("❌ Sistema de Mapa Mental não disponível")
-                    st.info("""
-                    **Para ativar o Mapa Mental:**
-                    1. Instale: `pip install streamlit-markmap==1.0.1`
-                    2. Verifique se o arquivo `mapa_mental_markmap.py` está presente
-                    """)
+                    st.info("Verifique se o arquivo `mapa_mental_markmap.py` está presente e as dependências estão instaladas.")
             except Exception as e:
                 st.error(f"❌ Erro ao carregar Mapa Mental: {e}")
                 st.info("""
@@ -1348,6 +1344,23 @@ def main():
                 1. Instale: `pip install streamlit-markmap==1.0.1`
                 2. Verifique se o arquivo `mapa_mental_markmap.py` está presente
                 """)
+        
+        with tab3:
+            # Exercícios Personalizados
+            try:
+                lazy_import_exercises()
+                if "exercicios" in _imported_modules:
+                    _imported_modules["exercicios"].setup_ui()
+                else:
+                    st.error("❌ Sistema de Exercícios Personalizados não disponível")
+                    st.info("Verifique se o arquivo `exercicios_personalizados.py` está presente e os arquivos JSON de questões estão disponíveis.")
+            except Exception as e:
+                st.error(f"❌ Erro ao carregar Exercícios Personalizados: {e}")
+                st.info("""
+                **Para ativar os Exercícios Personalizados:**
+                1. Verifique se o arquivo `exercicios_personalizados.py` está presente
+                2. Certifique-se de que os arquivos `questions_primeiro_dia.json` e `questions_segundo_enem.json` existem
+                """)
 
 if __name__ == "__main__":
-    main()
+    main() 
