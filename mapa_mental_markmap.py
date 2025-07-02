@@ -398,98 +398,94 @@ def gerar_markdown_mapa_mental(pergunta: str, api_key: str, nivel: str, current_
     try:
         client = Groq(api_key=api_key)
         
+        # Detectar tópico específico da pergunta ANTES de gerar o prompt
+        topico_especifico = extrair_topico_especifico(pergunta, current_subject)
+        
         # Configurações por nível
         nivel_config = {
             "Básico": {
-                "conceitos": "5-7 conceitos fundamentais",
+                "conceitos": "4-6 conceitos fundamentais",
                 "profundidade": "2-3 níveis de hierarquia",
-                "detalhes": "explicações simples e diretas"
+                "detalhes": "explicações simples e diretas",
+                "foco": "conceitos básicos essenciais"
             },
             "Intermediário": {
-                "conceitos": "8-12 conceitos relacionados",
+                "conceitos": "7-10 conceitos relacionados",
                 "profundidade": "3-4 níveis de hierarquia",
-                "detalhes": "fórmulas principais e exemplos"
+                "detalhes": "fórmulas principais e exemplos práticos",
+                "foco": "aplicações e métodos de resolução"
             },
             "Avançado": {
-                "conceitos": "12-15 conceitos e subdivisões",
+                "conceitos": "10-14 conceitos e subdivisões",
                 "profundidade": "4-5 níveis de hierarquia",
-                "detalhes": "fórmulas completas, demonstrações e aplicações"
+                "detalhes": "fórmulas completas, demonstrações e conexões",
+                "foco": "análise profunda e aplicações complexas"
             }
         }
         
         config = nivel_config.get(nivel, nivel_config["Intermediário"])
         
-        # Prompt melhorado e mais específico para as dúvidas da Sther
+        # Prompt completamente reformulado para ser ESPECÍFICO à dúvida
         prompt = f"""
-Você é uma IA assistente educacional, especialista em criar material de estudo visual e conciso para estudantes do ensino médio.
+Você é um especialista em educação e mapas mentais, focado em ENEM. Sua tarefa é criar um mapa mental ESPECÍFICO e DIRECIONADO.
 
-**TAREFA PRINCIPAL:**
-Sua missão é **interpretar a dúvida de um aluno**, **identificar o tópico acadêmico central** e construir um mapa mental sobre **esse tópico**, usando a sintaxe Markmap.
+**PERGUNTA DA ESTUDANTE:** "{pergunta}"
+**MATÉRIA:** {current_subject}
+**TÓPICO IDENTIFICADO:** {topico_especifico}
+**NÍVEL:** {nivel}
 
-**DÚVIDA DO ALUNO:** "{question}"
-**MATÉRIA:** {subject}
-**NÍVEL DE DETALHAMENTO:** {level}
+**INSTRUÇÕES CRÍTICAS:**
 
----
-**INSTRUÇÕES CRÍTICAS DE EXECUÇÃO:**
+1. **FOQUE EXCLUSIVAMENTE NO TÓPICO:** O mapa mental deve ser sobre "{topico_especifico}" especificamente, NÃO sobre {current_subject} em geral.
 
-1.  **IDENTIFIQUE O TÓPICO CENTRAL:** Analise a "DÚVIDA DO ALUNO" e extraia o **conceito principal**. Por exemplo, se a dúvida for "poderia me explicar sobre termodinâmica?", o tópico central é "Termodinâmica". Este será o nó raiz (`#`) do mapa. **NUNCA use a pergunta inteira como título.**
+2. **ANALISE A PERGUNTA:** Se a pergunta menciona um conceito específico (ex: "matrizes", "termodinâmica", "função quadrática"), TODO o mapa deve girar em torno DESSE conceito.
 
-2.  **FOCO ABSOLUTO NO TÓPICO:** Todo o conteúdo do mapa, incluindo definições, exemplos e fórmulas, deve ser **estritamente relevante ao tópico central identificado**. Evite "alucinações" ou fórmulas de outras áreas. Se o tópico é Termodinâmica, inclua apenas fórmulas de Termodinâmica (ex: ΔU = Q - W).
+3. **ESTRUTURA DIRECIONADA:**
+   - Título principal: O tópico específico da pergunta
+   - Ramificações: Aspectos diretos desse tópico
+   - Subtópicos: Conceitos que ajudam a entender especificamente esse assunto
+   - {config['conceitos']} no total
+   - {config['profundidade']} máximo
+   - Foco: {config['foco']}
 
-3.  **HIERARQUIA LÓGICA:** Organize o mapa de forma clara e pedagógica. Comece com os **fundamentos**, avance para os **conceitos principais ou leis**, e finalize com **aplicações e exemplos**. Isso cria um fluxo de aprendizado coerente.
+4. **EVITE GENERALIDADES:** NÃO inclua conceitos gerais da matéria que não se relacionam diretamente com o tópico da pergunta.
 
-4.  **CONCISÃO É REI:** Use **palavras-chave e frases curtas** nos nós. Mapas mentais não são textos discursivos. [cite_start]O objetivo é a clareza visual e a facilidade de memorização[cite: 1082, 1086].
+5. **RESPONDA APENAS COM O MARKDOWN:** Sem explicações adicionais.
 
-5.  **FORMATO DE SAÍDA (MARKMAP):**
-    * Responda **APENAS** com o código Markdown do mapa.
-    * Sempre inclua o `frontmatter` YAML no início para garantir a interatividade.
-    * Use LaTeX para fórmulas (`$inline$` ou `$$destacado$$`).
-    * [cite_start]Use emojis relevantes para a matéria para melhorar a associação visual[cite: 1077].
+**EXEMPLO DE ESTRUTURA CORRETA:**
 
----
-**EXEMPLO DE OUTPUT CORRETO PARA A PERGUNTA "Poderia me explicar termodinâmica?":**
-```markdown
----
-markmap:
-  pan: true
-  zoom: true
----
+Se a pergunta for "Como resolver equações do segundo grau?", o mapa deve ser:
 
-# 🌡️ Termodinâmica
+```
+# 🧮 Equações do Segundo Grau
 
-## 📚 Conceitos Fundamentais
-### ⚡ Energia, Calor e Trabalho
-- **Energia Interna (U):** Soma das energias das partículas.
-- **Calor (Q):** Energia transferida devido à diferença de temperatura.
-- **Trabalho (W):** Energia transferida por força e deslocamento.
+## 📚 Definição e Forma
+### 📐 Forma Geral
+- ax² + bx + c = 0
+- a ≠ 0
 
-## ⚖️ Leis da Termodinâmica
-### 1️⃣ Primeira Lei (Conservação de Energia)
-- **Definição:** A variação da energia interna de um sistema é a diferença entre o calor trocado e o trabalho realizado.
-- **Fórmula:** `$$\Delta U = Q - W$$`
-### 2️⃣ Segunda Lei (Entropia)
-- **Definição:** O calor não flui espontaneamente de um corpo frio para um quente. A entropia (desordem) do universo tende a aumentar.
-### 0️⃣ Lei Zero (Equilíbrio Térmico)
-- **Definição:** Se A está em equilíbrio com C, e B está em equilíbrio com C, então A e B estão em equilíbrio entre si.
+## 🔧 Métodos de Resolução
+### 🎯 Fórmula de Bhaskara
+- x = (-b ± √Δ)/2a
+- Δ = b² - 4ac
 
-## 🔥 Aplicações
-### ⚙️ Motores de Combustão
-- Convertem calor em trabalho mecânico.
-### 🧊 Refrigeradores
-- Transferem calor de uma fonte fria para uma fonte quente (com trabalho externo).
-Agora, gere o mapa mental para a dúvida do aluno, seguindo rigorosamente estas novas instruções.
+### 📊 Fatoração
+- Quando possível
+- Mais rápido
+```
+
+**AGORA CRIE O MAPA ESPECÍFICO PARA A PERGUNTA DA ESTUDANTE:**
 """
         
-        # Modelo atualizado (llama-3.3-70b-versatile está obsoleto)
+        # Usar modelo mais recente e estável
         response = client.chat.completions.create(
-            model="llama-3.2-90b-text-preview",  # Modelo estável da Groq
+            model="llama-3.2-90b-text-preview",
             messages=[
-                {"role": "system", "content": f"{get_subject_system_prompt(current_subject)} Você está ajudando Sther, uma estudante de 17 anos que vai prestar ENEM. Seja didático e específico."},
+                {"role": "system", "content": f"{get_subject_system_prompt(current_subject)} Você está criando um mapa mental específico para Sther, de 17 anos, que vai prestar ENEM. Seja preciso e direcionado ao tópico da pergunta."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=2500,  # Aumentado para mapas mais detalhados
-            temperature=0.3   # Reduzido para respostas mais consistentes
+            max_tokens=2000,
+            temperature=0.2   # Reduzido para mais foco e consistência
         )
         
         markdown_content = response.choices[0].message.content.strip()
@@ -497,23 +493,29 @@ Agora, gere o mapa mental para a dúvida do aluno, seguindo rigorosamente estas 
         # Limpar e validar o markdown
         markdown_content = limpar_markdown(markdown_content)
         
-        # Se não conseguiu gerar via IA, criar estrutura básica específica
+        # Validar se o conteúdo é específico (verificar se menciona o tópico)
+        if not validar_especificidade_mapa(markdown_content, topico_especifico):
+            # Se não for específico, usar versão básica específica
+            markdown_content = criar_mapa_mental_especifico(pergunta, topico_especifico, nivel, current_subject)
+        
+        # Se ainda não conseguiu gerar conteúdo adequado, usar fallback
         if not markdown_content or len(markdown_content) < 100:
-            markdown_content = criar_mapa_mental_basico(pergunta, nivel, current_subject)
+            markdown_content = criar_mapa_mental_especifico(pergunta, topico_especifico, nivel, current_subject)
         
         return markdown_content
         
     except Exception as e:
-        # Melhor tratamento de erro
+        # Melhor tratamento de erro com fallback específico
         error_msg = str(e)
         
-        # Se for erro de modelo obsoleto, informar claramente
         if "decommissioned" in error_msg or "model_decommissioned" in error_msg:
-            st.error("🔧 **Modelo de IA atualizado necessário** - usando mapa mental básico")
+            st.error("🔧 **Modelo de IA atualizado necessário** - usando mapa mental específico")
         else:
-            st.warning(f"⚠️ Erro na geração via IA: {error_msg[:100]}... - usando mapa mental básico")
+            st.warning(f"⚠️ Erro na geração via IA: {error_msg[:100]}... - usando mapa mental específico")
         
-        return criar_mapa_mental_basico(pergunta, nivel, current_subject)
+        # Fallback que também é específico
+        topico_especifico = extrair_topico_especifico(pergunta, current_subject)
+        return criar_mapa_mental_especifico(pergunta, topico_especifico, nivel, current_subject)
 
 def limpar_markdown(texto: str) -> str:
     """Limpa e valida o conteúdo markdown"""
@@ -534,11 +536,178 @@ def limpar_markdown(texto: str) -> str:
     return texto.strip()
 
 def criar_mapa_mental_basico(pergunta: str, nivel: str, current_subject: str) -> str:
-    """Cria um mapa mental básico quando a IA falha"""
+    """Cria um mapa mental básico quando a IA falha - DEPRECATED: use criar_mapa_mental_especifico"""
     
-    # Detectar tópico principal
-    topico = detectar_topico_principal(pergunta, current_subject)
+    # Detectar tópico específico (novo sistema)
+    topico = extrair_topico_especifico(pergunta, current_subject)
     
+    # Usar o novo sistema específico
+    return criar_mapa_mental_especifico(pergunta, topico, nivel, current_subject)
+"""
+
+def extrair_topico_especifico(pergunta: str, current_subject: str) -> str:
+    """Extrai o tópico específico da pergunta usando análise semântica aprimorada"""
+    
+    pergunta_lower = pergunta.lower()
+    
+    # Palavras-chave específicas por matéria (mais granular)
+    topicos_especificos = {
+        'Matemática': {
+            # Álgebra
+            'Equações do 1º Grau': ['equação primeiro grau', 'equação linear', 'resolver x'],
+            'Equações do 2º Grau': ['equação segundo grau', 'equação quadrática', 'bhaskara', 'delta', 'parábola'],
+            'Sistemas Lineares': ['sistema linear', 'sistema de equações', 'método substituição', 'método adição'],
+            'Matrizes': ['matriz', 'matrizes', 'determinante', 'matriz inversa', 'operações com matriz'],
+            'Determinantes': ['determinante', 'sarrus', 'laplace', 'det'],
+            
+            # Funções
+            'Função Afim': ['função afim', 'função linear', 'primeiro grau', 'reta'],
+            'Função Quadrática': ['função quadrática', 'função segundo grau', 'parábola', 'vértice'],
+            'Função Exponencial': ['função exponencial', 'exponencial', 'crescimento exponencial'],
+            'Função Logarítmica': ['função logarítmica', 'logaritmo', 'log', 'propriedades logaritmo'],
+            
+            # Geometria
+            'Trigonometria': ['trigonometria', 'seno', 'cosseno', 'tangente', 'triângulo retângulo'],
+            'Geometria Plana': ['área', 'perímetro', 'triângulo', 'quadrado', 'círculo', 'polígono'],
+            'Geometria Espacial': ['volume', 'prisma', 'pirâmide', 'cilindro', 'cone', 'esfera'],
+            
+            # Outros
+            'Progressão Aritmética': ['PA', 'progressão aritmética', 'termo geral', 'soma PA'],
+            'Progressão Geométrica': ['PG', 'progressão geométrica', 'termo geral PG', 'soma PG'],
+            'Análise Combinatória': ['combinação', 'arranjo', 'permutação', 'fatorial', 'combinatória'],
+            'Probabilidade': ['probabilidade', 'chance', 'evento', 'espaço amostral'],
+            'Estatística': ['média', 'mediana', 'moda', 'desvio padrão', 'variância']
+        },
+        
+        'Física': {
+            'Cinemática': ['movimento', 'velocidade', 'aceleração', 'MRU', 'MRUV', 'queda livre'],
+            'Dinâmica': ['força', 'leis de newton', 'atrito', 'peso', 'normal'],
+            'Energia Mecânica': ['energia cinética', 'energia potencial', 'trabalho', 'potência'],
+            'Termodinâmica': ['calor', 'temperatura', 'dilatação', 'calorimetria', 'primeira lei'],
+            'Eletrostática': ['carga elétrica', 'campo elétrico', 'potencial elétrico', 'capacitor'],
+            'Eletrodinâmica': ['corrente elétrica', 'resistência', 'lei ohm', 'circuito'],
+            'Óptica': ['reflexão', 'refração', 'espelhos', 'lentes', 'interferência'],
+            'Ondulatória': ['ondas', 'frequência', 'amplitude', 'som', 'efeito doppler']
+        },
+        
+        'Química': {
+            'Estrutura Atômica': ['átomo', 'elétron', 'próton', 'nêutron', 'orbital', 'distribuição eletrônica'],
+            'Tabela Periódica': ['propriedades periódicas', 'família', 'período', 'elementos'],
+            'Ligações Químicas': ['ligação iônica', 'ligação covalente', 'ligação metálica'],
+            'Reações Químicas': ['balanceamento', 'tipos de reação', 'síntese', 'decomposição'],
+            'Estequiometria': ['cálculo estequiométrico', 'mol', 'massa molar', 'rendimento'],
+            'Soluções': ['concentração', 'molaridade', 'diluição', 'mistura'],
+            'Termoquímica': ['entalpia', 'energia', 'reação endotérmica', 'reação exotérmica'],
+            'Cinética Química': ['velocidade reação', 'catalisador', 'energia ativação'],
+            'Equilíbrio Químico': ['constante equilíbrio', 'le chatelier', 'deslocamento'],
+            'Eletroquímica': ['pilha', 'eletrólise', 'oxidação', 'redução']
+        },
+        
+        'Biologia': {
+            'Citologia': ['célula', 'membrana plasmática', 'organelas', 'núcleo', 'mitocôndria'],
+            'Histologia': ['tecidos', 'epitélio', 'conjuntivo', 'muscular', 'nervoso'],
+            'Genética': ['DNA', 'RNA', 'gene', 'cromossomo', 'hereditariedade', 'mutação'],
+            'Evolução': ['seleção natural', 'darwin', 'especiação', 'evolução'],
+            'Ecologia': ['ecossistema', 'cadeia alimentar', 'população', 'comunidade'],
+            'Fisiologia Humana': ['digestão', 'respiração', 'circulação', 'excreção'],
+            'Botânica': ['fotossíntese', 'planta', 'raiz', 'caule', 'folha'],
+            'Zoologia': ['classificação', 'vertebrados', 'invertebrados']
+        },
+        
+        'Geografia': {
+            'Geologia': ['relevo', 'rochas', 'solo', 'erosão', 'placas tectônicas'],
+            'Climatologia': ['clima', 'tempo', 'chuva', 'temperatura', 'massas de ar'],
+            'Hidrografia': ['bacias hidrográficas', 'rios', 'lagos', 'aquíferos'],
+            'Demografia': ['população', 'migração', 'densidade demográfica', 'crescimento populacional'],
+            'Urbanização': ['cidade', 'metropolização', 'problemas urbanos'],
+            'Economia': ['setor primário', 'setor secundário', 'setor terciário', 'globalização']
+        },
+        
+        'História': {
+            'Brasil Colônia': ['colonização', 'economia colonial', 'escravidão', 'jesuítas'],
+            'Brasil Império': ['independência', 'primeiro reinado', 'segundo reinado', 'abolição'],
+            'Brasil República': ['proclamação república', 'era vargas', 'ditadura militar'],
+            'Idade Média': ['feudalismo', 'igreja católica', 'cruzadas'],
+            'Idade Moderna': ['renascimento', 'reforma protestante', 'absolutismo'],
+            'Idade Contemporânea': ['revolução francesa', 'revolução industrial', 'primeira guerra']
+        },
+        
+        'Língua Portuguesa': {
+            'Gramática': ['classes palavras', 'sintaxe', 'concordância', 'regência'],
+            'Literatura': ['escolas literárias', 'romantismo', 'realismo', 'modernismo'],
+            'Redação': ['dissertação argumentativa', 'introdução', 'desenvolvimento', 'conclusão'],
+            'Interpretação de Texto': ['compreensão textual', 'inferência', 'figuras de linguagem']
+        },
+        
+        'Redação': {
+            'Estrutura': ['introdução', 'desenvolvimento', 'conclusão', 'tese'],
+            'Argumentação': ['argumentos', 'dados', 'exemplos', 'autoridade'],
+            'Coesão e Coerência': ['conectivos', 'articulação', 'progressão temática'],
+            'Proposta de Intervenção': ['solução', 'agente', 'meio', 'finalidade', 'detalhamento']
+        }
+    }
+    
+    topicos = topicos_especificos.get(current_subject, {})
+    
+    # Buscar tópico mais específico
+    for topico, palavras_chave in topicos.items():
+        if any(palavra in pergunta_lower for palavra in palavras_chave):
+            return topico
+    
+    # Se não encontrou, usar detecção mais simples
+    return detectar_topico_principal(pergunta, current_subject)
+
+def validar_especificidade_mapa(markdown_content: str, topico_especifico: str) -> bool:
+    """Valida se o mapa mental é específico ao tópico identificado"""
+    
+    if not markdown_content or not topico_especifico:
+        return False
+    
+    # Converter para minúsculo para comparação
+    markdown_lower = markdown_content.lower()
+    topico_lower = topico_especifico.lower()
+    
+    # Verificar se o tópico aparece no título principal
+    if f"# " in markdown_content:
+        titulo_principal = markdown_content.split('\n')[0] if markdown_content.split('\n')[0].startswith('#') else ""
+        # Procurar pela primeira linha que começa com #
+        for linha in markdown_content.split('\n'):
+            if linha.strip().startswith('# '):
+                titulo_principal = linha
+                break
+        
+        if topico_lower in titulo_principal.lower():
+            return True
+    
+    # Verificar se palavras-chave do tópico aparecem com frequência
+    palavras_topico = topico_lower.split()
+    contador_palavras = 0
+    
+    for palavra in palavras_topico:
+        if palavra in markdown_lower:
+            contador_palavras += markdown_lower.count(palavra)
+    
+    # Se as palavras do tópico aparecem pelo menos 3 vezes, considera específico
+    return contador_palavras >= 3
+
+def criar_mapa_mental_especifico(pergunta: str, topico_especifico: str, nivel: str, current_subject: str) -> str:
+    """Cria um mapa mental específico para o tópico identificado"""
+    
+    # Emojis por matéria
+    emoji_materia = {
+        'Matemática': '🧮',
+        'Física': '⚡',
+        'Química': '⚗️',
+        'Biologia': '🧬',
+        'Geografia': '🌍',
+        'História': '🏛️',
+        'Língua Portuguesa': '📚',
+        'Redação': '✍️'
+    }
+    
+    emoji = emoji_materia.get(current_subject, '📚')
+    
+    # Estruturas específicas por tópico e nível
     if nivel == "Básico":
         return f"""---
 markmap:
@@ -552,26 +721,31 @@ markmap:
   spacingVertical: 5
 ---
 
-# 🎯 {topico}
+# {emoji} {topico_especifico}
 
-## 📚 Conceitos Fundamentais
-### 🔢 Definição
-- O que é {topico.lower()}
-- Importância no ENEM
+## 📚 O que é?
+### 🔍 Definição
+- Conceito principal
+- Características básicas
 
-### 📐 Propriedades Básicas
-- Características principais
-- {get_formula_example(current_subject)}
+### 📐 Elementos Essenciais
+- Componentes fundamentais
+- Propriedades básicas
 
-## 🧮 Resolução
-### 🎯 Método Principal
+## 🎯 Como Funciona?
+### 📝 Passos Básicos
 - Passo 1: Identificar
-- Passo 2: Aplicar
+- Passo 2: Aplicar conceito
 - Passo 3: Resolver
 
-### 📊 Exemplo ENEM
+### 📊 Exemplo Simples
+- Situação prática
+- Resolução passo a passo
+
+## 🎓 No ENEM
+### 📋 Como aparece
 - Tipo de questão comum
-- Estratégia de resolução
+- Dicas importantes
 """
     
     elif nivel == "Intermediário":
@@ -587,34 +761,40 @@ markmap:
   spacingVertical: 5
 ---
 
-# 🎯 {topico}
+# {emoji} {topico_especifico}
 
 ## 📚 Fundamentos
-### 🔢 Conceitos Base
-- Definições essenciais
+### 🔍 Definição Completa
+- Conceito detalhado
+- Origem e contexto
+- Importância na matéria
+
+### 📐 Propriedades e Características
+- Propriedades principais
+- Relações com outros conceitos
 - {get_formula_example(current_subject)}
 
-### 📐 Propriedades
-- Características importantes
-- {get_advanced_formula_example(current_subject)}
+## 🧮 Métodos e Técnicas
+### 🎯 Abordagem Principal
+- Método padrão
+- Estratégias de resolução
+- Casos especiais
 
-## 🧮 Métodos de Resolução
-### 🎯 Método Algébrico
-- Manipulação de equações
-- Isolamento de variáveis
-
-### 📊 Método Gráfico
-- Interpretação visual
-- Pontos importantes
+### 📊 Análise e Interpretação
+- Como interpretar resultados
+- Verificação de soluções
+- Erros comuns
 
 ## 🔗 Aplicações
 ### 📈 Problemas Práticos
-- Situações reais
-- Modelagem matemática
+- Situações do cotidiano
+- Modelagem do problema
+- {get_advanced_formula_example(current_subject)}
 
 ### 🎓 Questões ENEM
-- Padrões frequentes
-- Dicas de resolução
+- Padrões de cobrança
+- Estratégias de resolução
+- Dicas para prova
 """
     
     else:  # Avançado
@@ -630,43 +810,51 @@ markmap:
   spacingVertical: 5
 ---
 
-# 🎯 {topico}
+# {emoji} {topico_especifico}
 
 ## 📚 Teoria Fundamental
-### 🔢 Axiomas e Definições
-- Base teórica sólida
-- {get_formula_example(current_subject)}
+### 🔍 Base Conceitual
+- Definições rigorosas
+- Axiomas e postulados
+- Desenvolvimento histórico
 
-### 📐 Teoremas Principais
+### 📐 Propriedades Avançadas
+- Teoremas relacionados
 - Demonstrações importantes
-- {get_advanced_formula_example(current_subject)}
+- {get_formula_example(current_subject)}
 
 ## 🧮 Métodos Avançados
-### 🎯 Resolução Analítica
-- Técnicas algébricas
-- {get_formula_example(current_subject)}
+### 🎯 Técnicas Especializadas
+- Métodos algébricos
+- Métodos gráficos
+- Métodos analíticos
 
-### 📊 Resolução Gráfica
-- Interpretação geométrica
+### 📊 Análise Profunda
+- Casos limites
+- Condições de existência
 - {get_advanced_formula_example(current_subject)}
 
 ## 🔗 Conexões Interdisciplinares
-### 🌐 Outras Áreas da Matemática
-- Álgebra ↔ Geometria
-- Cálculo ↔ Funções
+### 🌐 Relação com Outras Áreas
+- Conexões matemáticas
+- Aplicações em outras ciências
+- Contexto histórico
 
-### 🎓 Aplicações Avançadas
-- Física matemática
-- Engenharias
+### 📈 Aplicações Complexas
+- Problemas avançados
+- Modelagem matemática
+- Pesquisa atual
 
-## 📈 Estratégias ENEM
+## 🎓 Estratégias ENEM
 ### 🎯 Reconhecimento de Padrões
-- Tipos de questões
+- Identificação rápida
 - Armadilhas comuns
+- Técnicas de verificação
 
-### ⚡ Técnicas Rápidas
-- Métodos de estimativa
+### ⚡ Otimização de Tempo
+- Métodos rápidos
 - Eliminação de alternativas
+- Estimativas inteligentes
 """
 
 def detectar_topico_principal(pergunta: str, current_subject: str) -> str:
