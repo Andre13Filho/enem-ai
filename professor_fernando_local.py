@@ -62,7 +62,7 @@ class ProfessorFernandoLocal:
             if success:
                 self.current_api_key = api_key
                 self.is_initialized = True
-                self.client = OpenAI(api_key=api_key)
+                # self.client = OpenAI(api_key=api_key)
                 st.success("✅ Professor Fernando (Física) pronto!")
                 # Atualiza o estado da sessão para refletir a inicialização bem-sucedida
                 st.session_state.rag_initialized_Fernando = True
