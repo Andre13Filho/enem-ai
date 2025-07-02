@@ -121,8 +121,6 @@
 - **Groq API** com modelo DeepSeek R1 Distill
 - **Sistema RAG** (Retrieval-Augmented Generation)
 - **Embeddings** multilíngues avançados
-- **Raciocínio suprimido** - apenas resposta final
-- **Otimizado para clareza** - sem thinking interno
 
 ### 📊 Base de Dados Vetorial
 
@@ -153,15 +151,6 @@ pip install groq
 - **Groq API Key** configurada em:
   - Streamlit Secrets: `GROQ_API_KEY`
   - Variável de ambiente: `GROQ_API_KEY`
-
-### 🎯 Configuração da IA
-
-- **Modelo**: DeepSeek R1 Distill Llama 70B
-- **Temperatura**: 0.7 (equilíbrio criatividade/precisão)
-- **Max tokens**: 2048 (análises detalhadas)
-- **Show reasoning**: False (sem raciocínio interno)
-- **Reasoning effort**: Low (foco na resposta final)
-- **Resposta**: Direta como Professora Carla
 
 ### 📁 Arquivos Principais
 
