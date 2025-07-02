@@ -158,6 +158,15 @@ pip install groq
 - `app.py` - Interface integrada
 - Indices FAISS baixados automaticamente do Hugging Face
 
+### ☁️ Compatibilidade Streamlit Cloud
+
+- ✅ **Sistema totalmente compatível** com Streamlit Cloud
+- ✅ **Correções aplicadas** para evitar erros de validação Pydantic
+- ✅ **Prompt template** integrado ao sistema LLM
+- ✅ **Nomes de arquivos FAISS** padronizados para `index.faiss` e `index.pkl`
+- ✅ **Teste completo** executado com sucesso (5/5 testes passaram)
+- ✅ **Download automático** das bases de dados na primeira execução
+
 ## 🎯 Resultados Esperados
 
 ### ✨ Para a Sther

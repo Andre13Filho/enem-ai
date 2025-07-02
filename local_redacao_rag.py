@@ -29,14 +29,12 @@ except ImportError:
     from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.schema import Document
 from langchain.chains import ConversationalRetrievalChain
-from langchain.chains.question_answering import load_qa_chain
 try:
     from langchain_community.memory import ConversationBufferMemory
 except ImportError:
     from langchain.memory import ConversationBufferMemory
 from langchain.llms.base import LLM
 from langchain.callbacks.manager import CallbackManagerForLLMRun
-from langchain.prompts import PromptTemplate
 
 # Groq para LLM
 from groq import Groq
@@ -71,9 +69,38 @@ class GroqLLM(LLM):
         try:
             # Cria uma nova instância do cliente a cada chamada para evitar cache corrompido
             client = Groq(api_key=self.api_key)
+            
+            # Sistema de prompt da Professora Carla
+            system_prompt = """Você é a Professora Carla, especialista em redação do ENEM. Você está conversando com Sther, uma estudante de 17 anos que quer muito bem no ENEM.
+
+CARACTERÍSTICAS DA PROFESSORA CARLA:
+- Didática e encorajadora
+- Usa linguagem clara e acessível
+- Sempre específica e construtiva nos feedbacks
+- Maternal mas profissional
+- Foca nos critérios oficiais do ENEM
+- Sempre termina com palavras de encorajamento
+
+SOBRE A STHER:
+- Dedicada aos estudos
+- Às vezes fica insegura com redação
+- Precisa de orientação específica e prática
+- Quer alcançar nota 1000 no ENEM
+
+INSTRUÇÕES:
+- Use emojis e formatação markdown para clareza
+- Organize conteúdo em seções lógicas
+- Baseie orientações nos critérios do ENEM
+- Seja específica em feedbacks de redação
+- Use exemplos práticos e aplicáveis
+- Mantenha foco na evolução da estudante"""
+
             response = client.chat.completions.create(
                 model=self.model_name,
-                messages=[{"role": "user", "content": prompt}],
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ],
                 temperature=0.7,
                 max_tokens=2048
             )
@@ -213,7 +240,7 @@ class LocalRedacaoRAG:
             
             # Carrega o vectorstore de casos de sucesso
             self.success_vectorstore = FAISS.load_local(
-                FAISS_SUCCESS_INDEX_DIR,
+                FAISS_SUCCESS_INDEX_DIR, 
                 self.embeddings,
                 allow_dangerous_deserialization=True
             )
@@ -235,67 +262,11 @@ class LocalRedacaoRAG:
                 output_key="answer"
             )
             
-            # Template de prompt específico para redação
-            template = """Você é a Professora Carla, especialista em redação do ENEM. Responda como uma professora para uma estudante de 17 anos chamada Sther.
-
-Use o contexto fornecido abaixo para responder à pergunta da estudante:
-
-{context}
-
-Pergunta: {question}
-
-INSTRUÇÕES PARA RESPOSTA:
-
-1. **SEJA DIDÁTICA E ENCORAJADORA:**
-   - Use uma linguagem clara e acessível para uma estudante de 17 anos
-   - Seja específica e construtiva nos feedbacks
-   - Sempre termine com palavras de encorajamento
-
-2. **ESTRUTURA SUAS RESPOSTAS:**
-   - Use emojis e formatação markdown para clareza
-   - Organize o conteúdo em seções lógicas
-   - Destaque pontos importantes com **negrito**
-
-3. **FOQUE NO ENEM:**
-   - Baseie suas orientações nos critérios do ENEM
-   - Use exemplos práticos e aplicáveis
-   - Conecte teoria com prática
-
-4. **ESTILO DA PROFESSORA CARLA:**
-   - Seja maternal mas profissional
-   - Use analogias simples quando necessário
-   - Mantenha o foco na evolução da estudante
-
-CONTEXTO ADICIONAL:
-- Sther é dedicada e quer muito bem no ENEM
-- Ela se esforça muito em redação mas às vezes fica insegura
-- Precisa de orientação específica e prática
-
-IMPORTANTE: 
-- Se for análise de redação, seja detalhada na correção
-- Se for dúvida sobre técnicas, seja específica e prática
-- Se for pedido de exemplos, use os casos de sucesso como referência
-
-Resposta da Professora Carla:"""
-
-            # Criar prompt template
-            prompt = PromptTemplate(
-                template=template,
-                input_variables=["context", "question"]
-            )
-            
-            # Criar cadeia QA personalizada
-            doc_chain = load_qa_chain(
+            # Criar cadeia RAG conversacional (sem prompt customizado para compatibilidade)
+            self.rag_chain = ConversationalRetrievalChain.from_llm(
                 llm=llm,
-                chain_type="stuff",
-                prompt=prompt
-            )
-            
-            # Criar cadeia RAG conversacional
-            self.rag_chain = ConversationalRetrievalChain(
                 retriever=self.retriever,
                 memory=self.memory,
-                combine_docs_chain=doc_chain,
                 return_source_documents=True,
                 verbose=False
             )
@@ -303,7 +274,7 @@ Resposta da Professora Carla:"""
             st.success("✅ Sistema RAG de redação inicializado com sucesso!")
             self.is_initialized = True
             return True
-            
+
         except Exception as e:
             st.error(f"❌ Erro ao inicializar o sistema RAG: {str(e)}")
             print(f"❌ Erro ao inicializar o sistema RAG: {str(e)}")
@@ -516,44 +487,49 @@ Resposta da Professora Carla:"""
         context_redacao = "\n\n".join([doc.page_content for doc in redacao_docs])
         context_success = "\n\n".join([doc.page_content for doc in success_docs])
         
-        # Prompt específico para análise de redação
+        # Prompt específico e detalhado para análise de redação
         analysis_prompt = f"""
-**ANÁLISE DETALHADA DA REDAÇÃO DA STHER**
+PROFESSORA CARLA, ANALISE ESTA REDAÇÃO DA STHER:
 
-**ARQUIVO:** {filename}
-**TEXTO DA REDAÇÃO:**
+📂 **ARQUIVO:** {filename}
+📊 **ESTATÍSTICAS:** {palavras} palavras, {paragrafos} parágrafos, {linhas} linhas
+
+📝 **TEXTO DA REDAÇÃO:**
 {texto_redacao}
 
-**ESTATÍSTICAS:**
-- Palavras: {palavras}
-- Parágrafos: {paragrafos}  
-- Linhas: {linhas}
+🎯 **MATERIAL DE APOIO DISPONÍVEL:**
+**Critérios do ENEM:** {context_redacao[:500]}...
+**Exemplos Nota 1000:** {context_success[:500]}...
 
-**TAREFA:** Analise esta redação seguindo rigorosamente os critérios do ENEM e forneça:
+📋 **TAREFA ESPECÍFICA:**
+Como Professora Carla, faça uma análise COMPLETA seguindo os critérios oficiais do ENEM:
 
-1. **NOTA FINAL (0-1000):** Baseada nas 5 competências do ENEM
-2. **ANÁLISE POR COMPETÊNCIA:** Com nota individual e feedback específico
-3. **PONTOS FORTES:** O que Sther fez bem
-4. **PONTOS A MELHORAR:** Específicos e acionáveis  
-5. **PLANO DE MELHORIA:** Passos concretos para chegar à nota 1000
-6. **COMPARAÇÃO COM NOTA 1000:** Como esta redação se compara aos exemplos de sucesso
+🏆 **1. NOTA FINAL (0-1000):** Calcule baseado nas 5 competências
 
-**COMPETÊNCIAS DO ENEM:**
-- C1: Demonstrar domínio da modalidade escrita formal da Língua Portuguesa
-- C2: Compreender a proposta de redação e aplicar conceitos das várias áreas de conhecimento
-- C3: Selecionar, relacionar, organizar e interpretar informações, fatos, opiniões e argumentos em defesa de um ponto de vista
-- C4: Demonstrar conhecimento dos mecanismos linguísticos necessários para a construção da argumentação
-- C5: Elaborar proposta de intervenção para o problema abordado, respeitando os direitos humanos
+📐 **2. ANÁLISE POR COMPETÊNCIA:**
+- **C1 (0-200):** Domínio da escrita formal - gramática, estrutura
+- **C2 (0-200):** Compreensão do tema - repertório, argumentação
+- **C3 (0-200):** Organização das informações - coerência, progressão
+- **C4 (0-200):** Mecanismos linguísticos - coesão, conectivos
+- **C5 (0-200):** Proposta de intervenção - agente, ação, meio, finalidade
 
-**SEJA ESPECÍFICA, CONSTRUTIVA E MOTIVACIONAL COMO A PROFESSORA CARLA QUE É!**
+✅ **3. PONTOS FORTES:** O que Sther fez muito bem
+
+⚠️ **4. PONTOS A MELHORAR:** Específicos e acionáveis
+
+📈 **5. PLANO PARA NOTA 1000:** Passos concretos
+
+🌟 **6. COMPARAÇÃO:** Como se compara aos exemplos de sucesso
+
+💪 **7. MENSAGEM MOTIVACIONAL:** Como Professora Carla carinhosa
+
+**IMPORTANTE:** Seja detalhada, específica e construtiva. Use os materiais de apoio para fundamentar sua análise!
 """
 
         try:
             # Usar o RAG para gerar análise especializada
             response = self.rag_chain({
-                "question": analysis_prompt,
-                "context": context_redacao,
-                "success_cases": context_success
+                "question": analysis_prompt
             })
             
             analysis = response.get("answer", "Erro na análise")
