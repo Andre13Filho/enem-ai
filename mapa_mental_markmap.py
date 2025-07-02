@@ -421,74 +421,65 @@ def gerar_markdown_mapa_mental(pergunta: str, api_key: str, nivel: str, current_
         
         # Prompt melhorado e mais específico para as dúvidas da Sther
         prompt = f"""
-Você é um especialista em mapas mentais educacionais do ENEM. A aluna Sther (17 anos, cursando 3º ano) fez esta pergunta específica sobre {current_subject}:
+Você é uma IA assistente educacional, especialista em criar material de estudo visual e conciso para estudantes do ensino médio.
 
-**Pergunta da Sther:** "{pergunta}"
-**Matéria:** {current_subject}
-**Nível:** {nivel}
+**TAREFA PRINCIPAL:**
+Sua missão é **interpretar a dúvida de um aluno**, **identificar o tópico acadêmico central** e construir um mapa mental sobre **esse tópico**, usando a sintaxe Markmap.
 
-**OBJETIVO:** Criar um mapa mental ESPECÍFICO que responda diretamente à dúvida da Sther, não um mapa genérico da matéria.
+**DÚVIDA DO ALUNO:** "{question}"
+**MATÉRIA:** {subject}
+**NÍVEL DE DETALHAMENTO:** {level}
 
-**CONFIGURAÇÃO:** {config['conceitos']}, {config['profundidade']}, {config['detalhes']}
+---
+**INSTRUÇÕES CRÍTICAS DE EXECUÇÃO:**
 
-**INSTRUÇÕES CRÍTICAS:**
-1. Responda APENAS com o código Markdown do mapa mental
-2. SEMPRE comece com as configurações YAML frontmatter
-3. O título principal deve ser EXATAMENTE sobre a pergunta da Sther
-4. Cada seção deve contribuir para responder a pergunta específica
-5. Para fórmulas: use $formula$ (inline) ou $$formula$$ (display)
-6. Use emojis relevantes para {current_subject}
-7. Foque no que cai no ENEM para {current_subject}
-8. Organize do conceito central para subtópicos relacionados
+1.  **IDENTIFIQUE O TÓPICO CENTRAL:** Analise a "DÚVIDA DO ALUNO" e extraia o **conceito principal**. Por exemplo, se a dúvida for "poderia me explicar sobre termodinâmica?", o tópico central é "Termodinâmica". Este será o nó raiz (`#`) do mapa. **NUNCA use a pergunta inteira como título.**
 
-**ESTRUTURA OBRIGATÓRIA:**
+2.  **FOCO ABSOLUTO NO TÓPICO:** Todo o conteúdo do mapa, incluindo definições, exemplos e fórmulas, deve ser **estritamente relevante ao tópico central identificado**. Evite "alucinações" ou fórmulas de outras áreas. Se o tópico é Termodinâmica, inclua apenas fórmulas de Termodinâmica (ex: ΔU = Q - W).
+
+3.  **HIERARQUIA LÓGICA:** Organize o mapa de forma clara e pedagógica. Comece com os **fundamentos**, avance para os **conceitos principais ou leis**, e finalize com **aplicações e exemplos**. Isso cria um fluxo de aprendizado coerente.
+
+4.  **CONCISÃO É REI:** Use **palavras-chave e frases curtas** nos nós. Mapas mentais não são textos discursivos. [cite_start]O objetivo é a clareza visual e a facilidade de memorização[cite: 1082, 1086].
+
+5.  **FORMATO DE SAÍDA (MARKMAP):**
+    * Responda **APENAS** com o código Markdown do mapa.
+    * Sempre inclua o `frontmatter` YAML no início para garantir a interatividade.
+    * Use LaTeX para fórmulas (`$inline$` ou `$$destacado$$`).
+    * [cite_start]Use emojis relevantes para a matéria para melhorar a associação visual[cite: 1077].
+
+---
+**EXEMPLO DE OUTPUT CORRETO PARA A PERGUNTA "Poderia me explicar termodinâmica?":**
 ```markdown
 ---
 markmap:
   pan: true
   zoom: true
-  initialExpandLevel: 2
-  maxWidth: 300
-  colorFreezeLevel: 2
-  duration: 500
-  spacingHorizontal: 80
-  spacingVertical: 5
 ---
 
-# 🎯 [RESPOSTA DIRETA À PERGUNTA DA STHER]
+# 🌡️ Termodinâmica
 
-## 📚 Conceito Central
-### 🔍 Definição
-- Resposta direta à pergunta
-- Por que é importante
+## 📚 Conceitos Fundamentais
+### ⚡ Energia, Calor e Trabalho
+- **Energia Interna (U):** Soma das energias das partículas.
+- **Calor (Q):** Energia transferida devido à diferença de temperatura.
+- **Trabalho (W):** Energia transferida por força e deslocamento.
 
-### 📐 Como Funciona
-- Mecanismo/processo principal
-- {get_formula_example(current_subject)}
+## ⚖️ Leis da Termodinâmica
+### 1️⃣ Primeira Lei (Conservação de Energia)
+- **Definição:** A variação da energia interna de um sistema é a diferença entre o calor trocado e o trabalho realizado.
+- **Fórmula:** `$$\Delta U = Q - W$$`
+### 2️⃣ Segunda Lei (Entropia)
+- **Definição:** O calor não flui espontaneamente de um corpo frio para um quente. A entropia (desordem) do universo tende a aumentar.
+### 0️⃣ Lei Zero (Equilíbrio Térmico)
+- **Definição:** Se A está em equilíbrio com C, e B está em equilíbrio com C, então A e B estão em equilíbrio entre si.
 
-## 🧮 Resolução Prática
-### ⚡ Passo a Passo
-- Método 1: [específico para a pergunta]
-- Método 2: [alternativo]
-
-### 🎯 Dicas ENEM
-- Como identificar no exame
-- Pegadinhas comuns
-- {get_advanced_formula_example(current_subject)}
-
-## 📊 Exemplos Relacionados
-### 🔢 Exemplo Básico
-- Situação similar
-- Resolução step-by-step
-
-### 🏆 Exemplo ENEM
-- Questão típica do exame
-- Estratégia de resolução
-```
-
-IMPORTANTE: Adapte o conteúdo para responder ESPECIFICAMENTE à pergunta "{pergunta}" da Sther em {current_subject}.
-
-GERE O MAPA MENTAL AGORA:"""
+## 🔥 Aplicações
+### ⚙️ Motores de Combustão
+- Convertem calor em trabalho mecânico.
+### 🧊 Refrigeradores
+- Transferem calor de uma fonte fria para uma fonte quente (com trabalho externo).
+Agora, gere o mapa mental para a dúvida do aluno, seguindo rigorosamente estas novas instruções.
+"""
         
         # Modelo atualizado (llama-3.3-70b-versatile está obsoleto)
         response = client.chat.completions.create(
