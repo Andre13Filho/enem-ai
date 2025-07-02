@@ -293,6 +293,17 @@ onde $\theta$ é o ângulo entre a força e o deslocamento.
         except Exception as e:
             return f"Erro ao buscar conteúdo: {str(e)}"
     
+    def search_exercises_by_message(self, message: str, k: int = 3) -> List[Dict[str, Any]]:
+        """Busca exercícios na base do ENEM por similaridade com a mensagem."""
+        if not self.exercises_rag:
+            return []
+        
+        try:
+            return self.exercises_rag.search_exercises_by_message(message, k=k)
+        except Exception as e:
+            print(f"Erro ao buscar exercícios: {e}")
+            return []
+
     def _add_recommended_exercises(self, user_message: str) -> str:
         """Adiciona exercícios recomendados baseados na mensagem do usuário"""
         try:

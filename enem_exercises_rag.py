@@ -248,86 +248,137 @@ class ENEMExercisesRAG:
         text_lower = text.lower()
         
         # Tópicos específicos de matemática
-        topics = {
-            "Função Quadrática": ["função quadrática", "parábola", "vértice", "ax² + bx + c"],
-            "Geometria": ["triângulo", "círculo", "área", "volume", "perímetro", "raio"],
-            "Trigonometria": ["seno", "cosseno", "tangente", "trigonométric"],
-            "Probabilidade": ["probabilidade", "chance", "evento", "aleatório"],
-            "Estatística": ["média", "mediana", "moda", "desvio", "gráfico"],
-            "Progressão": ["progressão", "aritmética", "geométrica", "sequência"],
-            "Logaritmo": ["logaritmo", "log", "exponencial"],
-            "Física": ["força", "energia", "velocidade", "movimento", "newton"],
-            "Química": ["reação", "mol", "átomo", "elemento", "química"],
-            "Biologia": ["célula", "dna", "gene", "evolução", "ecologia"]
+        math_topics = {
+            "Geometria Plana": ['área', 'perímetro', 'polígono', 'círculo', 'triângulo', 'quadrado'],
+            "Geometria Espacial": ['volume', 'cubo', 'esfera', 'cilindro', 'cone', 'pirâmide'],
+            "Funções": ['função', 'gráfico', 'domínio', 'imagem', 'f(x)', 'g(x)'],
+            "Análise Combinatória": ['combinatória', 'permutação', 'arranjo', 'combinação'],
+            "Probabilidade": ['probabilidade', 'chance', 'sorteio', 'aleatório'],
+            "Estatística": ['média', 'mediana', 'moda', 'desvio padrão'],
+            "Trigonometria": ['seno', 'cosseno', 'tangente', 'trigonométrica'],
+            "Álgebra": ['equação', 'expressão', 'polinômio', 'inequação']
         }
         
-        for topic, keywords in topics.items():
+        # Tópicos de Ciências da Natureza
+        science_topics = {
+            # Física
+            "Mecânica": ['força', 'movimento', 'energia', 'trabalho', 'potência', 'newton', 'cinética', 'potencial'],
+            "Termodinâmica": ['temperatura', 'calor', 'termodinâmica', 'gás', 'pressão'],
+            "Óptica": ['luz', 'lente', 'espelho', 'refração', 'reflexão', 'óptica'],
+            "Ondulatória": ['onda', 'frequência', 'amplitude', 'som', 'doppler'],
+            "Eletricidade": ['corrente', 'tensão', 'resistência', 'circuito', 'elétrons', 'eletricidade', 'eletrostática'],
+            # Química
+            "Química Orgânica": ['carbono', 'hidrocarboneto', 'álcool', 'função orgânica'],
+            "Estequiometria": ['mol', 'massa molar', 'estequiometria', 'cálculo estequiométrico'],
+            "Soluções": ['solução', 'concentração', 'molaridade', 'solubilidade'],
+            "Termoquímica": ['entalpia', 'reação exotérmica', 'reação endotérmica'],
+            "Eletroquímica": ['pilha', 'eletrólise', 'oxidação', 'redução'],
+            # Biologia
+            "Citologia": ['célula', 'membrana', 'citoplasma', 'núcleo', 'mitocôndria'],
+            "Genética": ['gene', 'dna', 'hereditariedade', 'genética', 'mendel'],
+            "Ecologia": ['ecossistema', 'bioma', 'cadeia alimentar', 'população'],
+            "Fisiologia Humana": ['sistema digestório', 'sistema respiratório', 'sistema circulatório']
+        }
+        
+        all_topics = {**math_topics, **science_topics}
+        
+        for topic, keywords in all_topics.items():
             if any(keyword in text_lower for keyword in keywords):
                 return topic
         
         return "Geral"
     
     def _create_vectorstore(self):
-        """Cria vectorstore ChromaDB"""
-        try:
-            if not self.embeddings:
-                raise Exception("Embeddings não configurados")
+        """Cria e persiste o vectorstore com os documentos"""
+        if not self.documents:
+            st.warning("Nenhum documento para processar")
+            return
             
-            # Cria vectorstore ChromaDB
+        try:
+            st.info(f"💾 Criando vectorstore com {len(self.documents)} exercícios...")
+            
+            # Divide os documentos em chunks menores (se necessário)
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=1000,
+                chunk_overlap=150
+            )
+            splits = text_splitter.split_documents(self.documents)
+            
             self.vectorstore = Chroma.from_documents(
-                documents=self.documents,
+                documents=splits,
                 embedding=self.embeddings,
                 persist_directory=self.persist_directory
             )
-            
-            # Configura retriever
-            self.retriever = self.vectorstore.as_retriever(
-                search_type="similarity",
-                search_kwargs={"k": 5}
-            )
-            
-            print(f"✅ VectorStore criada com {len(self.documents)} exercícios")
+            self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 5})
+            st.success("✅ Vectorstore criado e salvo com sucesso!")
             
         except Exception as e:
             st.error(f"Erro ao criar vectorstore: {str(e)}")
-            raise
-    
+
     def load_existing_vectorstore(self) -> bool:
-        """Carrega vectorstore existente se disponível"""
+        """Carrega um vectorstore Chroma existente"""
+        if self.vectorstore:
+            return True
+            
+        if not os.path.exists(self.persist_directory):
+            print(f"⚠️ Diretório de persistência não encontrado: {self.persist_directory}")
+            return False
+            
         try:
-            if os.path.exists(self.persist_directory) and self.embeddings:
-                self.vectorstore = Chroma(
-                    persist_directory=self.persist_directory,
-                    embedding_function=self.embeddings
-                )
-                
-                self.retriever = self.vectorstore.as_retriever(
-                    search_type="similarity",
-                    search_kwargs={"k": 5}
-                )
-                
-                # Testa se a vectorstore tem conteúdo
-                try:
-                    test_docs = self.retriever.invoke("matemática")
-                    print(f"✅ VectorStore de exercícios carregada com {len(test_docs)} docs de teste")
-                    
-                    # Carrega amostra para estatísticas
-                    sample_docs = self.vectorstore.similarity_search("questão", k=50)
-                    self.documents = sample_docs
-                    print(f"📊 Amostra de exercícios: {len(sample_docs)} questões")
-                    
-                except Exception as e:
-                    print(f"⚠️ Erro no teste da VectorStore de exercícios: {e}")
-                
-                return True
+            print(f"📚 Carregando vectorstore de '{self.persist_directory}'...")
+            self.vectorstore = Chroma(
+                persist_directory=self.persist_directory,
+                embedding_function=self.embeddings
+            )
+            self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 5})
+            print("✅ Vectorstore carregado com sucesso.")
+            
+            # Verifica se o vectorstore não está vazio
+            if not self.vectorstore._collection.count():
+                 print("⚠️ Vectorstore está vazio. Recomenda-se reprocessar os documentos.")
+                 return False
+
+            return True
+            
         except Exception as e:
-            print(f"Não foi possível carregar vectorstore de exercícios: {str(e)}")
-        
-        return False
-    
+            print(f"❌ Erro ao carregar vectorstore: {str(e)}")
+            return False
+
+    def search_exercises_by_message(self, message: str, k: int = 3) -> List[Dict[str, Any]]:
+        """Busca exercícios por similaridade com a mensagem do usuário."""
+        if not self.vectorstore:
+            # Tenta carregar o vectorstore se ele não estiver na memória
+            if not self.load_existing_vectorstore():
+                # Se não conseguir carregar, processa os documentos para criar um novo
+                print("Vectorstore não encontrado. Processando documentos para criar um novo...")
+                self.process_enem_documents()
+                if not self.vectorstore:
+                    print("❌ Falha ao criar ou carregar o vectorstore. A busca não pode ser realizada.")
+                    return []
+
+        try:
+            # Realiza a busca por similaridade
+            results = self.vectorstore.similarity_search(message, k=k)
+            
+            # Formata os resultados para o padrão esperado
+            formatted_results = []
+            for doc in results:
+                formatted_results.append({
+                    "year": doc.metadata.get("year", "N/A"),
+                    "question_number": doc.metadata.get("question_number", "N/A"),
+                    "topic": doc.metadata.get("topic", "Geral"),
+                    "content": doc.page_content
+                })
+            
+            return formatted_results
+        except Exception as e:
+            print(f"Erro durante a busca por similaridade: {e}")
+            return []
+            
     def search_exercises_by_topic(self, topic: str, subject_area: str = None, k: int = 3) -> List[Document]:
-        """Busca exercícios por tópico e área"""
+        """Busca exercícios por tópico, com filtro opcional de área"""
         if not self.retriever:
+            st.warning("Retriever não inicializado")
             return []
         
         try:
