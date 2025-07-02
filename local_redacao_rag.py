@@ -11,7 +11,6 @@ import re
 import tempfile
 from typing import Dict, List, Any, Optional
 from datetime import datetime
-from redacao_formatter import format_redacao_response
 import time
 
 # Importações para processamento de PDF
@@ -106,7 +105,19 @@ INSTRUÇÕES:
                 temperature=0.7,
                 max_tokens=2048
             )
-            return response.choices[0].message.content
+            
+            # Limpar tags de pensamento da resposta do DeepSeek R1
+            raw_response = response.choices[0].message.content
+            if raw_response:
+                # Remove tags <think>...</think> e variações
+                import re
+                clean_response = re.sub(r'<think>.*?</think>', '', raw_response, flags=re.DOTALL)
+                clean_response = re.sub(r'<thinking>.*?</thinking>', '', clean_response, flags=re.DOTALL)
+                clean_response = re.sub(r'<thought>.*?</thought>', '', clean_response, flags=re.DOTALL)
+                # Remove múltiplas quebras de linha e espaços extras
+                clean_response = re.sub(r'\n\s*\n\s*\n', '\n\n', clean_response.strip())
+                return clean_response
+            return raw_response
         except Exception as e:
             return f"Erro na API: {str(e)}"
 
@@ -543,9 +554,8 @@ Como Professora Carla, faça uma análise COMPLETA seguindo os critérios oficia
                 "question": analysis_prompt
             })
             
-            analysis_raw = response.get("answer", "Erro na análise")
-            analysis = format_redacao_response(analysis_raw) 
-            
+            analysis = response.get("answer", "Erro na análise")
+                
             # Adicionar cabeçalho formatado
             final_analysis = f"""
 # 📝 **CORREÇÃO COMPLETA DA REDAÇÃO**
