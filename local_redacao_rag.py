@@ -160,4 +160,26 @@ def get_redacao_correction(essay_text: str, api_key: str) -> str:
         correction = corrector.get_correction(essay_text)
         return correction
     except Exception as e:
-        return f"❌ Ocorreu um erro geral no processo de correção: {e}" 
+        return f"❌ Ocorreu um erro geral no processo de correção: {e}"
+
+def setup_redacao_ui():
+    """
+    Função de placeholder para compatibilidade com app.py.
+    A UI de redação agora é gerenciada dentro de 'professor_leticia_local.py'.
+    """
+    pass
+
+def analyze_redacao_pdf(pdf_content: bytes, filename: str) -> str:
+    """
+    Função de placeholder para compatibilidade com app.py.
+    A análise agora é chamada diretamente pela UI da Professora Letícia.
+    """
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        return "🔑 Chave da API Groq não encontrada."
+        
+    text = RedacaoRAG.extract_text_from_pdf(pdf_content)
+    if "não foi possível extrair" in text.lower() or not text.strip():
+        return f"❌ Erro ao ler o arquivo: {text}"
+    
+    return get_redacao_correction(text, api_key) 
