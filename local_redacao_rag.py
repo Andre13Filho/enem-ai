@@ -88,7 +88,10 @@ SOBRE A STHER:
 - Precisa de orientação específica e prática
 - Quer alcançar nota 1000 no ENEM
 
-INSTRUÇÕES:
+INSTRUÇÕES IMPORTANTES:
+- RESPONDA DIRETAMENTE sem mostrar seu raciocínio ou processo de pensamento
+- NÃO mostre análises internas ou "thinking" 
+- Vá direto ao ponto com sua resposta como Professora Carla
 - Use emojis e formatação markdown para clareza
 - Organize conteúdo em seções lógicas
 - Baseie orientações nos critérios do ENEM
@@ -103,7 +106,15 @@ INSTRUÇÕES:
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.7,
-                max_tokens=2048
+                max_tokens=2048,
+                # Parâmetros para suprimir o raciocínio interno do DeepSeek R1
+                stream=False,
+                response_format={"type": "text"},
+                # Força o modelo a retornar apenas a resposta final
+                extra_body={
+                    "reasoning_effort": "low",
+                    "show_reasoning": False
+                }
             )
             return response.choices[0].message.content
         except Exception as e:
@@ -682,7 +693,13 @@ def validate_api_key(api_key: str) -> bool:
         response = client.chat.completions.create(
             model="deepseek-r1-distill-llama-70b",
             messages=[{"role": "user", "content": "teste"}],
-            max_tokens=10
+            max_tokens=10,
+            # Parâmetros para suprimir o raciocínio interno
+            stream=False,
+            extra_body={
+                "reasoning_effort": "low",
+                "show_reasoning": False
+            }
         )
         return True
     except Exception as e:
