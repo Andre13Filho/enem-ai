@@ -11,6 +11,7 @@ import re
 import tempfile
 from typing import Dict, List, Any, Optional
 from datetime import datetime
+from redacao_formatter import format_redacao_response
 import time
 
 # Importações para processamento de PDF
@@ -542,7 +543,8 @@ Como Professora Carla, faça uma análise COMPLETA seguindo os critérios oficia
                 "question": analysis_prompt
             })
             
-            analysis = response.get("answer", "Erro na análise")
+            analysis_raw = response.get("answer", "Erro na análise")
+            analysis = format_redacao_response(analysis_raw) 
             
             # Adicionar cabeçalho formatado
             final_analysis = f"""
