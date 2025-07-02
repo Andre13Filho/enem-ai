@@ -136,13 +136,13 @@ class LocalRedacaoRAG:
         os.makedirs(FAISS_INDEX_DIR, exist_ok=True)
         os.makedirs(FAISS_SUCCESS_INDEX_DIR, exist_ok=True)
         
-        # Arquivos principais de redação
-        index_file = os.path.join(FAISS_INDEX_DIR, "index_redacao.faiss")
-        pkl_file = os.path.join(FAISS_INDEX_DIR, "index_redacao.pkl")
+        # Arquivos principais de redação (nomes padrão do FAISS)
+        index_file = os.path.join(FAISS_INDEX_DIR, "index.faiss")
+        pkl_file = os.path.join(FAISS_INDEX_DIR, "index.pkl")
         
-        # Arquivos de casos de sucesso
-        success_index_file = os.path.join(FAISS_SUCCESS_INDEX_DIR, "index_success_red.faiss")
-        success_pkl_file = os.path.join(FAISS_SUCCESS_INDEX_DIR, "index_success_red.pkl")
+        # Arquivos de casos de sucesso (nomes padrão do FAISS)
+        success_index_file = os.path.join(FAISS_SUCCESS_INDEX_DIR, "index.faiss")
+        success_pkl_file = os.path.join(FAISS_SUCCESS_INDEX_DIR, "index.pkl")
 
         # Verifica se todos os arquivos já existem
         if (os.path.exists(index_file) and os.path.exists(pkl_file) and 
@@ -161,11 +161,11 @@ class LocalRedacaoRAG:
         success_faiss_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index_success_red.faiss"
         success_pkl_url = "https://huggingface.co/Andre13Filho/rag_enem/resolve/main/index_success_red.pkl"
 
-        # Baixa os arquivos principais
+        # Baixa os arquivos principais com nomes padrão do FAISS
         faiss_success = self._download_file(faiss_url, index_file)
         pkl_success = self._download_file(pkl_url, pkl_file)
         
-        # Baixa os arquivos de casos de sucesso
+        # Baixa os arquivos de casos de sucesso com nomes padrão do FAISS
         success_faiss_success = self._download_file(success_faiss_url, success_index_file)
         success_pkl_success = self._download_file(success_pkl_url, success_pkl_file)
 
