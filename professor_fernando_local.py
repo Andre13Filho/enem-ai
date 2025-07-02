@@ -217,7 +217,7 @@ Estou com probleminhas técnicos Sther, pode voltar depois?
                 response += "\n• Base de conhecimento geral de Física"
             
             # SEMPRE adiciona exercícios recomendados
-            # response += self._add_recommended_exercises(user_message)
+            response += self._add_recommended_exercises(user_message)
             
             # SISTEMA DE ANALOGIAS V2 - SÉRIES PERSONALIZADAS
             # SEMPRE tenta adicionar analogias, mesmo se houve erro na API
@@ -293,120 +293,120 @@ onde $\theta$ é o ângulo entre a força e o deslocamento.
         except Exception as e:
             return f"Erro ao buscar conteúdo: {str(e)}"
     
-    # def _add_recommended_exercises(self, user_message: str) -> str:
-    #     """Adiciona exercícios recomendados baseados na mensagem do usuário"""
-    #     try:
-    #         user_lower = user_message.lower()
+    def _add_recommended_exercises(self, user_message: str) -> str:
+        """Adiciona exercícios recomendados baseados na mensagem do usuário"""
+        try:
+            user_lower = user_message.lower()
             
-    #         # Detecta se Sther está EXPLICITAMENTE pedindo exercícios
-    #         exercise_request_keywords = [
-    #             'exercício', 'exercicios', 'questão', 'questões', 'questao', 'questoes',
-    #             'praticar', 'treinar', 'resolver', 'fazer exercício', 'atividade',
-    #             'me dê', 'me de', 'quero', 'preciso', 'tem exercício', 'tem questão'
-    #         ]
+            # Detecta se Sther está EXPLICITAMENTE pedindo exercícios
+            exercise_request_keywords = [
+                'exercício', 'exercicios', 'questão', 'questões', 'questao', 'questoes',
+                'praticar', 'treinar', 'resolver', 'fazer exercício', 'atividade',
+                'me dê', 'me de', 'quero', 'preciso', 'tem exercício', 'tem questão'
+            ]
             
-    #         is_asking_for_exercises = any(keyword in user_lower for keyword in exercise_request_keywords)
+            is_asking_for_exercises = any(keyword in user_lower for keyword in exercise_request_keywords)
             
-#             if is_asking_for_exercises:
-#                 # Sther está pedindo exercícios - busca com mais prioridade
-#                 exercises = self.search_exercises_by_message(user_message, k=3)
+            if is_asking_for_exercises:
+                # Sther está pedindo exercícios - busca com mais prioridade
+                exercises = self.search_exercises_by_message(user_message, k=3)
                 
-#                 if exercises:
-#                     exercises_text = """
+                if exercises:
+                    exercises_text = """
 
-# ---
+---
 
-# 📚 **Exercícios ENEM - Conforme solicitado!**
+📚 **Exercícios ENEM - Conforme solicitado!**
 
-# Perfeito, Sther! Aqui estão os exercícios que você pediu:
+Perfeito, Sther! Aqui estão os exercícios que você pediu:
 
-# """
+"""
                     
-#                     for i, exercise in enumerate(exercises, 1):
-#                         year = exercise["year"] 
-#                         question_num = exercise["question_number"]
-#                         topic = exercise["topic"]
+                    for i, exercise in enumerate(exercises, 1):
+                        year = exercise["year"] 
+                        question_num = exercise["question_number"]
+                        topic = exercise["topic"]
                         
-#                         # Limita o conteúdo para não sobrecarregar
-#                         content = exercise["content"].strip()
-#                         if len(content) > 800:
-#                             content = content[:800] + "\n\n[...continua - me peça para ver o resto se precisar!]"
+                        # Limita o conteúdo para não sobrecarregar
+                        content = exercise["content"].strip()
+                        if len(content) > 800:
+                            content = content[:800] + "\n\n[...continua - me peça para ver o resto se precisar!]"
                         
-#                         exercises_text += f"""
-# **📝 Exercício {i} - ENEM {year} (Questão {question_num})**
-# *Tópico: {topic}*
+                        exercises_text += f"""
+**📝 Exercício {i} - ENEM {year} (Questão {question_num})**
+*Tópico: {topic}*
 
-# {content}
+{content}
 
-# *💬 Quer que eu explique alguma parte? É só perguntar!*
+*💬 Quer que eu explique alguma parte? É só perguntar!*
 
-# ---
-# """
+---
+"""
                     
-#                     exercises_text += """
-# 🎯 **Dica:** Leia com calma, tente resolver primeiro e depois me pergunte se tiver dúvidas! 💪
-# """
+                    exercises_text += """
+🎯 **Dica:** Leia com calma, tente resolver primeiro e depois me pergunte se tiver dúvidas! 💪
+"""
                     
-#                     return exercises_text
+                    return exercises_text
                 
-#                 else:
-#                     # Sther pediu exercícios mas não encontrou nada específico
-#                     return """
+                else:
+                    # Sther pediu exercícios mas não encontrou nada específico
+                    return """
 
-# ---
+---
 
-# ❌ **Não encontrei exercícios específicos**
+❌ **Não encontrei exercícios específicos**
 
-# Desculpe, Sther! Não encontrei exercícios exatos sobre esse tópico na base ENEM.
+Desculpe, Sther! Não encontrei exercícios exatos sobre esse tópico na base ENEM.
 
-# 💡 **Tente reformular assim:**
-# - "Exercícios de Geometria"
-# - "Questões de Funções" 
-# - "Exercícios do ENEM 2024"
-# - "Problemas de Probabilidade"
+💡 **Tente reformular assim:**
+- "Exercícios de Geometria"
+- "Questões de Funções" 
+- "Exercícios do ENEM 2024"
+- "Problemas de Probabilidade"
 
-# 📚 **Ou me pergunte sobre a teoria primeiro** que eu explico e depois trago exercícios relacionados!
-# """
+📚 **Ou me pergunte sobre a teoria primeiro** que eu explico e depois trago exercícios relacionados!
+"""
             
-#             else:
-#                 # Pergunta normal - apenas sugere exercícios sutilmente
-#                 exercises = self.search_exercises_by_message(user_message, k=1)
+            else:
+                # Pergunta normal - apenas sugere exercícios sutilmente
+                exercises = self.search_exercises_by_message(user_message, k=1)
                 
-#                 if exercises:
-#                     exercise = exercises[0]
-#                     year = exercise["year"]
-#                     topic = exercise["topic"]
+                if exercises:
+                    exercise = exercises[0]
+                    year = exercise["year"]
+                    topic = exercise["topic"]
                     
-#                     return f"""
+                    return f"""
 
-# ---
+---
 
-# 💡 **Sugestão de Prática**
+💡 **Sugestão de Prática**
 
-# Para fixar esse conteúdo, que tal resolver um exercício do ENEM {year} sobre {topic}? 
-# Se quiser, é só me pedir: "Professor, me dê exercícios sobre {topic.lower()}"! 
+Para fixar esse conteúdo, que tal resolver um exercício do ENEM {year} sobre {topic}? 
+Se quiser, é só me pedir: "Professor, me dê exercícios sobre {topic.lower()}"! 
 
-# 🚀 Prática é fundamental!
-# """
+🚀 Prática é fundamental!
+"""
                 
-#                 else:
-#                     return """
+                else:
+                    return """
 
-# ---
+---
 
-# 💡 **Sugestão de Prática**
+💡 **Sugestão de Prática**
 
-# Para fixar bem esse conteúdo, sempre recomendo praticar com exercícios! 
-# Me peça exercícios específicos quando quiser treinar! 🚀
-# """
+Para fixar bem esse conteúdo, sempre recomendo praticar com exercícios! 
+Me peça exercícios específicos quando quiser treinar! 🚀
+"""
                 
-#         except Exception as e:
-#             # Em caso de erro, retorna sugestão simples
-#             return """
+        except Exception as e:
+            # Em caso de erro, retorna sugestão simples
+            return """
 
-# ---
+---
 
-# 💡 **Prática recomendada**
+💡 **Prática recomendada**
 
-# Para fixar o conteúdo, sempre recomendo exercícios! Me pergunte quando quiser praticar! 💪
-# """
+Para fixar o conteúdo, sempre recomendo exercícios! Me pergunte quando quiser praticar! 💪
+"""
