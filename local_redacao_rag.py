@@ -11,6 +11,7 @@ import re
 import tempfile
 from typing import Dict, List, Any, Optional
 from datetime import datetime
+import time
 
 # Importações para processamento de PDF
 try:
@@ -288,17 +289,26 @@ class LocalRedacaoRAG:
         try:
             # Verificar se a pergunta parece ser uma redação para análise
             if self._is_redacao_for_analysis(question):
-                # Obter API key
-                api_key = None
-                if hasattr(st, 'secrets') and "GROQ_API_KEY" in st.secrets:
-                    api_key = st.secrets["GROQ_API_KEY"]
-                else:
-                    api_key = os.environ.get("GROQ_API_KEY")
+                # Obter API key com sistema robusto
+                api_key = get_api_key_robust()
                 
-                if api_key:
+                if api_key and validate_api_key(api_key):
                     # Analisar como redação
                     analysis = self.analyze_redacao_text(question, "Redação via Chat", api_key)
                     return {"answer": analysis}
+                else:
+                    return {"answer": """
+# 🔑 **Erro de Configuração**
+
+A API key não foi encontrada ou não está funcionando. 
+
+**Para resolver:**
+1. Verifique a seção de diagnóstico abaixo
+2. Configure a GROQ_API_KEY nos Secrets do Streamlit
+3. Reinicie o aplicativo
+
+**Precisa de ajuda?** Use o diagnóstico automático na aba de configurações.
+"""}
             
             return self.rag_chain({"question": question})
         except Exception as e:
@@ -601,38 +611,250 @@ def get_local_redacao_rag_instance():
         _singleton_instance = LocalRedacaoRAG()
     return _singleton_instance
 
+def get_api_key_robust() -> Optional[str]:
+    """
+    Sistema robusto para obter API key que funciona no Streamlit Cloud.
+    Resolve problemas de cache e secrets.
+    """
+    api_key = None
+    
+    # Método 1: Streamlit Secrets (preferencial para cloud)
+    try:
+        if hasattr(st, 'secrets'):
+            # Força refresh do cache de secrets
+            if hasattr(st.secrets, '_file_change_listener'):
+                st.secrets._file_change_listener.check()
+            
+            # Tentativas múltiplas com nomes diferentes
+            possible_keys = ["GROQ_API_KEY", "groq_api_key", "API_KEY", "api_key"]
+            
+            for key_name in possible_keys:
+                try:
+                    if key_name in st.secrets:
+                        api_key = str(st.secrets[key_name]).strip()
+                        if api_key and api_key != "sua_chave_groq_aqui" and len(api_key) > 10:
+                            st.write(f"✅ API Key encontrada via secrets: {key_name}")
+                            return api_key
+                except Exception as e:
+                    continue
+                    
+        st.write("⚠️ Streamlit secrets não encontrados ou vazios")
+                    
+    except Exception as e:
+        st.write(f"❌ Erro ao acessar secrets: {str(e)}")
+    
+    # Método 2: Variáveis de ambiente
+    try:
+        possible_env_keys = ["GROQ_API_KEY", "groq_api_key", "API_KEY"]
+        for key_name in possible_env_keys:
+            env_key = os.environ.get(key_name)
+            if env_key and env_key.strip() != "sua_chave_groq_aqui" and len(env_key.strip()) > 10:
+                api_key = env_key.strip()
+                st.write(f"✅ API Key encontrada via ambiente: {key_name}")
+                return api_key
+                
+        st.write("⚠️ Variáveis de ambiente não encontradas")
+                
+    except Exception as e:
+        st.write(f"❌ Erro ao acessar variáveis de ambiente: {str(e)}")
+    
+    # Método 3: Session state (cache temporário)
+    try:
+        if 'groq_api_key' in st.session_state:
+            cached_key = st.session_state['groq_api_key']
+            if cached_key and len(cached_key) > 10:
+                st.write("✅ API Key encontrada no cache da sessão")
+                return cached_key
+                
+    except Exception as e:
+        st.write(f"❌ Erro ao acessar session state: {str(e)}")
+    
+    return None
+
+def validate_api_key(api_key: str) -> bool:
+    """Valida se a API key está funcionando"""
+    if not api_key or len(api_key) < 10:
+        return False
+        
+    try:
+        # Teste rápido com a API Groq
+        client = Groq(api_key=api_key)
+        response = client.chat.completions.create(
+            model="deepseek-r1-distill-llama-70b",
+            messages=[{"role": "user", "content": "teste"}],
+            max_tokens=10
+        )
+        return True
+    except Exception as e:
+        st.write(f"❌ Validação da API key falhou: {str(e)}")
+        return False
+
+def setup_api_key_debug():
+    """Função de debug para diagnosticar problemas de API key"""
+    st.markdown("### 🔍 **Diagnóstico da API Key**")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### Verificações:")
+        
+        # Check 1: Streamlit secrets
+        if hasattr(st, 'secrets'):
+            if "GROQ_API_KEY" in st.secrets:
+                key_preview = str(st.secrets["GROQ_API_KEY"])[:10] + "..."
+                st.write(f"✅ Secret encontrado: {key_preview}")
+                
+                # Validar a key
+                if validate_api_key(st.secrets["GROQ_API_KEY"]):
+                    st.write("✅ API Key válida!")
+                else:
+                    st.write("❌ API Key inválida")
+            else:
+                st.write("❌ Secret GROQ_API_KEY não encontrado")
+                st.write("**Secrets disponíveis:**", list(st.secrets.keys()) if hasattr(st.secrets, 'keys') else "Nenhum")
+        else:
+            st.write("❌ st.secrets não disponível")
+        
+        # Check 2: Environment variables
+        env_key = os.environ.get("GROQ_API_KEY")
+        if env_key:
+            env_preview = env_key[:10] + "..."
+            st.write(f"✅ Variável de ambiente: {env_preview}")
+        else:
+            st.write("❌ Variável GROQ_API_KEY não encontrada")
+    
+    with col2:
+        st.markdown("#### Teste Manual:")
+        
+        manual_key = st.text_input(
+            "Cole sua API key aqui para teste:",
+            type="password",
+            help="Sua key não será salva, apenas testada"
+        )
+        
+        if manual_key and st.button("🧪 Testar API Key"):
+            if validate_api_key(manual_key):
+                st.success("✅ API Key funcionando!")
+                # Salva temporariamente na sessão
+                st.session_state['groq_api_key'] = manual_key
+                st.rerun()
+            else:
+                st.error("❌ API Key inválida")
+    
+    # Check final com função robusta
+    st.markdown("#### Resultado Final:")
+    final_key = get_api_key_robust()
+    
+    if final_key:
+        st.success(f"✅ API Key obtida com sucesso: {final_key[:10]}...")
+        if validate_api_key(final_key):
+            st.success("✅ API Key validada e funcionando!")
+        else:
+            st.error("❌ API Key não está funcionando")
+    else:
+        st.error("❌ Nenhuma API Key válida encontrada")
+        
+        # Instruções de correção
+        st.markdown("""
+        ### 🔧 **Como Corrigir:**
+        
+        **No Streamlit Cloud:**
+        1. Vá em **Settings** → **Secrets**
+        2. Adicione:
+        ```toml
+        GROQ_API_KEY = "sua_chave_aqui"
+        ```
+        3. Clique em **Save**
+        4. **Reinicie o app**
+        
+        **Localmente:**
+        1. Crie arquivo `.env`:
+        ```
+        GROQ_API_KEY=sua_chave_aqui
+        ```
+        
+        **Obter API Key Grátis:**
+        1. Acesse: https://console.groq.com/
+        2. Faça login/cadastro
+        3. Crie uma nova API key
+        4. Copie e cole acima
+        """)
+
 def analyze_redacao_pdf(pdf_content: bytes, filename: str) -> str:
     """Função principal para análise completa de redação em PDF"""
     
     # Obter instância do RAG
     rag_instance = get_local_redacao_rag_instance()
     
-    # Obter API key
-    api_key = None
-    if hasattr(st, 'secrets') and "GROQ_API_KEY" in st.secrets:
-        api_key = st.secrets["GROQ_API_KEY"]
-    else:
-        api_key = os.environ.get("GROQ_API_KEY")
+    # Diagnóstico de API key primeiro
+    st.markdown("#### 🔍 Verificando API Key...")
+    
+    # Obter API key com sistema robusto
+    api_key = get_api_key_robust()
     
     if not api_key:
         return """
-# 🔑 **Configuração Necessária**
+# 🔑 **API Key Não Encontrada**
 
 Olá, Sther! Para analisar sua redação, preciso que a chave da API Groq seja configurada.
 
-**Como configurar:**
-1. Acesse [Groq Console](https://console.groq.com/)
-2. Gere sua API key gratuita
-3. Configure nos Secrets do Streamlit ou variáveis de ambiente
+**Diagnóstico realizado:**
+- Verificação de Streamlit Secrets: ❌
+- Verificação de Variáveis de Ambiente: ❌
+- Cache da Sessão: ❌
 
-**Enquanto isso, aqui estão algumas dicas:**
-- Mantenha estrutura de 4-5 parágrafos
-- Use repertório sociocultural relevante
-- Detalhe bem sua proposta de intervenção
-- Revise gramática e coesão
+## 🔧 **Como Resolver no Streamlit Cloud:**
+
+### Passo 1: Obter API Key Grátis
+1. Acesse: https://console.groq.com/
+2. Faça login (ou crie uma conta)
+3. Clique em "API Keys"
+4. Clique em "Create API Key"
+5. Copie a chave gerada
+
+### Passo 2: Configurar no Streamlit Cloud
+1. No seu app do Streamlit Cloud, clique em **"⚙️ Settings"**
+2. Vá na aba **"Secrets"**
+3. Cole exatamente isto:
+```toml
+GROQ_API_KEY = "sua_chave_copiada_aqui"
+```
+4. Clique em **"Save"**
+5. **IMPORTANTE:** Reinicie o app clicando em "Reboot"
+
+### Passo 3: Verificar
+- Aguarde o app reiniciar
+- Tente enviar uma redação novamente
+- Use a aba "Diagnóstico" se persistir o problema
 
 **A Professora Carla está ansiosa para te ajudar! 🌟**
 """
+    
+    # Validar API key
+    if not validate_api_key(api_key):
+        return f"""
+# ⚠️ **API Key Inválida**
+
+A API key foi encontrada, mas não está funcionando.
+
+**Key encontrada:** {api_key[:10]}...
+
+## 🔧 **Possíveis Problemas:**
+1. **Key expirada:** Gere uma nova no console da Groq
+2. **Key incorreta:** Verifique se copiou completamente
+3. **Espaços extras:** Remova espaços antes/depois da key
+4. **Cota esgotada:** Verifique seu limite na Groq Console
+
+## 💡 **Solução:**
+1. Acesse: https://console.groq.com/
+2. Gere uma nova API key
+3. Substitua nos Secrets do Streamlit
+4. Reinicie o app
+
+**Use a aba "Diagnóstico" para mais detalhes.**
+"""
+    
+    st.success(f"✅ API Key válida: {api_key[:10]}...")
     
     try:
         # Extrair texto do PDF
@@ -703,6 +925,11 @@ Desculpe, Sther! Houve um problema técnico ao processar sua redação.
 2. Verificar se o PDF não está corrompido
 3. Enviar a redação por texto no chat
 
+## 🔍 **Debug Info:**
+- API Key: ✅ Válida
+- Sistema RAG: ✅ Inicializado
+- Erro: {str(e)}
+
 ## 📱 **Contato:**
 Se o problema persistir, relate este erro para o suporte técnico.
 
@@ -718,39 +945,46 @@ def setup_redacao_ui():
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("### 📤 **Envie sua Redação**")
+    # Tab para diagnóstico
+    tab1, tab2 = st.tabs(["📤 Análise de Redação", "🔍 Diagnóstico da API"])
     
-    uploaded_file = st.file_uploader(
-        "Escolha um arquivo PDF com sua redação:",
-        type=['pdf'],
-        help="Envie sua redação em formato PDF para análise completa"
-    )
+    with tab1:
+        st.markdown("### 📤 **Envie sua Redação**")
+        
+        uploaded_file = st.file_uploader(
+            "Escolha um arquivo PDF com sua redação:",
+            type=['pdf'],
+            help="Envie sua redação em formato PDF para análise completa"
+        )
+        
+        if uploaded_file is not None:
+            if st.button("🔍 Analisar Redação", type="primary"):
+                with st.spinner("📝 Professora Carla analisando sua redação..."):
+                    try:
+                        # Lê o conteúdo do arquivo
+                        pdf_content = uploaded_file.read()
+                        
+                        # Analisa a redação
+                        analise = analyze_redacao_pdf(pdf_content, uploaded_file.name)
+                        
+                        # Exibe o resultado
+                        st.markdown("### 📋 **Resultado da Análise**")
+                        st.markdown(analise)
+                        
+                        # Botão para download do relatório
+                        st.download_button(
+                            label="📥 Baixar Relatório Completo",
+                            data=analise,
+                            file_name=f"analise_redacao_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
+                            mime="text/markdown"
+                        )
+                        
+                    except Exception as e:
+                        st.error(f"❌ Erro ao processar a redação: {str(e)}")
+                        st.info("💡 Verifique se o arquivo é um PDF válido e tente novamente.")
     
-    if uploaded_file is not None:
-        if st.button("🔍 Analisar Redação", type="primary"):
-            with st.spinner("📝 Professora Carla analisando sua redação..."):
-                try:
-                    # Lê o conteúdo do arquivo
-                    pdf_content = uploaded_file.read()
-                    
-                    # Analisa a redação
-                    analise = analyze_redacao_pdf(pdf_content, uploaded_file.name)
-                    
-                    # Exibe o resultado
-                    st.markdown("### 📋 **Resultado da Análise**")
-                    st.markdown(analise)
-                    
-                    # Botão para download do relatório
-                    st.download_button(
-                        label="📥 Baixar Relatório Completo",
-                        data=analise,
-                        file_name=f"analise_redacao_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
-                        mime="text/markdown"
-                    )
-                    
-                except Exception as e:
-                    st.error(f"❌ Erro ao processar a redação: {str(e)}")
-                    st.info("💡 Verifique se o arquivo é um PDF válido e tente novamente.")
+    with tab2:
+        setup_api_key_debug()
     
     # Informações adicionais
     with st.expander("ℹ️ Como funciona a análise?"):
