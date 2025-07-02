@@ -6,6 +6,7 @@ import sqlite3
 from typing import Dict, List, Any
 from datetime import datetime
 from groq import Groq
+from local_redacao_rag import setup_redacao_ui, analyze_redacao_pdf
 from local_portuguese_rag import local_portuguese_rag, LocalPortugueseRAG
 from professor_leticia_local import setup_professor_leticia_local_ui, get_professor_leticia_local_response
 

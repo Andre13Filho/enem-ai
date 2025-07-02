@@ -18,6 +18,7 @@ langchain-huggingface
 python-docx>=0.8.11
 pypdf>=3.0.0
 PyPDF2>=3.0.0
+PyMuPDF>=1.23.0  # Para extração avançada de texto de PDFs
 
 # Utilitários Básicos
 python-dateutil>=2.8.0

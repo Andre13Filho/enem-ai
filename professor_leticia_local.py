@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Professora Letícia - Sistema RAG Local para Língua Portuguesa e Redação
+Professora Letícia - Sistema RAG Local para Língua Portuguesa
 A.T.E.N.A. - Interface integrada com Streamlit
 """
 
@@ -16,123 +16,76 @@ try:
 except ImportError:
     PORTUGUESE_RAG_AVAILABLE = False
 
-# Importa sistema RAG de redação
-try:
-    from local_redacao_rag import RedacaoRAG
-    REDACAO_RAG_AVAILABLE = True
-except ImportError:
-    REDACAO_RAG_AVAILABLE = False
-
 def setup_professor_leticia_local_ui():
     """Configura interface da Professora Letícia"""
     
-    st.markdown("### ✍️ Correção de Redação (Critérios ENEM)")
-    
-    if not REDACAO_RAG_AVAILABLE:
-        st.error("❌ Sistema de Correção de Redação não disponível. Verifique as dependências.")
-    else:
-        # File uploader para a redação
-        uploaded_file = st.file_uploader(
-            "Envie sua redação em formato PDF ou TXT:",
-            type=['pdf', 'txt'],
-            help="A Professora Letícia irá corrigir sua redação com base nos critérios do ENEM."
-        )
-        
-        if uploaded_file:
-            # Botão para iniciar a correção
-            if st.button("Corrigir Redação", key="corrigir_redacao", type="primary"):
-                api_key = os.environ.get("GROQ_API_KEY")
-                if not api_key:
-                    st.error("🔑 Chave da API Groq não encontrada. Configure-a para continuar.")
-                else:
-                    with st.spinner("Extraindo texto do arquivo..."):
-                        if uploaded_file.type == "application/pdf":
-                            text = RedacaoRAG.extract_text_from_pdf(uploaded_file.read())
-                        else:
-                            text = uploaded_file.read().decode("utf-8")
-                    
-                    if "não foi possível extrair" in text.lower() or not text.strip():
-                        st.error(f"❌ Erro ao ler o arquivo: {text}")
-                    else:
-                        # Armazena o texto e dispara a correção
-                        st.session_state.redacao_text = text
-                        # Limpa correção antiga
-                        if 'redacao_correction' in st.session_state:
-                            del st.session_state['redacao_correction']
-
-            # Se o texto da redação está no estado da sessão, mostra e permite corrigir
-            if 'redacao_text' in st.session_state:
-                with st.expander("👀 Ver texto da redação enviada", expanded=False):
-                    st.text_area("", st.session_state.redacao_text, height=250)
-
-                # Gera a correção se ainda não foi gerada
-                if 'redacao_correction' not in st.session_state:
-                    corrector = RedacaoRAG(api_key=os.environ.get("GROQ_API_KEY"))
-                    correction = corrector.get_correction(st.session_state.redacao_text)
-                    st.session_state.redacao_correction = correction
-                
-                # Exibe a correção
-                st.markdown("---")
-                st.markdown("#### Análise da Professora Letícia:")
-                st.markdown(st.session_state.redacao_correction)
-
-    st.markdown("---")
-    st.markdown("### 📚 Dúvidas sobre Língua Portuguesa")
-
     if not PORTUGUESE_RAG_AVAILABLE:
         st.error("❌ Sistema RAG Local de Língua Portuguesa não disponível. Verifique as dependências.")
         return
     
-    # Botão para processar documentos de Português
-    if st.button("🔄 Processar Materiais de Português", key="process_portuguese"):
-        with st.spinner("Processando materiais..."):
+    st.markdown("### 📚 Materiais de Língua Portuguesa")
+    
+    # Verifica se a pasta existe
+    if not os.path.exists("./Língua Portuguesa"):
+        st.warning("⚠️ Pasta 'Língua Portuguesa' não encontrada. Crie a pasta e adicione seus materiais.")
+        return
+    
+    # Botão para processar documentos
+    if st.button("🔄 Processar Materiais", key="process_portuguese"):
+        with st.spinner("Processando materiais de português..."):
             success = local_portuguese_rag.process_portuguese_documents()
             if success:
-                st.success("✅ Materiais de português processados!")
+                st.success("✅ Materiais processados com sucesso!")
             else:
-                st.error("❌ Erro ao processar materiais de português.")
+                st.error("❌ Erro ao processar materiais")
     
     # Estatísticas
     stats = local_portuguese_rag.get_stats()
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric("Documentos (Português)", stats["total_documentos"])
+        st.metric("Documentos", stats["total_documentos"])
     with col2:
-        st.metric("VectorStore (Português)", "✅" if stats["vectorstore_inicializado"] else "❌")
+        st.metric("VectorStore", "✅" if stats["vectorstore_inicializado"] else "❌")
     with col3:
-        st.metric("RAG Chain (Português)", "✅" if stats["rag_chain_configurada"] else "❌")
+        st.metric("RAG Chain", "✅" if stats["rag_chain_configurada"] else "❌")
 
 def get_professor_leticia_local_response(question: str, api_key: str) -> str:
-    """Gera resposta da Professora Letícia para dúvidas de português"""
-    
-    # Esta função agora lida apenas com as perguntas gerais de português.
-    # A correção de redação é tratada na UI.
+    """Gera resposta da Professora Letícia usando RAG local"""
     
     if not PORTUGUESE_RAG_AVAILABLE:
-        return "❌ Sistema RAG Local de Língua Portuguesa não está disponível."
+        return "❌ Sistema RAG Local de Língua Portuguesa não está disponível. Verifique as dependências."
     
     if not api_key:
-        return "🔑 Por favor, configure sua chave da API Groq."
+        return "🔑 Por favor, configure sua chave da API Groq para continuar."
     
     try:
-        # Garante que o RAG de português esteja pronto
+        # Tenta carregar vectorstore existente
         if not local_portuguese_rag.vectorstore:
             if not local_portuguese_rag.load_existing_vectorstore():
+                # Se não existir, processa documentos
                 if not local_portuguese_rag.process_portuguese_documents():
-                    return "❌ Erro ao processar materiais de português."
+                    return "❌ Erro ao processar materiais de português. Verifique se a pasta 'Língua Portuguesa' existe e contém documentos."
         
+        # Configura RAG chain se necessário
         if not local_portuguese_rag.rag_chain:
             local_portuguese_rag.create_rag_chain(api_key)
         
-        # Gera a resposta para a pergunta de português
+        # Gera resposta
         result = local_portuguese_rag.get_response(question)
         response = result["answer"]
         
-        # Limpa memória
+        # Aplica formatação específica de português
+        try:
+            from portuguese_formatter import format_portuguese_response
+            response = format_portuguese_response(response)
+        except ImportError:
+            pass
+        
+        # Limpa memória após cada resposta
         local_portuguese_rag.clear_memory()
         
         return response
         
     except Exception as e:
-        return f"❌ Erro ao gerar resposta de português: {str(e)}" 
+        return f"❌ Erro ao gerar resposta: {str(e)}" 
