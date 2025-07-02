@@ -1214,7 +1214,7 @@ def main():
                     st.markdown(message.content)
         
         # Input do usuário
-        if prompt := st.chat_input(f"Envie uma mensagem para {subject_info.get('teacher', 'Assistente')}..."):
+        if prompt := st.chat_input(f"Sua dúvida para {subject_info.get('teacher', 'Assistente')}..."):
             # Salva a última pergunta para os exercícios personalizados
             st.session_state.last_user_question = {
                 'content': prompt,
