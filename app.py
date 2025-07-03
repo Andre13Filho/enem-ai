@@ -1165,7 +1165,41 @@ def main():
             for conv_id, title, subject, created_at, first_message in recent_conversations:
                 # Formata o título da conversa
                 display_title = title
-                date_str = datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S").strftime("%d/%m %H:%M")
+                
+                # Função para formatar data de forma mais robusta
+                try:
+                    # Tenta diferentes formatos de data
+                    if isinstance(created_at, str):
+                        # Remove timezone info se presente
+                        created_at_clean = created_at.replace('+00:00', '').replace('Z', '')
+                        
+                        # Tenta formatos comuns
+                        formats_to_try = [
+                            "%Y-%m-%d %H:%M:%S.%f",  # Com microsegundos
+                            "%Y-%m-%d %H:%M:%S",     # Sem microsegundos
+                            "%Y-%m-%dT%H:%M:%S.%f",  # ISO com microsegundos
+                            "%Y-%m-%dT%H:%M:%S",     # ISO sem microsegundos
+                            "%Y-%m-%d"               # Apenas data
+                        ]
+                        
+                        date_obj = None
+                        for fmt in formats_to_try:
+                            try:
+                                date_obj = datetime.strptime(created_at_clean, fmt)
+                                break
+                            except ValueError:
+                                continue
+                        
+                        if date_obj:
+                            date_str = date_obj.strftime("%d/%m %H:%M")
+                        else:
+                            date_str = created_at[:16]  # Fallback: primeiros 16 caracteres
+                    else:
+                        # Se já é um objeto datetime
+                        date_str = created_at.strftime("%d/%m %H:%M")
+                except Exception:
+                    # Fallback em caso de erro
+                    date_str = str(created_at)[:16]
                 
                 # Obtém a cor da matéria
                 subject_color = SUBJECT_COLORS.get(subject, "#757575")  # Cinza como cor padrão
