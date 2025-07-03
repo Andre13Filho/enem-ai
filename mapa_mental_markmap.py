@@ -33,32 +33,32 @@ def get_example_question(subject: str) -> str:
     return examples.get(subject, 'Faça uma pergunta sobre sua dúvida!')
 
 def get_formula_example(subject: str) -> str:
-    """Retorna exemplo de fórmula básica para cada matéria"""
+    """Retorna exemplo de fórmula básica explicativa para cada matéria"""
     examples = {
-        'Matemática': '- $f(x) = ax + b$',
-        'Física': '- $v = \\frac{\\Delta s}{\\Delta t}$',
-        'Química': '- $C = \\frac{n}{V}$',
-        'Biologia': '- Respiração: $C_6H_{12}O_6 + O_2 \\rightarrow CO_2 + H_2O$',
-        'Geografia': '- Densidade demográfica = População/Área',
-        'História': '- Cronologia de eventos',
-        'Língua Portuguesa': '- Estrutura: Sujeito + Predicado',
-        'Redação': '- Introdução + Desenvolvimento + Conclusão'
+        'Matemática': '- Função linear: $f(x) = ax + b$ (onde "a" é coeficiente angular)',
+        'Física': '- Velocidade média: $v = \\frac{\\Delta s}{\\Delta t}$ (distância/tempo)',
+        'Química': '- Concentração molar: $C = \\frac{n}{V}$ (mol/litro)',
+        'Biologia': '- Respiração: $C_6H_{12}O_6 + 6O_2 \\rightarrow 6CO_2 + 6H_2O + ATP$',
+        'Geografia': '- Densidade demográfica = População total / Área territorial',
+        'História': '- Periodização: Antecedentes → Evento → Consequências',
+        'Língua Portuguesa': '- Estrutura frasal: Sujeito + Predicado + Complementos',
+        'Redação': '- Estrutura: Introdução (tese) + Desenvolvimento + Conclusão'
     }
-    return examples.get(subject, '- Conceito fundamental')
+    return examples.get(subject, '- Princípio fundamental da área')
 
 def get_advanced_formula_example(subject: str) -> str:
-    """Retorna exemplo de fórmula avançada para cada matéria"""
+    """Retorna exemplo de fórmula avançada explicativa para cada matéria"""
     examples = {
-        'Matemática': '- $$x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$$',
-        'Física': '- $$F = ma$$\\n- $$E = mc^2$$',
-        'Química': '- $$pH = -\\log[H^+]$$',
-        'Biologia': '- Fotossíntese: $6CO_2 + 6H_2O \\rightarrow C_6H_{12}O_6 + 6O_2$',
-        'Geografia': '- Índices demográficos complexos',
-        'História': '- Análise de causas e consequências',
-        'Língua Portuguesa': '- Figuras de linguagem e sintaxe',
-        'Redação': '- Argumentação e coesão textual'
+        'Matemática': '- Fórmula de Bhaskara: $x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$ (resolve equações 2º grau)',
+        'Física': '- Segunda Lei de Newton: $F = ma$ (força = massa × aceleração)',
+        'Química': '- Potencial hidrogeniônico: $pH = -\\log[H^+]$ (mede acidez)',
+        'Biologia': '- Fotossíntese: $6CO_2 + 6H_2O \\xrightarrow{luz} C_6H_{12}O_6 + 6O_2$ (produz glicose)',
+        'Geografia': '- Taxa de crescimento populacional: $TC = \\frac{P_f - P_i}{P_i} \\times 100$',
+        'História': '- Análise multicausal: Fatores econômicos + sociais + políticos',
+        'Língua Portuguesa': '- Análise sintática: Períodos compostos por coordenação/subordinação',
+        'Redação': '- Estratégias argumentativas: Dados + exemplos + autoridade'
     }
-    return examples.get(subject, '- Conceito avançado')
+    return examples.get(subject, '- Aplicação avançada do conceito')
 
 def get_subject_system_prompt(subject: str) -> str:
     """Retorna prompt de sistema específico para cada matéria"""
@@ -385,69 +385,79 @@ def gerar_markdown_mapa_mental(pergunta: str, api_key: str, nivel: str, current_
         
         client = Groq(api_key=api_key)
         
-        # Prompt completamente reformulado para usar RAG e ser ESPECÍFICO
+        # Prompt completamente reformulado para ser OBJETIVO e EXPLICATIVO
         prompt = f"""
-Você é um especialista em educação e mapas mentais, focado em ENEM. Crie um mapa mental ESPECÍFICO baseado no CONTEÚDO RAG fornecido.
+Você é um especialista em educação para ENEM. Crie um mapa mental EXPLICATIVO sobre "{topico_especifico}" para uma estudante de 17 anos.
 
 **PERGUNTA DA ESTUDANTE:** "{pergunta}"
-**TÓPICO ESPECÍFICO:** {topico_especifico}
-**NÍVEL:** {nivel} ({config['style']})
+**TÓPICO:** {topico_especifico}
+**NÍVEL:** {nivel}
 
-**CONTEÚDO RAG (USE COMO BASE):**
+**CONTEÚDO RAG:**
 {rag_content}
 
-**INSTRUÇÕES OBRIGATÓRIAS:**
+**REGRAS OBRIGATÓRIAS:**
 
-1. **TEMA CENTRAL = TÓPICO ESPECÍFICO:** 
-   - Título principal: "{topico_especifico}" (NÃO "{current_subject}")
-   - Todo mapa gira em torno deste tópico específico
+1. **MÁXIMO 4 NÍVEIS HIERÁRQUICOS** (# → ## → ### → ####)
+2. **SEM PERGUNTAS** - apenas EXPLICAÇÕES diretas
+3. **SEM MENÇÕES VAGAS** - explique sempre os conceitos
+4. **LINGUAGEM CLARA** para estudante de 17 anos
+5. **INFORMAÇÕES ESPECÍFICAS** baseadas no RAG
 
-2. **USE O CONTEÚDO RAG:**
-   - Extraia informações específicas do conteúdo RAG acima
-   - Crie ramificações baseadas nos conceitos encontrados no RAG
-   - Use fórmulas e exemplos do material RAG
+**ESTRUTURA OBRIGATÓRIA:**
 
-3. **ESTRUTURA POR NÍVEL:**
-   - Conceitos: exatamente {config['conceitos']} conceitos principais
-   - Profundidade: máximo {config['profundidade']} níveis hierárquicos
-   - Foco: {config['style']}
-
-4. **FORMATO YAML + MARKDOWN:**
-   - Inclua frontmatter YAML com {config['expansion']}
-   - Use emojis relevantes
-   - Fórmulas em LaTeX ($formula$)
-   - Responda APENAS com o markdown completo
-
-**EXEMPLO DE ESTRUTURA:**
 ```
 ---
 markmap:
-  {config['expansion']}
+  initialExpandLevel: 2
+  maxWidth: 300
 ---
 
 # 🎯 {topico_especifico}
 
-## [Conceito 1 do RAG]
-### [Subconceito específico]
-- [Detalhe do RAG]
+## 📚 Definição
+- [Explicação clara do que é o conceito]
+- [Por que é importante no ENEM]
 
-## [Conceito 2 do RAG]
-### [Aplicação específica]
-- [Exemplo do material]
+## 🔍 Características Principais  
+- [Característica 1 explicada]
+- [Característica 2 explicada]
+- [Fórmula se aplicável: $formula$]
+
+## 🎯 Como Funciona
+### [Processo/Etapa 1]
+- [Explicação detalhada]
+### [Processo/Etapa 2] 
+- [Explicação detalhada]
+
+## 💡 Aplicações no ENEM
+- [Tipo de questão 1 + exemplo]
+- [Tipo de questão 2 + exemplo]
+- [Dica específica para resolver]
 ```
 
-Agora crie o mapa específico usando o conteúdo RAG:
+**EXEMPLO DO QUE FAZER:**
+✅ "## Respiração Celular
+- Processo que transforma glicose em energia (ATP)
+- Ocorre nas mitocôndrias das células
+- Fórmula: $C_6H_{12}O_6 + 6O_2 → 6CO_2 + 6H_2O + ATP$"
+
+**EXEMPLO DO QUE NÃO FAZER:**
+❌ "## O que é respiração celular?"
+❌ "## Contexto histórico" (sem explicar qual contexto)
+
+Agora crie o mapa explicativo:
 """
         
         # Usar modelo mais recente e estável
         response = client.chat.completions.create(
             model="llama-3.2-90b-text-preview",
             messages=[
-                {"role": "system", "content": f"{get_subject_system_prompt(current_subject)} Você está criando um mapa mental específico para Sther, de 17 anos, que vai prestar ENEM. Seja preciso e direcionado ao tópico da pergunta."},
+                {"role": "system", "content": f"{get_subject_system_prompt(current_subject)} Você está criando um mapa mental explicativo para Sther, de 17 anos, que vai prestar ENEM. Seja preciso e direcionado ao tópico da pergunta."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=2000,
-            temperature=0.2   # Reduzido para mais foco e consistência
+            max_tokens=1500,
+            temperature=0.1   # Muito baixo para máxima consistência e foco
         )
         
         markdown_content = response.choices[0].message.content.strip()
@@ -668,7 +678,7 @@ def validar_especificidade_mapa(markdown_content: str, topico_especifico: str) -
     return topico_especifico.lower() in markdown_content.lower()
 
 def criar_mapa_mental_especifico(pergunta: str, topico_especifico: str, nivel: str, current_subject: str) -> str:
-    """Cria um mapa mental específico para o tópico identificado com níveis diferenciados"""
+    """Cria um mapa mental específico e explicativo para o tópico identificado"""
     
     # Emojis por matéria
     emoji_materia = {
@@ -677,106 +687,105 @@ def criar_mapa_mental_especifico(pergunta: str, topico_especifico: str, nivel: s
     }
     emoji = emoji_materia.get(current_subject, '📚')
     
-    # Configurar diferentes níveis de expansão
-    if nivel == "Básico":
-        expansion_level = 1
-        conceitos_basicos = f"""
-# {emoji} {topico_especifico}
+    # Configurar níveis com conteúdo específico para FOTOSSÍNTESE como exemplo
+    if "fotossíntese" in topico_especifico.lower() or "fotossintese" in pergunta.lower():
+        if nivel == "Básico":
+            conceitos_basicos = f"""
+# {emoji} Fotossíntese
 
-## 📚 Conceito Central
-- O que é {topico_especifico.lower()}
-- Importância no ENEM
+## 📚 Definição
+- Processo que transforma luz solar em energia química
+- Plantas produzem glicose usando CO₂ e água
+- Libera oxigênio como produto secundário
 
-## 🔍 Definição
-- Características principais
-- {get_formula_example(current_subject)}
+## 🔍 Onde Acontece
+- Ocorre nas folhas das plantas
+- Estrutura: cloroplastos (organelas verdes)
+- Pigmento: clorofila capta a luz solar
 
-## 🎯 Aplicação Básica
-- Como identificar
-- Exemplo simples
+## 🎯 Importância
+- Produz oxigênio que respiramos
+- Base da cadeia alimentar
+- Remove CO₂ da atmosfera
 """
-    elif nivel == "Intermediário":
-        expansion_level = 2
-        conceitos_basicos = f"""
-# {emoji} {topico_especifico}
+        elif nivel == "Intermediário":
+            conceitos_basicos = f"""
+# {emoji} Fotossíntese
 
-## 📚 Conceitos Fundamentais
-### 🔍 Definição
-- O que é {topico_especifico.lower()}
-- Características principais
-- Elementos essenciais
+## 📚 Definição Completa
+- Processo anabólico que converte energia luminosa em química
+- Transforma matéria inorgânica em orgânica
+- Equação: $6CO_2 + 6H_2O \\rightarrow C_6H_{12}O_6 + 6O_2$
 
-### 📐 Propriedades
-- {get_formula_example(current_subject)}
-- Relações importantes
+## 🔍 Estruturas Envolvidas
+### Cloroplastos
+- Organelas das células vegetais
+- Contêm clorofila (pigmento verde)
+- Tilacoide: onde ocorre a fase clara
+### Estroma
+- Fluido interno do cloroplasto
+- Local da fase escura (Ciclo de Calvin)
 
-## 🎯 Aplicações
-### 📝 Métodos de Resolução
-- Estratégias principais
-- Passo a passo
+## ⚡ Duas Etapas Principais
+### Fase Clara (Fotoquímica)
+- Ocorre nos tilacoides
+- Capta energia solar
+- Produz ATP e NADPH
+### Fase Escura (Ciclo de Calvin)
+- Ocorre no estroma
+- Fixa CO₂ em glicose
+- Não depende diretamente da luz
 
-### 🎓 No ENEM
-- Tipos de questão
-- Dicas importantes
-
-## 🔧 Prática
-### ✍️ Exercícios Típicos
-- Casos mais comuns
-- Estratégias de resolução
+## 💡 Aplicações no ENEM
+- Questões sobre equação química
+- Relação com respiração celular
+- Impacto ambiental e aquecimento global
 """
-    else:  # Avançado
-        expansion_level = 3
-        conceitos_basicos = f"""
-# {emoji} {topico_especifico}
+        else:  # Avançado
+            conceitos_basicos = f"""
+# {emoji} Fotossíntese
 
-## 📚 Fundamentos Teóricos
-### 🔍 Definição Completa
-- O que é {topico_especifico.lower()}
-- Contexto histórico
-- Características fundamentais
+## 📚 Definição Científica
+- Processo anabólico endergônico
+- Converte energia radiante em energia química
+- Equação global: $6CO_2 + 6H_2O \\xrightarrow{luz} C_6H_{12}O_6 + 6O_2$
+- ΔG positivo (requer energia)
 
-### 📐 Propriedades Matemáticas
-- {get_formula_example(current_subject)}
-- {get_advanced_formula_example(current_subject)}
-- Demonstrações importantes
+## 🔬 Aspectos Bioquímicos
+### Fase Fotoquímica
+- Fotossistemas I e II
+- Transporte de elétrons
+- Fotofosforilação: $ADP + Pi \\rightarrow ATP$
+- Fotólise da água: $2H_2O \\rightarrow 4H^+ + 4e^- + O_2$
+### Ciclo de Calvin-Benson
+- Fixação: CO₂ + RuBP → compostos de 3C
+- Redução: NADPH reduz 3-fosfoglicerato
+- Regeneração: RuBP é regenerada
 
-### 🧮 Relações Conceituais
-- Conexões com outros tópicos
-- Interdisciplinaridade
+## 🌍 Tipos de Fotossíntese
+### Plantas C3
+- Fixam CO₂ diretamente no Ciclo de Calvin
+- Maioria das plantas (arroz, trigo)
+### Plantas C4
+- Primeiro fixam CO₂ em compostos de 4 carbonos
+- Adaptação a climas quentes (milho, cana)
+### Plantas CAM
+- Abrem estômatos à noite
+- Adaptação a climas áridos (cactos)
 
-## 🎯 Aplicações Práticas
-### 📝 Métodos Avançados
-- Técnicas especializadas
-- Algoritmos de resolução
-- Casos complexos
-
-### 🎓 ENEM Aprofundado
-- Questões de alta complexidade
-- Interpretação avançada
-- Análise crítica
-
-### 🌐 Aplicações Reais
-- Tecnologia
-- Ciência
-- Cotidiano
-
-## 🔧 Resolução de Problemas
-### ✍️ Exercícios Complexos
-- Problemas contextualizados
-- Múltiplas abordagens
-- Análise de erros comuns
-
-### 🧠 Estratégias Mentais
-- Heurísticas de resolução
-- Padrões de reconhecimento
-- Otimização de tempo
-
-## 📊 Avaliação e Preparação
-### 📈 Níveis de Dificuldade
-- Progressão gradual
-- Autoavaliação
-- Pontos de atenção
+## 💡 Conexões ENEM
+- Relação inversa com respiração celular
+- Impacto das mudanças climáticas
+- Eficiência energética em diferentes biomas
+- Biotecnologia e plantas transgênicas
 """
+    
+    # Template genérico para outros tópicos
+    else:
+        conceitos_basicos = criar_template_generico(topico_especifico, nivel, current_subject, emoji)
+    
+    # Configurar expansão baseada no nível (máximo 4 níveis)
+    expansion_level = 1 if nivel == "Básico" else 2 if nivel == "Intermediário" else 3
     
     return f"""---
 markmap:
@@ -791,6 +800,132 @@ markmap:
 ---
 
 {conceitos_basicos}
+"""
+
+def criar_template_generico(topico_especifico: str, nivel: str, current_subject: str, emoji: str) -> str:
+    """Cria template genérico explicativo para qualquer tópico"""
+    
+    # Conteúdo específico por matéria
+    definicoes_especificas = {
+        'Matemática': {
+            'Equações do 2º Grau': 'Equações da forma ax² + bx + c = 0, onde a ≠ 0',
+            'Trigonometria': 'Estudo das relações entre ângulos e lados de triângulos',
+            'Funções': 'Relação entre dois conjuntos onde cada elemento tem uma imagem única',
+            'Logaritmos': 'Operação inversa da potenciação, usado para resolver equações exponenciais'
+        },
+        'Física': {
+            'Cinemática': 'Estudo do movimento sem considerar suas causas',
+            'Dinâmica': 'Estudo das forças que causam o movimento',
+            'Termodinâmica': 'Estudo das relações entre calor, trabalho e energia',
+            'Eletricidade': 'Estudo dos fenômenos relacionados a cargas elétricas'
+        },
+        'Química': {
+            'Ligações Químicas': 'Forças que mantêm átomos unidos formando compostos',
+            'Reações Químicas': 'Processos de transformação de substâncias químicas',
+            'Soluções': 'Misturas homogêneas de duas ou mais substâncias',
+            'Ácidos e Bases': 'Substâncias que doam ou recebem prótons (H⁺)'
+        },
+        'Biologia': {
+            'Respiração Celular': 'Processo que transforma glicose em energia (ATP) nas células',
+            'Fotossíntese': 'Processo que converte luz solar em energia química nas plantas',
+            'Genética': 'Estudo da hereditariedade e variação dos seres vivos',
+            'Ecologia': 'Estudo das relações entre seres vivos e o ambiente'
+        }
+    }
+    
+    # Buscar definição específica ou usar genérica
+    definicao = ""
+    if current_subject in definicoes_especificas:
+        for topico, desc in definicoes_especificas[current_subject].items():
+            if topico.lower() in topico_especifico.lower():
+                definicao = desc
+                break
+    
+    if not definicao:
+        definicao = f"Conceito fundamental de {current_subject} relacionado a {topico_especifico.lower()}"
+    
+    if nivel == "Básico":
+        return f"""
+# {emoji} {topico_especifico}
+
+## 📚 Definição
+- {definicao}
+- Conceito importante para o ENEM
+- {get_formula_example(current_subject)}
+
+## 🔍 Características Principais
+- Propriedade fundamental do conceito
+- Aplicação prática básica
+- Exemplo simples de uso
+
+## 💡 Como Identificar no ENEM
+- Palavras-chave típicas nas questões
+- Sinais que indicam esse tema
+- Estratégia básica de resolução
+"""
+    elif nivel == "Intermediário":
+        return f"""
+# {emoji} {topico_especifico}
+
+## 📚 Definição Completa
+- {definicao}
+- Importância no contexto da matéria
+- Relação com outros conceitos
+
+## 🔍 Como Funciona
+### Processo Principal
+- Etapa 1: descrição detalhada
+- Etapa 2: desenvolvimento
+- {get_formula_example(current_subject)}
+### Aplicações Práticas
+- Uso em situações reais
+- Exemplos do cotidiano
+
+## 🎯 Estratégias de Resolução
+- Método 1: abordagem sistemática
+- Método 2: técnica alternativa
+- Dicas para evitar erros comuns
+
+## 💡 No ENEM
+- Tipos de questão mais frequentes
+- Competências avaliadas
+- Tempo médio de resolução
+"""
+    else:  # Avançado
+        return f"""
+# {emoji} {topico_especifico}
+
+## 📚 Fundamento Teórico
+- {definicao}
+- Base científica do conceito
+- Desenvolvimento histórico relevante
+- {get_advanced_formula_example(current_subject)}
+
+## 🔬 Análise Detalhada
+### Aspectos Fundamentais
+- Princípio 1: explicação aprofundada
+- Princípio 2: relações complexas
+- Demonstração matemática quando aplicável
+### Variações e Casos Especiais
+- Situação específica 1
+- Situação específica 2
+- Exceções importantes
+
+## 🎯 Aplicações Avançadas
+### Resolução Complexa
+- Técnica especializada 1
+- Técnica especializada 2
+- Análise de casos limites
+### Interdisciplinaridade
+- Conexão com outras matérias
+- Aplicações tecnológicas
+- Relevância científica atual
+
+## 💡 Domínio Completo ENEM
+- Questões de alta complexidade
+- Análise crítica e interpretação
+- Estratégias de otimização de tempo
+- Armadilhas comuns e como evitá-las
 """
 
 def detectar_topico_principal(pergunta: str, current_subject: str) -> str:
