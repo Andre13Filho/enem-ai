@@ -148,7 +148,7 @@ class LocalBiologyRAG:
                 os.remove(index_file)
             if os.path.exists(pkl_file): 
                 os.remove(pkl_file)
-                return False
+            return False
             
     def initialize(self, api_key: str) -> bool:
         """
