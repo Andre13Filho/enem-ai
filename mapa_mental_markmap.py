@@ -1311,6 +1311,48 @@ def display_mapa_mental_wrapper():
         st.session_state.gerar_mapa_mental = False
     display_mapa_mental_markmap()
 
+# Adicionar a função analisar_markdown_stats que estava faltando
+
+def analisar_markdown_stats(markdown: str) -> dict:
+    """Analisa estatísticas do mapa mental gerado"""
+    if not markdown:
+        return {'conceitos': 0, 'conexoes': 0, 'niveis': 0, 'formulas': 0}
+    
+    linhas = markdown.split('\n')
+    
+    # Contar conceitos (linhas que começam com # ou -)
+    conceitos = 0
+    for linha in linhas:
+        linha_clean = linha.strip()
+        if (linha_clean.startswith('#') or linha_clean.startswith('-')) and len(linha_clean) > 1:
+            conceitos += 1
+    
+    # Contar conexões (estimativa baseada em linhas com conteúdo)
+    conexoes = max(0, conceitos - 1)  # Conceitos conectados
+    
+    # Contar níveis hierárquicos (máximo de # consecutivos)
+    niveis = 0
+    for linha in linhas:
+        linha_clean = linha.strip()
+        if linha_clean.startswith('#'):
+            nivel_atual = 0
+            for char in linha_clean:
+                if char == '#':
+                    nivel_atual += 1
+                else:
+                    break
+            niveis = max(niveis, nivel_atual)
+    
+    # Contar fórmulas (texto entre $)
+    formulas = markdown.count('$') // 2  # Cada fórmula tem $ de abertura e fechamento
+    
+    return {
+        'conceitos': conceitos,
+        'conexoes': conexoes,
+        'niveis': niveis,
+        'formulas': formulas
+    }
+
 if __name__ == "__main__":
     try:
         st.set_page_config(
