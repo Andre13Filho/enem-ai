@@ -270,12 +270,14 @@ class ExerciciosPersonalizados:
                         tema_completo += f" ({question_data.get('conteudo')})"
                     st.caption(tema_completo)
                     
-                    # Adiciona o gabarito
+                    # Adiciona o gabarito oculto
                     gabarito = get_gabarito(question_id, self.gabaritos)
                     if gabarito != "N/A":
-                        st.info(f"✅ **Gabarito:** {gabarito}")
+                        with st.expander("🔍 Mostrar Gabarito", expanded=False):
+                            st.success(f"✅ **Resposta Correta:** {gabarito}")
                     else:
-                        st.warning("⚠️ Gabarito não disponível")
+                        with st.expander("🔍 Mostrar Gabarito", expanded=False):
+                            st.warning("⚠️ Gabarito não disponível")
                 
                 with col2:
                     # Determina o dia e o nome do arquivo com base no número da questão
