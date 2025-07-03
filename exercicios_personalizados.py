@@ -37,6 +37,33 @@ def load_data():
         st.error(f"Erro ao decodificar JSON: {e}")
         return {"questions": {}, "total": 0}
 
+@st.cache_data
+def load_gabaritos():
+    """Carrega dados dos gabaritos do ENEM."""
+    try:
+        # Carrega gabaritos do primeiro dia
+        with open("gabaritos_primeiro_dia.json", "r", encoding="utf-8") as f:
+            primeiro_dia_gab = json.load(f)
+        
+        # Carrega gabaritos do segundo dia
+        with open("gabaritos_segundo_dia.json", "r", encoding="utf-8") as f:
+            segundo_dia_gab = json.load(f)
+        
+        # Combina os dados
+        all_gabaritos = {**primeiro_dia_gab, **segundo_dia_gab}
+        
+        return all_gabaritos
+    except FileNotFoundError as e:
+        st.error(f"Arquivo de gabarito não encontrado: {e}")
+        return {}
+    except json.JSONDecodeError as e:
+        st.error(f"Erro ao decodificar gabarito JSON: {e}")
+        return {}
+
+def get_gabarito(question_id: str, gabaritos_data: Dict) -> str:
+    """Obtém o gabarito para uma questão específica."""
+    return gabaritos_data.get(question_id, "N/A")
+
 def extract_keywords(text):
     """Extrai palavras-chave relevantes do texto."""
     # Remove pontuação e converte para minúsculas
@@ -176,6 +203,7 @@ def get_pdf_info(question_key):
 class ExerciciosPersonalizados:
     def __init__(self):
         self.data = load_data()
+        self.gabaritos = load_gabaritos()
 
     def setup_ui(self):
         st.markdown("### 📚 Exercícios Personalizados")
@@ -224,6 +252,13 @@ class ExerciciosPersonalizados:
                     if question_data.get('conteudo'):
                         tema_completo += f" ({question_data.get('conteudo')})"
                     st.caption(tema_completo)
+                    
+                    # Adiciona o gabarito
+                    gabarito = get_gabarito(question_id, self.gabaritos)
+                    if gabarito != "N/A":
+                        st.info(f"✅ **Gabarito:** {gabarito}")
+                    else:
+                        st.warning("⚠️ Gabarito não disponível")
                 
                 with col2:
                     # Determina o dia e o nome do arquivo com base no número da questão
