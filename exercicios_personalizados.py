@@ -62,7 +62,24 @@ def load_gabaritos():
 
 def get_gabarito(question_id: str, gabaritos_data: Dict) -> str:
     """Obtém o gabarito para uma questão específica."""
-    return gabaritos_data.get(question_id, "N/A")
+    # Primeiro tenta buscar com o formato original
+    gabarito = gabaritos_data.get(question_id)
+    
+    if gabarito is not None:
+        return gabarito
+    
+    # Se não encontrou, tenta com zero à esquerda para questões de 2 dígitos
+    year, number_str = question_id.split('_')
+    number = int(number_str)
+    
+    # Para questões de 91-99 (segundo dia), tenta com zero à esquerda
+    if 91 <= number <= 99:
+        padded_question_id = f"{year}_{number:03d}"  # Ex: 2019_96 -> 2019_096
+        gabarito = gabaritos_data.get(padded_question_id)
+        if gabarito is not None:
+            return gabarito
+    
+    return "N/A"
 
 def extract_keywords(text):
     """Extrai palavras-chave relevantes do texto."""
