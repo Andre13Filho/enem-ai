@@ -960,6 +960,27 @@ def get_recent_conversations(limit=10):
         st.error(f"Erro ao buscar conversas recentes do Supabase: {e}")
         return []
 
+def delete_conversation(conversation_id):
+    """Apaga uma conversa específica do Supabase."""
+    try:
+        # Com ON DELETE CASCADE, só precisamos apagar a conversa
+        # As mensagens serão apagadas automaticamente
+        supabase_client.table('conversations').delete().eq('id', conversation_id).execute()
+        
+        # Se a conversa atual foi apagada, limpa o estado
+        if 'current_conversation_id' in st.session_state and st.session_state.current_conversation_id == conversation_id:
+            del st.session_state.current_conversation_id
+            # Limpar todos os históricos de chat
+            for subject in SUBJECTS.keys():
+                if f"chat_history_{subject}" in st.session_state:
+                    st.session_state[f"chat_history_{subject}"] = []
+                    
+        st.success("Conversa excluída com sucesso!")
+        return True
+    except Exception as e:
+        st.error(f"Erro ao excluir a conversa do Supabase: {e}")
+        return False
+
 def clear_all_conversations():
     """Apaga todo o histórico de conversas do Supabase."""
     try:
@@ -1149,12 +1170,22 @@ def main():
                 # Obtém a cor da matéria
                 subject_color = SUBJECT_COLORS.get(subject, "#757575")  # Cinza como cor padrão
                 
-                # Usa abordagem nativa do Streamlit para botões
-                btn_label = f"📝 {display_title} ({subject} - {date_str})"
-                if st.sidebar.button(btn_label, key=f"conv_{conv_id}"):
-                    st.session_state.current_conversation_id = conv_id
-                    st.session_state.current_subject = subject
-                    st.rerun()
+                # Cria duas colunas: uma para o botão da conversa e outra para o botão excluir
+                col_conv, col_delete = st.sidebar.columns([4, 1])
+                
+                with col_conv:
+                    # Botão da conversa
+                    btn_label = f"📝 {display_title} ({subject} - {date_str})"
+                    if st.button(btn_label, key=f"conv_{conv_id}"):
+                        st.session_state.current_conversation_id = conv_id
+                        st.session_state.current_subject = subject
+                        st.rerun()
+                
+                with col_delete:
+                    # Botão de excluir conversa
+                    if st.button("❌", key=f"del_{conv_id}", help="Excluir conversa"):
+                        if delete_conversation(conv_id):
+                            st.rerun()
         else:
             st.sidebar.info("Nenhuma conversa no histórico. Faça uma pergunta para começar!")
 
