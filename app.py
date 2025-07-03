@@ -2,10 +2,11 @@ import streamlit as st
 import time
 import re
 import os
-import sqlite3
+from supabase import create_client, Client
 from typing import Dict, List, Any
 from datetime import datetime
 from groq import Groq
+
 from local_redacao_rag import setup_redacao_ui, analyze_redacao_pdf
 from local_portuguese_rag import local_portuguese_rag, LocalPortugueseRAG
 from professor_leticia_local import setup_professor_leticia_local_ui, get_professor_leticia_local_response
@@ -885,102 +886,91 @@ def get_analogia_para_professor(conceito: str, materia: str, api_key: str) -> st
     except Exception as e:
         return f"❌ Erro ao gerar analogia: {str(e)}"
 
-def init_conversation_db():
-    """Inicializa o banco de dados de conversas"""
-    conn = sqlite3.connect('conversations.db')
-    c = conn.cursor()
-    # Tabela de conversas
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS conversations (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            subject TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    # Tabela de mensagens
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS messages (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            conversation_id INTEGER,
-            sender TEXT NOT NULL,
-            text TEXT NOT NULL,
-            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (conversation_id) REFERENCES conversations (id)
-        )
-    ''')
-    conn.commit()
-    return conn
+def init_supabase_client() -> Client:
+    """Inicializa e retorna o cliente Supabase de forma segura."""
+    url = st.secrets.get("SUPABASE_URL")
+    key = st.secrets.get("SUPABASE_KEY")
+
+    if not url or not key:
+        st.error("As credenciais do Supabase (URL e Key) não foram configuradas nos Secrets.")
+        st.stop()
+
+    return create_client(url, key)
+
+# Inicializa o cliente Supabase uma vez
+supabase_client = init_supabase_client()
 
 def get_or_create_conversation(subject, prompt=None):
-    """Obtém a conversa atual ou cria uma nova"""
+    """Obtém a conversa atual ou cria uma nova no Supabase."""
     if 'current_conversation_id' not in st.session_state:
-        # Cria uma nova conversa apenas se houver uma pergunta
         if prompt:
-            conn = init_conversation_db()
-            c = conn.cursor()
-            # Usa o início da pergunta como título (máximo 30 caracteres)
-            title = prompt[:30] + "..." if len(prompt) > 30 else prompt
-            c.execute("INSERT INTO conversations (title, subject) VALUES (?, ?)", (title, subject))
-            conn.commit()
-            conversation_id = c.lastrowid
-            conn.close()
-            st.session_state.current_conversation_id = conversation_id
-            return conversation_id
+            title = prompt[:35] + "..." if len(prompt) > 35 else prompt
+            try:
+                data, count = supabase_client.table('conversations').insert({
+                    'title': title,
+                    'subject': subject
+                }).execute()
+                
+                # A API retorna uma tupla (dados, contagem). Pegamos o ID dos dados.
+                if data and len(data) > 1 and data[1]:
+                    conversation_id = data[1][0]['id']
+                    st.session_state.current_conversation_id = conversation_id
+                    return conversation_id
+                else:
+                    st.error("Falha ao obter ID da nova conversa.")
+                    return None
+            except Exception as e:
+                st.error(f"Erro ao criar conversa no Supabase: {e}")
+                return None
         return None
     return st.session_state.current_conversation_id
 
 def save_message(conversation_id, sender, text):
-    """Salva uma mensagem no banco de dados"""
-    conn = init_conversation_db()
-    c = conn.cursor()
-    c.execute(
-        "INSERT INTO messages (conversation_id, sender, text) VALUES (?, ?, ?)",
-        (conversation_id, sender, text)
-    )
-    conn.commit()
-    conn.close()
+    """Salva uma mensagem no banco de dados do Supabase."""
+    if not conversation_id:
+        return
+    try:
+        supabase_client.table('messages').insert({
+            'conversation_id': conversation_id,
+            'sender': sender,
+            'text': text
+        }).execute()
+    except Exception as e:
+        st.error(f"Erro ao salvar mensagem no Supabase: {e}")
 
 def get_conversation_messages(conversation_id):
-    """Obtém todas as mensagens de uma conversa"""
-    conn = init_conversation_db()
-    c = conn.cursor()
-    c.execute(
-        "SELECT sender, text FROM messages WHERE conversation_id = ? ORDER BY timestamp",
-        (conversation_id,)
-    )
-    messages = c.fetchall()
-    conn.close()
-    return messages
+    """Obtém todas as mensagens de uma conversa do Supabase."""
+    if not conversation_id:
+        return []
+    try:
+        response = supabase_client.table('messages').select('sender, text').eq('conversation_id', conversation_id).order('created_at').execute()
+        return [(item['sender'], item['text']) for item in response.data]
+    except Exception as e:
+        st.error(f"Erro ao buscar mensagens do Supabase: {e}")
+        return []
 
 def get_recent_conversations(limit=10):
-    """Obtém as conversas mais recentes"""
-    conn = init_conversation_db()
-    c = conn.cursor()
-    c.execute(
-        """
-        SELECT c.id, c.title, c.subject, c.created_at, 
-               (SELECT text FROM messages WHERE conversation_id = c.id AND sender = 'user' ORDER BY timestamp LIMIT 1) as first_message
-        FROM conversations c
-        ORDER BY c.created_at DESC
-        LIMIT ?
-        """,
-        (limit,)
-    )
-    conversations = c.fetchall()
-    conn.close()
-    return conversations
+    """Obtém as conversas mais recentes do Supabase."""
+    try:
+        response = supabase_client.table('conversations').select('id, title, subject, created_at').order('created_at', desc=True).limit(limit).execute()
+        # Adaptar a saída para corresponder ao formato esperado (id, title, subject, created_at, first_message)
+        # O campo 'first_message' foi removido para simplificar, pois exigiria outra consulta.
+        return [(conv['id'], conv['title'], conv['subject'], conv['created_at'], "") for conv in response.data]
+    except Exception as e:
+        st.error(f"Erro ao buscar conversas recentes do Supabase: {e}")
+        return []
 
 def clear_all_conversations():
-    """Apaga todo o histórico de conversas"""
-    conn = init_conversation_db()
-    c = conn.cursor()
-    c.execute("DELETE FROM messages")
-    c.execute("DELETE FROM conversations")
-    conn.commit()
-    conn.close()
-    if 'current_conversation_id' in st.session_state:
-        del st.session_state.current_conversation_id
+    """Apaga todo o histórico de conversas do Supabase."""
+    try:
+        # É preciso apagar as mensagens primeiro por causa da chave estrangeira
+        supabase_client.table('messages').delete().neq('id', 0).execute()
+        supabase_client.table('conversations').delete().neq('id', 0).execute()
+        if 'current_conversation_id' in st.session_state:
+            del st.session_state.current_conversation_id
+        st.success("Histórico de conversas apagado com sucesso!")
+    except Exception as e:
+        st.error(f"Erro ao limpar o histórico no Supabase: {e}")
 
 # Cores para cada matéria
 SUBJECT_COLORS = {

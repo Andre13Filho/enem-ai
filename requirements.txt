@@ -32,6 +32,8 @@ requests>=2.31.0
 # Funcionalidades extras
 streamlit-markmap>=1.0.0  # Para mapas mentais interativos
 
+supabase
+
 # Formatadores específicos por matéria (incluídos no projeto)
 # physics_formatter.py - Formatação de fórmulas de física
 # math_formatter.py - Formatação de expressões matemáticas  
